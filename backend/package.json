@@ -1,4 +1,5 @@
 {
+	"type": "module",
 	"scripts": {
 		"compile": "tsc --watch",
 		"dev": "nodemon ./dist/server.js",
