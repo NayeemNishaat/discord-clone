@@ -1,0 +1,27 @@
+# dependencies
+backend/node_modules
+frontend/node_modules
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production
+frontend/build
+frontend/dist
+backend/build
+backend/dist
+
+# local env files
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+backend/.env*
+
+# vercel
+frontend/.vercel
+
+# typescript
+frontend/*.tsbuildinfo
+backend/*.tsbuildinfo
