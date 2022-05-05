@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 interface userSchema {
-	username: String;
-	password: String;
-	confirmPassword: String;
-	email: String;
+	username: string;
+	password: string;
+	confirmPassword: string;
+	email: string;
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -25,7 +25,7 @@ const userSchema: Schema = new mongoose.Schema({
 		minlength: [6, "Password length should be 6 or more!"],
 		required: [true, "A user must have a password."],
 		validate: {
-			validator: function (this: userSchema, currEl: String) {
+			validator: function (this: userSchema, currEl: string) {
 				return currEl === this.password;
 			},
 			message: "Passwords didn't match."
@@ -36,7 +36,7 @@ const userSchema: Schema = new mongoose.Schema({
 		lowercase: true,
 		required: [true, "A user must have an email."],
 		validate: {
-			validator: (email: String) => {
+			validator: (email: string) => {
 				return email.match(
 					/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 				);
