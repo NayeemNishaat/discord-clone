@@ -1,9 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface userSchema {
+interface IuserSchema extends Document {
 	username: string;
 	password: string;
-	confirmPassword: string;
+	confirmPassword: string | undefined;
 	email: string;
 }
 
@@ -25,7 +25,7 @@ const userSchema: Schema = new mongoose.Schema({
 		minlength: [6, "Password length should be 6 or more!"],
 		required: [true, "A user must have a password."],
 		validate: {
-			validator: function (this: userSchema, currEl: string) {
+			validator: function (this: IuserSchema, currEl: string) {
 				return currEl === this.password;
 			},
 			message: "Passwords didn't match."
@@ -44,6 +44,14 @@ const userSchema: Schema = new mongoose.Schema({
 			message: "Please provide a valid Email!"
 		}
 	}
+});
+
+userSchema.pre<IuserSchema>("save", function (next) {
+	if (!this.isModified("password")) return next();
+
+	this.confirmPassword = undefined;
+
+	next();
 });
 
 export default mongoose.model("User", userSchema);
