@@ -1,16 +1,7 @@
-import express, { Express, Request, Response } from "express";
-import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
-import authRoutes from "./routes/authRoutes";
-
-const app: Express = express();
-app.use(express.json());
-app.use(cors());
-
-// Chapter: Mounting Routes
-app.use("/api/v1/auth", authRoutes);
+import app from "./app";
 
 // Chapter: DB and Server Connection
 declare const process: {

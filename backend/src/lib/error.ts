@@ -4,7 +4,7 @@ export const catchAsync =
 	(fn: Function) => (req: Request, res: Response, next: NextFunction) =>
 		fn(req, req, next).catch(next);
 
-class AppError extends Error {
+export class AppError extends Error {
 	statuscode: number;
 	isOperational: boolean;
 	status: string;
@@ -19,5 +19,3 @@ class AppError extends Error {
 		Error.captureStackTrace(this, this.constructor);
 	}
 }
-
-export default AppError;
