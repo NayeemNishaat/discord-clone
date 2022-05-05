@@ -1,14 +1,8 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-
+import express, { Router } from "express";
 const router: Router = express.Router();
+import { register, login } from "../controllers/authController";
 
-router.post("/register", (req: Request, res: Response, next: NextFunction) => {
-	console.log(55);
-	res.status(200).send("Register Route");
-});
-
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-	res.status(200).send("Login Route");
-});
+router.post("/register", register);
+router.post("/login", login);
 
 export default router;
