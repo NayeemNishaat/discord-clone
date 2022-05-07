@@ -28,10 +28,14 @@ export const register = catchAsync(
 		newUser.password = undefined;
 		newUser.confirmPassword = undefined;
 
-		res.status(200).json({ status: "success", data: "newUser" });
+		res.status(201).json({ status: "success", data: newUser });
 	}
 );
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
-	res.status(200).send("Login Route");
-};
+export const login = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		// await User.deleteMany({});
+
+		res.status(200).send("Login Route");
+	}
+);
