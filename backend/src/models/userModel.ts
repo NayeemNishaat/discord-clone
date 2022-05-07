@@ -26,8 +26,7 @@ const userSchema: Schema = new mongoose.Schema({
 		required: [true, "A user must have a confirm password."],
 		validate: {
 			validator: function (this: IuserSchema, currEl: string) {
-				console.log(currEl);
-				return currEl === this.password;
+				return currEl === this.password; // Important: currEl is confirmPassword
 			},
 			message: "Passwords didn't match."
 		}
