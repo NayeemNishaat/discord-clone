@@ -23,7 +23,7 @@ const userSchema: Schema = new mongoose.Schema({
 	confirmPassword: {
 		type: String,
 		minlength: [6, "Password length should be 6 or more!"],
-		required: [true, "A user must have a password."],
+		required: [true, "A user must have a confirm password."],
 		validate: {
 			validator: function (this: IuserSchema, currEl: string) {
 				return currEl === this.password;

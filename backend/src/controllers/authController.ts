@@ -1,16 +1,22 @@
 import { Request, Response, NextFunction } from "express";
-import { catchAsync } from "../lib/error";
+import { catchAsync, AppError } from "../lib/error";
 import User from "../models/userModel";
 
 interface userSchema {
 	username: string;
-	password: string;
-	confirmPassword: string;
+	password: string | undefined;
+	confirmPassword: string | undefined;
 	email: string;
+	token: string;
 }
 
 export const register = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
+		const userExist = await User.findOne({ email: req.body.email });
+
+		if (userExist)
+			return next(new AppError("Email is already in use!", 409));
+
 		const newUser: userSchema = await User.create({
 			username: req.body.username,
 			email: req.body.email,
@@ -18,7 +24,11 @@ export const register = catchAsync(
 			confirmPassword: req.body.password
 		});
 
-		res.status(200).send("Register Route");
+		newUser.token = "token";
+		newUser.password = undefined;
+		newUser.confirmPassword = undefined;
+
+		res.status(200).json({ status: "success", data: "newUser" });
 	}
 );
 
