@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 export const catchAsync =
 	(fn: Function) => (req: Request, res: Response, next: NextFunction) =>
-		fn(req, req, next).catch(next);
+		fn(req, res, next).catch(next);
 
 export class AppError extends Error {
 	statuscode: number;

@@ -23,22 +23,20 @@ export const register = catchAsync(
 			username: req.body.username,
 			email: req.body.email,
 			password: req.body.password,
-			confirmPassword: req.body.password
+			confirmPassword: req.body.confirmPassword
 		});
 
-		const token = "token";
-
-		newUser.token = token;
+		newUser.token = "token";
 		newUser.password = undefined;
-		newUser.confirmPassword = undefined;
 
-		return res.status(201).json({
-			status: "success",
-			data: newUser
-		});
+		res.status(201).json({ status: "success", data: newUser });
 	}
 );
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
-	res.status(200).send("Login Route");
-};
+export const login = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		// await User.deleteMany({});
+
+		res.status(200).send("Login Route");
+	}
+);

@@ -23,11 +23,11 @@ const userSchema: Schema = new mongoose.Schema({
 	},
 	confirmPassword: {
 		type: String,
-		minlength: [6, "Confirm password length should be 6 or more!"],
-		required: [true, "A user must have a password."],
+		minlength: [6, "Confirm Password length should be 6 or more!"],
+		required: [true, "A user must have a confirm password."],
 		validate: {
 			validator: function (this: IuserSchema, currEl: string) {
-				return currEl === this.password;
+				return currEl === this.password; // Important: currEl is confirmPassword
 			},
 			message: "Passwords didn't match."
 		}
