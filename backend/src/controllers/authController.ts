@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcryptjs";
 import { catchAsync, AppError } from "../lib/error";
 import User from "../models/userModel";
 
@@ -35,8 +36,16 @@ export const register = catchAsync(
 
 export const login = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
-		// await User.deleteMany({});
+		const user = await User.findOne({
+			email: req.body.email.toLowerCase()
+		});
 
-		res.status(200).send("Login Route");
+		if (!user) return next(new AppError("Invalid credentials!", 400));
+
+		if (await bcrypt.compare(req.body.password, user.password)) {
+			user.token = "Token";
+		}
+
+		res.status(200).json({ status: "success", data: user });
 	}
 );
