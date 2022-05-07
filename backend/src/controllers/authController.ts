@@ -21,12 +21,11 @@ export const register = catchAsync(
 			username: req.body.username,
 			email: req.body.email,
 			password: req.body.password,
-			confirmPassword: req.body.password
+			confirmPassword: req.body.confirmPassword
 		});
 
 		newUser.token = "token";
 		newUser.password = undefined;
-		newUser.confirmPassword = undefined;
 
 		res.status(201).json({ status: "success", data: newUser });
 	}
