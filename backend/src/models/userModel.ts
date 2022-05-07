@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import bcrypt from "bcryptjs";
 
 interface IuserSchema extends Document {
 	username: string;
@@ -22,7 +23,7 @@ const userSchema: Schema = new mongoose.Schema({
 	},
 	confirmPassword: {
 		type: String,
-		minlength: [6, "Password length should be 6 or more!"],
+		minlength: [6, "Confirm password length should be 6 or more!"],
 		required: [true, "A user must have a password."],
 		validate: {
 			validator: function (this: IuserSchema, currEl: string) {
@@ -35,6 +36,7 @@ const userSchema: Schema = new mongoose.Schema({
 		type: String,
 		lowercase: true,
 		required: [true, "A user must have an email."],
+		unique: true,
 		validate: {
 			validator: (email: string) => {
 				return email.match(
@@ -46,8 +48,12 @@ const userSchema: Schema = new mongoose.Schema({
 	}
 });
 
-userSchema.pre<IuserSchema>("save", function (next) {
+userSchema.pre<IuserSchema>("save", async function (next) {
 	if (!this.isModified("password")) return next();
+
+	const encryptedPassword = await bcrypt.hash(this.password, 12);
+
+	this.password = encryptedPassword;
 
 	this.confirmPassword = undefined;
 

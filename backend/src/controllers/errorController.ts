@@ -6,7 +6,7 @@ interface IError extends AppError {
 	errors?: object;
 }
 
-const sendError = (req: Request, res: Response, err: IError, env: string) => {
+const sendError = (err: IError, req: Request, res: Response, env: string) => {
 	if (env === "development") {
 		console.log(err);
 
@@ -49,14 +49,15 @@ export const errorHandler = (
 	err.status = err.status || "error";
 
 	if (process.env.NODE_ENV === "development") {
-		sendError(req, res, err, "development");
+		sendError(err, req, res, "development");
 	} else {
 		let error = { ...err };
+		error.message = err.message;
 		console.log(error);
 
 		if (error._message === "User validation failed")
 			error = handleValidationErrorDB(error);
 
-		sendError(req, res, error, "production");
+		sendError(error, req, res, "production");
 	}
 };
