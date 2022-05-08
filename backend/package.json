@@ -16,5 +16,8 @@
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.3.2",
 		"ts-node": "^10.7.0"
+	},
+	"devDependencies": {
+		"@types/jsonwebtoken": "^8.5.8"
 	}
 }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { catchAsync, AppError } from "../lib/error";
 import User from "../models/userModel";
 
