@@ -27,25 +27,31 @@ export const register = catchAsync(
 			confirmPassword: req.body.confirmPassword
 		});
 
-		newUser.token = "token";
+		const token = "token";
 		newUser.password = undefined;
 
-		res.status(201).json({ status: "success", data: newUser });
+		res.status(201).json({ status: "success", data: { newUser, token } });
 	}
 );
 
 export const login = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
-		const user = await User.findOne({
+		const user: userSchema = await User.findOne({
 			email: req.body.email.toLowerCase()
-		});
+		}).select("+password");
 
 		if (!user) return next(new AppError("Invalid credentials!", 400));
 
-		if (await bcrypt.compare(req.body.password, user.password)) {
-			user.token = "Token";
+		if (
+			user.password &&
+			!(await bcrypt.compare(req.body.password, user.password))
+		) {
+			return next(new AppError("Invalid credentials!", 400));
 		}
 
-		res.status(200).json({ status: "success", data: user });
+		const token = "123";
+		user.password = undefined;
+
+		res.status(200).json({ status: "success", data: { user, token } });
 	}
 );
