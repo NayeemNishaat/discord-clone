@@ -62,7 +62,11 @@ export const errorHandler = (
 		if (error._message === "User validation failed")
 			error = handleValidationErrorDB(error);
 
-		if (error.name === "JsonWebTokenError") error = handleJWTError(error);
+		if (
+			error.name === "JsonWebTokenError" ||
+			error.name === "TokenExpiredError"
+		)
+			error = handleJWTError(error);
 
 		sendError(error, req, res, "production");
 	}
