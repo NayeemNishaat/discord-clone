@@ -39,6 +39,10 @@ const handleValidationErrorDB = (err: IError) => {
 	return new AppError(message, 400);
 };
 
+const handleJWTError = (err: IError) => {
+	return new AppError("Invalid Token!", 401);
+};
+
 export const errorHandler = (
 	err: IError,
 	req: Request,
@@ -57,6 +61,8 @@ export const errorHandler = (
 
 		if (error._message === "User validation failed")
 			error = handleValidationErrorDB(error);
+
+		if (error.name === "JsonWebTokenError") error = handleJWTError(error);
 
 		sendError(error, req, res, "production");
 	}
