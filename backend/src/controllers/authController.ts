@@ -5,12 +5,38 @@ import { catchAsync, AppError } from "../lib/error";
 import User from "../models/userModel";
 
 interface userSchema {
+	_id: string;
 	username: string;
 	password: string | undefined;
 	confirmPassword: string | undefined;
 	email: string;
 	token: string;
 }
+declare const process: {
+	env: {
+		JWT_SECRET: string;
+		JWT_EXPIRES_IN: string;
+		JWT_COOKIE_EXPIRES_IN: number;
+	};
+};
+
+const createSendToken = (
+	info: { id: string; email: string },
+	req: Request,
+	res: Response
+) => {
+	const token = jwt.sign(info, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRES_IN
+	});
+
+	const cookieOptions = {
+		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 1), // Note: Must be number!
+		httpOnly: true,
+		secure: true
+	};
+
+	res.cookie("jwt", token, cookieOptions);
+};
 
 export const register = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -28,10 +54,11 @@ export const register = catchAsync(
 			confirmPassword: req.body.confirmPassword
 		});
 
-		const token = "token";
+		createSendToken({ id: newUser._id, email: newUser.email }, req, res);
+
 		newUser.password = undefined;
 
-		res.status(201).json({ status: "success", data: { newUser, token } });
+		res.status(201).json({ status: "success", data: newUser });
 	}
 );
 
@@ -50,9 +77,10 @@ export const login = catchAsync(
 			return next(new AppError("Invalid credentials!", 400));
 		}
 
-		const token = "123";
+		createSendToken({ id: user._id, email: user.email }, req, res);
+
 		user.password = undefined;
 
-		res.status(200).json({ status: "success", data: { user, token } });
+		res.status(200).json({ status: "success", data: user });
 	}
 );
