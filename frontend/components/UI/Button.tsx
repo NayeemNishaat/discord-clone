@@ -8,7 +8,7 @@ function CustomButton({
 }: {
 	label: string;
 	styles?: string;
-	disabled?: boolean;
+	disabled: boolean;
 	click: React.MouseEventHandler<HTMLButtonElement>;
 }) {
 	return (

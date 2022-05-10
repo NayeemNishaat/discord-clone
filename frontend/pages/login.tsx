@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Form from "../components/Form/Form";
 import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
@@ -7,6 +7,17 @@ import Footer from "../components/Form/Footer";
 function login() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [valid, setValid] = useState(false);
+
+	useEffect(() => {
+		if (email !== "" && password !== "") {
+			setValid(true);
+		} else setValid(false);
+	});
+
+	const clickHandler = () => {
+		console.log("clicked");
+	};
 
 	return (
 		<Form>
@@ -25,7 +36,7 @@ function login() {
 				value={password}
 				setValue={setPassword}
 			/>
-			<Footer />
+			<Footer valid={valid} click={clickHandler} />
 		</Form>
 	);
 }
