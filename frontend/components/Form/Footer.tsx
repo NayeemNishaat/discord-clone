@@ -1,13 +1,20 @@
 import CustomButton from "../UI/Button";
 
-function Footer() {
-	const clickHandler = () => {
-		console.log("clicked");
-	};
-
+function Footer({
+	valid,
+	click
+}: {
+	valid: boolean;
+	click: React.MouseEventHandler<HTMLButtonElement>;
+}) {
 	return (
 		<>
-			<CustomButton styles="mt-10" label="Submit" click={clickHandler} />
+			<CustomButton
+				styles="mt-10 font-bold"
+				label="Submit"
+				click={click}
+				disabled={!valid}
+			/>
 		</>
 	);
 }
