@@ -1,22 +1,27 @@
-import { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-function Input(props: { label: string; type: string; placeholder: string }) {
-	const [value, setValue] = useState("");
-
-	const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setValue(e.target.value);
-	};
-
+function Input({
+	label,
+	type,
+	placeholder,
+	value,
+	setValue
+}: {
+	label: string;
+	type: string;
+	placeholder: string;
+	value: string;
+	setValue: React.Dispatch<string>;
+}) {
 	return (
 		<div className="mt-1 flex w-2/3 flex-col justify-center first:mt-0">
 			<TextField
 				variant="standard"
-				label={props.label}
-				type={props.type}
+				label={label}
+				type={type}
 				value={value}
-				onChange={inputChangeHandler}
-				placeholder={props.placeholder}
+				placeholder={placeholder}
+				onChange={(e) => setValue(e.target.value)}
 				sx={{
 					".css-1c2i806-MuiFormLabel-root-MuiInputLabel-root": {
 						color: "white"
