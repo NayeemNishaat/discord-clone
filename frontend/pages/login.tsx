@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Form from "../components/Form/Form";
-import Input from "../components/Form/Input";
+import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
+import Footer from "../components/Form/Footer";
 
 function login() {
 	const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ function login() {
 				value={password}
 				setValue={setPassword}
 			/>
+			<Footer />
 		</Form>
 	);
 }
