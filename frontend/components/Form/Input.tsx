@@ -1,12 +1,7 @@
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-function Input(props: {
-	label: string;
-	type: string;
-	placeholder: string;
-	id: string;
-}) {
+function Input(props: { label: string; type: string; placeholder: string }) {
 	const [value, setValue] = useState("");
 
 	const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,7 +9,7 @@ function Input(props: {
 	};
 
 	return (
-		<div className="flex w-2/3 flex-col justify-center">
+		<div className="mt-1 flex w-2/3 flex-col justify-center first:mt-0">
 			<TextField
 				variant="standard"
 				label={props.label}
@@ -22,8 +17,10 @@ function Input(props: {
 				value={value}
 				onChange={inputChangeHandler}
 				placeholder={props.placeholder}
-				id={props.id}
 				sx={{
+					".css-1c2i806-MuiFormLabel-root-MuiInputLabel-root": {
+						color: "white"
+					},
 					".css-aqpgxn-MuiFormLabel-root-MuiInputLabel-root": {
 						color: "white"
 					},
