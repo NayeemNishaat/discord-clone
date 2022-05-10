@@ -2,12 +2,12 @@ import Link from "next/link";
 import CustomButton from "../UI/Button";
 
 function Footer({
-	valid,
+	disabled,
 	click,
 	link,
 	text
 }: {
-	valid: boolean;
+	disabled: boolean;
 	click: React.MouseEventHandler<HTMLButtonElement>;
 	link: string;
 	text: string;
@@ -18,7 +18,7 @@ function Footer({
 				styles="mt-10 font-bold"
 				label="Submit"
 				click={click}
-				disabled={!valid}
+				disabled={disabled}
 			/>
 			<p className="mt-5 text-white">
 				{text}{" "}

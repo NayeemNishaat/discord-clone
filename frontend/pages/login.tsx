@@ -6,13 +6,30 @@ import Footer from "../components/Form/Footer";
 
 function login() {
 	const [email, setEmail] = useState("");
+	const [validEmail, setValidEmail] = useState(true);
 	const [password, setPassword] = useState("");
+	const [validPassword, setValiPassword] = useState(true);
 	const [valid, setValid] = useState(false);
+	const [emailTouched, setEmailTouched] = useState(false);
+	const [passwordTouched, setPasswordTouched] = useState(false);
 
 	useEffect(() => {
-		if (email !== "" && password !== "") {
-			setValid(true);
-		} else setValid(false);
+		if (
+			emailTouched &&
+			(email === "" ||
+				!new RegExp(
+					/^[^\W][a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+				).test(email.toLowerCase()))
+		)
+			setValidEmail(false);
+		else setValidEmail(true);
+
+		if (passwordTouched && (password === "" || password.length < 6))
+			setValiPassword(false);
+		else setValiPassword(true);
+
+		if (validEmail && validPassword) setValid(true);
+		else setValid(false);
 	});
 
 	const clickHandler = () => {
@@ -28,6 +45,9 @@ function login() {
 				type="email"
 				value={email}
 				setValue={setEmail}
+				error={!validEmail}
+				helperText={!validEmail ? "Invalid Email" : ""}
+				setTouched={setEmailTouched}
 			/>
 			<Input
 				label="Password"
@@ -35,8 +55,20 @@ function login() {
 				type="password"
 				value={password}
 				setValue={setPassword}
+				error={!validPassword}
+				helperText={
+					!validPassword
+						? "Minimum password length should be 6 digits!"
+						: ""
+				}
+				setTouched={setPasswordTouched}
 			/>
-			<Footer valid={valid} click={clickHandler} />
+			<Footer
+				disabled={!valid}
+				click={clickHandler}
+				link="/register"
+				text="Don't have an account?"
+			/>
 		</Form>
 	);
 }
