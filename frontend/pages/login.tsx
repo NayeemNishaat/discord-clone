@@ -24,13 +24,24 @@ function login() {
 			setValidEmail(false);
 		else setValidEmail(true);
 
-		if (passwordTouched && (password === "" || password.length < 6))
+		if (
+			passwordTouched &&
+			(password === "" || password.length < 6 || password.length > 12)
+		)
 			setValiPassword(false);
 		else setValiPassword(true);
 
-		if (validEmail && validPassword) setValid(true);
+		if (emailTouched && passwordTouched && validEmail && validPassword)
+			setValid(true);
 		else setValid(false);
-	});
+	}, [
+		emailTouched,
+		passwordTouched,
+		email,
+		password,
+		validEmail,
+		validPassword
+	]);
 
 	const clickHandler = () => {
 		console.log("clicked");
@@ -58,7 +69,7 @@ function login() {
 				error={!validPassword}
 				helperText={
 					!validPassword
-						? "Minimum password length should be 6 digits!"
+						? "Password length should be 6 to 12 digits!"
 						: ""
 				}
 				setTouched={setPasswordTouched}
