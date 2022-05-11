@@ -49,7 +49,10 @@ function login() {
 
 	return (
 		<Form>
-			<Header />
+			<Header
+				title="Welcome Back!"
+				subtitle="We are happy to have you with us!"
+			/>
 			<Input
 				label="Email"
 				placeholder="Enter Your Email"
@@ -79,7 +82,9 @@ function login() {
 				click={clickHandler}
 				link="/register"
 				text="Don't have an account?"
-			/>
+			>
+				Create one!
+			</Footer>
 		</Form>
 	);
 }

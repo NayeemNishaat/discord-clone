@@ -5,12 +5,14 @@ function Footer({
 	disabled,
 	click,
 	link,
-	text
+	text,
+	children
 }: {
 	disabled: boolean;
 	click: React.MouseEventHandler<HTMLButtonElement>;
 	link: string;
 	text: string;
+	children: React.ReactNode;
 }) {
 	return (
 		<>
@@ -23,7 +25,7 @@ function Footer({
 			<p className="mt-5 text-white">
 				{text}{" "}
 				<Link href={link}>
-					<a className="text-blue-500 underline">Create one!</a>
+					<a className="text-blue-500 underline">{children}</a>
 				</Link>
 			</p>
 		</>
