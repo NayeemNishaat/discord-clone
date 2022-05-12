@@ -10,10 +10,13 @@ function register() {
 	const [validUsername, setValidUsername] = useState(true);
 	const [validEmail, setValidEmail] = useState(true);
 	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [validPassword, setValiPassword] = useState(true);
+	const [validConfirmPassword, setValiConfirmPassword] = useState(true);
 	const [valid, setValid] = useState(false);
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
+	const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 	const [usernameTouched, setUsernameTouched] = useState(false);
 
 	useEffect(() => {
@@ -41,13 +44,19 @@ function register() {
 			setValiPassword(false);
 		else setValiPassword(true);
 
+		if (confirmPasswordTouched && confirmPassword !== password)
+			setValiConfirmPassword(false);
+		else setValiConfirmPassword(true);
+
 		if (
 			emailTouched &&
 			passwordTouched &&
 			usernameTouched &&
+			confirmPasswordTouched &&
 			validEmail &&
 			validPassword &&
-			validUsername
+			validUsername &&
+			validConfirmPassword
 		)
 			setValid(true);
 		else setValid(false);
@@ -55,16 +64,31 @@ function register() {
 		emailTouched,
 		passwordTouched,
 		usernameTouched,
+		confirmPasswordTouched,
 		email,
 		password,
 		username,
+		confirmPassword,
 		validEmail,
 		validPassword,
-		validUsername
+		validUsername,
+		validConfirmPassword
 	]);
 
-	const clickHandler = () => {
-		console.log("clicked");
+	const clickHandler = async () => {
+		const res = await fetch("http://localhost:5000/api/v1/auth/register", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				username,
+				email,
+				password,
+				confirmPassword
+			})
+		});
+
+		const data = await res.json();
+		console.log(data);
 	};
 
 	return (
@@ -108,6 +132,20 @@ function register() {
 						: ""
 				}
 				setTouched={setPasswordTouched}
+			/>
+			<Input
+				label="Confirm Password"
+				placeholder="Enter Your Password Again"
+				type="password"
+				value={confirmPassword}
+				setValue={setConfirmPassword}
+				error={!validConfirmPassword}
+				helperText={
+					!validConfirmPassword
+						? "Password length should be 6 to 12 digits!"
+						: ""
+				}
+				setTouched={setConfirmPasswordTouched}
 			/>
 			<Footer
 				disabled={!valid}
