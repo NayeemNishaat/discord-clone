@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 import Form from "../components/Form/Form";
 import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
 import Footer from "../components/Form/Footer";
+import { loginInfo } from "../redux/slices/authSlice";
 
 function login() {
 	const [email, setEmail] = useState("");
@@ -12,6 +15,9 @@ function login() {
 	const [valid, setValid] = useState(false);
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
+
+	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (
@@ -43,8 +49,30 @@ function login() {
 		validPassword
 	]);
 
-	const clickHandler = () => {
-		console.log("clicked");
+	const clickHandler = async () => {
+		const res = await fetch("http://localhost:5000/api/v1/auth/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				email,
+				password
+			})
+		});
+
+		const data: { data: { _id: string; username: string; email: string } } =
+			await res.json();
+
+		dispatch(
+			loginInfo({
+				_id: data.data._id,
+				name: data.data.username,
+				email: data.data.email
+			})
+		);
+
+		localStorage.setItem("loginInfo", JSON.stringify(data.data));
+
+		router.push("/dashboard");
 	};
 
 	return (
