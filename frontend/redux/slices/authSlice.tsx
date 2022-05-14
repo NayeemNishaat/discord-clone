@@ -3,13 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface authState {
 	_id: string | null;
 	email: string | null;
-	name: string | null;
+	username: string | null;
 }
 
 const initialState: authState = {
 	_id: null,
 	email: null,
-	name: null
+	username: null
 };
 
 const authSlice = createSlice({
@@ -18,11 +18,15 @@ const authSlice = createSlice({
 	reducers: {
 		loginInfo: (
 			state: authState,
-			action: PayloadAction<{ _id: string; email: string; name: string }>
+			action: PayloadAction<{
+				_id: string;
+				email: string;
+				username: string;
+			}>
 		) => {
 			state._id = action.payload._id;
 			state.email = action.payload.email;
-			state.name = action.payload.name;
+			state.username = action.payload.username;
 		}
 	}
 });

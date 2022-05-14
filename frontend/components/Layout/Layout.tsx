@@ -10,7 +10,7 @@ function Layout(props: { children: React.ReactNode }) {
 			const storedLoginInfo: {
 				_id: string;
 				email: string;
-				name: string;
+				username: string;
 			} = JSON.parse(localStorage.getItem("loginInfo") || "");
 
 			dispatch(loginInfo(storedLoginInfo));

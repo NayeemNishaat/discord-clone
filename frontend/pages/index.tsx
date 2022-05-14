@@ -1,23 +1,19 @@
 import type { NextPage } from "next";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { test } from "../redux/slices/authSlice";
+// import { useState, useEffect } from "react";
 
 const Index: NextPage = () => {
-	const id = useSelector((state: RootState) => state.auth.id);
+	// const [loginInfo, setLoginInfo] = useState<RootState["auth"]>();
 
-	const dispatch = useDispatch();
+	// useEffect(() => {
+	// 	setLoginInfo(useSelector((state: RootState) => state.auth));
+	// });
+
+	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	return (
-		<section className="text-5xl font-bold">
-			<p>{id}</p>
-			<button
-				aria-label="Increment value"
-				onClick={() => dispatch(test("Nayeem"))}
-			>
-				Set ID
-			</button>
-		</section>
+		<section className="text-5xl font-bold">{loginInfo.username}</section>
 	);
 };
 

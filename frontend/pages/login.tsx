@@ -65,7 +65,7 @@ function login() {
 		dispatch(
 			loginInfo({
 				_id: data.data._id,
-				name: data.data.username,
+				username: data.data.username,
 				email: data.data.email
 			})
 		);
