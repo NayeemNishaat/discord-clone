@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Form from "../components/Form/Form";
@@ -6,6 +6,8 @@ import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
 import Footer from "../components/Form/Footer";
 import { loginInfo } from "../redux/slices/authSlice";
+import Alert from "../components/UI/Alert";
+import { AlertColor } from "@mui/material/Alert";
 
 function login() {
 	const [email, setEmail] = useState("");
@@ -15,9 +17,19 @@ function login() {
 	const [valid, setValid] = useState(false);
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
+	const [alertInfo, setAlertInfo] = useState<{
+		show: boolean;
+		type: AlertColor;
+		message: string;
+	}>({
+		show: false,
+		type: "success",
+		message: ""
+	});
 
 	const dispatch = useDispatch();
 	const router = useRouter();
+	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
 
 	useEffect(() => {
 		if (
@@ -40,13 +52,16 @@ function login() {
 		if (emailTouched && passwordTouched && validEmail && validPassword)
 			setValid(true);
 		else setValid(false);
+
+		return () => clearTimeout(timerRef.current as NodeJS.Timeout);
 	}, [
 		emailTouched,
 		passwordTouched,
 		email,
 		password,
 		validEmail,
-		validPassword
+		validPassword,
+		timerRef.current
 	]);
 
 	const clickHandler = async () => {
@@ -65,7 +80,7 @@ function login() {
 				message?: string;
 				data: { _id: string; username: string; email: string };
 			} = await res.json();
-			console.log(data);
+
 			if (data.status === "fail") throw Error(data.message);
 
 			dispatch(
@@ -80,12 +95,28 @@ function login() {
 
 			router.push("/dashboard");
 		} catch (err: any) {
-			console.log(err.message);
+			setAlertInfo({
+				show: true,
+				type: "error",
+				message: err.message
+			});
+
+			timerRef.current = setTimeout(() => {
+				setAlertInfo({
+					show: false,
+					type: "success",
+					message: ""
+				});
+			}, 5000);
 		}
 	};
 
 	return (
 		<Form>
+			{alertInfo.show && (
+				<Alert type={alertInfo.type} message={alertInfo.message} />
+			)}
+
 			<Header
 				title="Welcome Back!"
 				subtitle="We are happy to have you with us!"
