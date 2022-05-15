@@ -72,6 +72,11 @@ function login() {
 	]);
 
 	const clickHandler = async () => {
+		setEmailTouched(false);
+		setPasswordTouched(false);
+		setEmail("");
+		setPassword("");
+
 		try {
 			const res = await fetch("http://localhost:5000/api/v1/auth/login", {
 				method: "POST",
@@ -88,7 +93,8 @@ function login() {
 				data: { _id: string; username: string; email: string };
 			} = await res.json();
 
-			if (data.status === "fail") throw Error(data.message);
+			if (data.status === "fail" || data.status === "error")
+				throw Error(data.message);
 
 			setAlertInfo({
 				show: true,
@@ -115,11 +121,6 @@ function login() {
 				router.push("/dashboard");
 			}, 2000);
 		} catch (err: any) {
-			setEmailTouched(false);
-			setPasswordTouched(false);
-			setEmail("");
-			setPassword("");
-
 			setAlertInfo({
 				show: true,
 				type: "error",

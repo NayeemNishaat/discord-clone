@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 import Form from "../components/Form/Form";
 import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
 import Footer from "../components/Form/Footer";
+import { AlertColor } from "@mui/material/Alert";
+import { useDispatch } from "react-redux";
+import { loginInfo } from "../redux/slices/authSlice";
+import Alert from "../components/UI/Alert";
 
 function register() {
 	const [email, setEmail] = useState("");
@@ -18,6 +23,19 @@ function register() {
 	const [passwordTouched, setPasswordTouched] = useState(false);
 	const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 	const [usernameTouched, setUsernameTouched] = useState(false);
+	const [alertInfo, setAlertInfo] = useState<{
+		show: boolean;
+		type: AlertColor;
+		message: string;
+	}>({
+		show: false,
+		type: "success",
+		message: ""
+	});
+
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
 
 	useEffect(() => {
 		if (
@@ -60,6 +78,16 @@ function register() {
 		)
 			setValid(true);
 		else setValid(false);
+
+		setAlertInfo({
+			show: false,
+			type: "success",
+			message: ""
+		});
+
+		return () => {
+			clearTimeout(timerRef.current as NodeJS.Timeout);
+		};
 	}, [
 		emailTouched,
 		passwordTouched,
@@ -76,23 +104,87 @@ function register() {
 	]);
 
 	const clickHandler = async () => {
-		const res = await fetch("http://localhost:5000/api/v1/auth/register", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				username,
-				email,
-				password,
-				confirmPassword
-			})
-		});
+		setUsernameTouched(false);
+		setEmailTouched(false);
+		setPasswordTouched(false);
+		setConfirmPasswordTouched(false);
+		setUsername("");
+		setEmail("");
+		setPassword("");
+		setConfirmPassword("");
 
-		const data = await res.json();
-		console.log(data);
+		try {
+			const res = await fetch(
+				"http://localhost:5000/api/v1/auth/register",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						username,
+						email,
+						password,
+						confirmPassword
+					})
+				}
+			);
+
+			const data = await res.json();
+
+			if (data.status === "fail" || data.status === "error")
+				throw Error(data.message);
+
+			setAlertInfo({
+				show: true,
+				type: "success",
+				message: "Successfully Registered!"
+			});
+
+			dispatch(
+				loginInfo({
+					_id: data.data._id,
+					username: data.data.username,
+					email: data.data.email
+				})
+			);
+			localStorage.setItem("loginInfo", JSON.stringify(data.data));
+
+			timerRef.current = setTimeout(() => {
+				setAlertInfo({
+					show: false,
+					type: "success",
+					message: ""
+				});
+
+				router.push("/dashboard");
+			}, 2000);
+		} catch (err: any) {
+			setAlertInfo({
+				show: true,
+				type: "error",
+				message: err.message
+			});
+
+			timerRef.current = setTimeout(() => {
+				setAlertInfo({
+					show: false,
+					type: "success",
+					message: ""
+				});
+			}, 5000);
+		}
 	};
 
 	return (
 		<Form>
+			{alertInfo.show && (
+				<Alert
+					show={alertInfo.show}
+					type={alertInfo.type}
+					message={alertInfo.message}
+					setAlertInfo={setAlertInfo}
+				/>
+			)}
+
 			<Header
 				title="Welcome!"
 				subtitle="Please create an account to get going!"
@@ -141,9 +233,7 @@ function register() {
 				setValue={setConfirmPassword}
 				error={!validConfirmPassword}
 				helperText={
-					!validConfirmPassword
-						? "Password length should be 6 to 12 digits!"
-						: ""
+					!validConfirmPassword ? "Passwords didn't match!" : ""
 				}
 				setTouched={setConfirmPasswordTouched}
 			/>
