@@ -53,12 +53,13 @@ function login() {
 			setValid(true);
 		else setValid(false);
 
+		setAlertInfo({
+			show: false,
+			type: "success",
+			message: ""
+		});
+
 		return () => {
-			setAlertInfo({
-				show: false,
-				type: "success",
-				message: ""
-			});
 			clearTimeout(timerRef.current as NodeJS.Timeout);
 		};
 	}, [
@@ -114,6 +115,11 @@ function login() {
 				router.push("/dashboard");
 			}, 2000);
 		} catch (err: any) {
+			setEmailTouched(false);
+			setPasswordTouched(false);
+			setEmail("");
+			setPassword("");
+
 			setAlertInfo({
 				show: true,
 				type: "error",
