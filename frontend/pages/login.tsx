@@ -50,29 +50,38 @@ function login() {
 	]);
 
 	const clickHandler = async () => {
-		const res = await fetch("http://localhost:5000/api/v1/auth/login", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				email,
-				password
-			})
-		});
+		try {
+			const res = await fetch("http://localhost:5000/api/v1/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					email,
+					password
+				})
+			});
 
-		const data: { data: { _id: string; username: string; email: string } } =
-			await res.json();
+			const data: {
+				status: string;
+				message?: string;
+				data: { _id: string; username: string; email: string };
+			} = await res.json();
+			console.log(data);
+			if (data.status === "fail") throw Error(data.message);
 
-		dispatch(
-			loginInfo({
-				_id: data.data._id,
-				username: data.data.username,
-				email: data.data.email
-			})
-		);
+			dispatch(
+				loginInfo({
+					_id: data.data._id,
+					username: data.data.username,
+					email: data.data.email
+				})
+			);
 
-		localStorage.setItem("loginInfo", JSON.stringify(data.data));
+			localStorage.setItem("loginInfo", JSON.stringify(data.data));
 
-		router.push("/dashboard");
+			router.push("/dashboard");
+		} catch (err: any) {
+			console.log(err.message);
+		}
 	};
 
 	return (

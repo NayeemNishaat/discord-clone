@@ -23,10 +23,10 @@ const sendError = (err: IError, req: Request, res: Response, env: string) => {
 		});
 	}
 
-	return res.status(err.statuscode).json({
-		status: "Something went wrong!",
-		message: "Please try again later!"
-	});
+	// return res.status(err.statuscode).json({
+	// 	status: err.status,
+	// 	message: "Something went wrong! Please try again later!"
+	// });
 };
 
 const handleValidationErrorDB = (err: IError) => {
