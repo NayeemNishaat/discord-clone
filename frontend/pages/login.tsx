@@ -53,15 +53,21 @@ function login() {
 			setValid(true);
 		else setValid(false);
 
-		return () => clearTimeout(timerRef.current as NodeJS.Timeout);
+		return () => {
+			setAlertInfo({
+				show: false,
+				type: "success",
+				message: ""
+			});
+			clearTimeout(timerRef.current as NodeJS.Timeout);
+		};
 	}, [
 		emailTouched,
 		passwordTouched,
 		email,
 		password,
 		validEmail,
-		validPassword,
-		timerRef.current
+		validPassword
 	]);
 
 	const clickHandler = async () => {
@@ -83,6 +89,12 @@ function login() {
 
 			if (data.status === "fail") throw Error(data.message);
 
+			setAlertInfo({
+				show: true,
+				type: "success",
+				message: "Successfully Logged In!"
+			});
+
 			dispatch(
 				loginInfo({
 					_id: data.data._id,
@@ -90,10 +102,17 @@ function login() {
 					email: data.data.email
 				})
 			);
-
 			localStorage.setItem("loginInfo", JSON.stringify(data.data));
 
-			router.push("/dashboard");
+			timerRef.current = setTimeout(() => {
+				setAlertInfo({
+					show: false,
+					type: "success",
+					message: ""
+				});
+
+				router.push("/dashboard");
+			}, 2000);
 		} catch (err: any) {
 			setAlertInfo({
 				show: true,
@@ -114,7 +133,12 @@ function login() {
 	return (
 		<Form>
 			{alertInfo.show && (
-				<Alert type={alertInfo.type} message={alertInfo.message} />
+				<Alert
+					show={alertInfo.show}
+					type={alertInfo.type}
+					message={alertInfo.message}
+					setAlertInfo={setAlertInfo}
+				/>
 			)}
 
 			<Header

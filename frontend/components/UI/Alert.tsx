@@ -1,15 +1,26 @@
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertColor } from "@mui/material/Alert";
 import Slide, { SlideProps } from "@mui/material/Slide";
-import { useState } from "react";
 
-function Alert({ type, message }: { type: AlertColor; message: string }) {
-	const [open, setOpen] = useState(true);
-
+function Alert({
+	show,
+	type,
+	message,
+	setAlertInfo
+}: {
+	show: boolean;
+	type: AlertColor;
+	message: string;
+	setAlertInfo: React.Dispatch<{
+		show: boolean;
+		type: AlertColor;
+		message: string;
+	}>;
+}) {
 	return (
 		<Snackbar
 			anchorOrigin={{ vertical: "top", horizontal: "center" }}
-			open={open}
+			open={show}
 			// autoHideDuration={6000}
 			// onClose={() => setOpen(false)}
 			TransitionComponent={(props: SlideProps) => {
@@ -17,7 +28,13 @@ function Alert({ type, message }: { type: AlertColor; message: string }) {
 			}}
 		>
 			<MuiAlert
-				onClose={() => setOpen(false)}
+				onClose={() =>
+					setAlertInfo({
+						show: false,
+						type: "success",
+						message: ""
+					})
+				}
 				severity={type}
 				sx={{ width: "100%" }}
 			>
