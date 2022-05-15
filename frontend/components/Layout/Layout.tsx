@@ -6,16 +6,15 @@ function Layout(props: { children: React.ReactNode }) {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (localStorage.getItem("loginInfo")) {
-			const storedLoginInfo: {
-				_id: string;
-				email: string;
-				username: string;
-			} = JSON.parse(localStorage.getItem("loginInfo") || "");
+		const storedLoginInfo: {
+			_id: string;
+			email: string;
+			username: string;
+		} = JSON.parse(localStorage.getItem("loginInfo") || "null");
 
-			dispatch(loginInfo(storedLoginInfo));
-		}
-	});
+		if (!storedLoginInfo) return;
+		dispatch(loginInfo(storedLoginInfo));
+	}, []);
 
 	return <>{props.children}</>;
 }

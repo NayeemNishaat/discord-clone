@@ -3,13 +3,13 @@ import { Button } from "@mui/material";
 function CustomButton({
 	label,
 	styles,
-	disabled,
+	disabled = false,
 	click
 }: {
 	label: string;
 	styles?: string;
-	disabled: boolean;
-	click: React.MouseEventHandler<HTMLButtonElement>;
+	disabled?: boolean;
+	click?: React.MouseEventHandler<HTMLButtonElement>;
 }) {
 	return (
 		<Button
