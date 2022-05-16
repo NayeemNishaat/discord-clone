@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CustomButton from "../UI/Button";
+import { Button } from "@mui/material";
 
 function Footer({
 	disabled,
@@ -16,12 +16,14 @@ function Footer({
 }) {
 	return (
 		<>
-			<CustomButton
-				styles="mt-10 font-bold"
-				label="Submit"
-				click={click}
+			<Button
+				variant="outlined"
+				className="mt-10 font-bold"
 				disabled={disabled}
-			/>
+				onClick={click}
+			>
+				Submit
+			</Button>
 			<p className="mt-5 text-white">
 				{text}{" "}
 				<Link href={link}>
