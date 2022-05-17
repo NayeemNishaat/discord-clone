@@ -5,8 +5,8 @@ function InviteList({
 }: {
 	invitations: { _id: string; username: string }[];
 }) {
-	const acceptInvitation = () => {};
-	const rejectInvitation = () => {};
+	const acceptInvitation = () => {}; // Fix:
+	const rejectInvitation = () => {}; // Fix:
 
 	return (
 		<ul>
