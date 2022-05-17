@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import Button from "../components/UI/Button";
+import { Button } from "@mui/material";
 import Link from "next/link";
 import { CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
@@ -29,19 +29,17 @@ const Index: NextPage = () => {
 							<div className="mt-5 flex justify-center gap-5">
 								<Link href="/login">
 									<a>
-										<Button
-											label="Log In"
-											styles="text-white text-lg bg-black hover:bg-[#ff0038]"
-										/>
+										<Button className="bg-black text-lg text-white hover:bg-[#ff0038]">
+											Log In
+										</Button>
 									</a>
 								</Link>
 
 								<Link href="/register">
 									<a>
-										<Button
-											label="Register"
-											styles="text-black text-lg bg-white hover:bg-[#ff7b00]"
-										/>
+										<Button className="bg-white text-lg text-black hover:bg-[#ff7b00]">
+											Register
+										</Button>
 									</a>
 								</Link>
 							</div>
