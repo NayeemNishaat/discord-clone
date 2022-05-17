@@ -5,6 +5,18 @@ import MailLockIcon from "@mui/icons-material/MailLock";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 import Modal from "../UI/Modal";
 import FriendList from "../Friend/FriendList";
+import InviteList from "../Invite/InviteList";
+
+const friends = [
+	{ name: "Mohim", isOnline: true },
+	{ name: "Saymon", isOnline: false },
+	{ name: "Istiake", isOnline: true }
+];
+
+const invitations = [
+	{ _id: "1", username: "Nayeem" },
+	{ _id: "2", username: "Ayoub" }
+];
 
 function SideBar() {
 	const [open, setOpen] = useState(false);
@@ -23,18 +35,22 @@ function SideBar() {
 
 			<Modal open={open} handleClose={handleClose} />
 
-			<div className="mt-10 flex flex-1 flex-col items-center text-white">
+			<div className="mt-10 flex w-4/5 flex-1 flex-col text-white">
 				<div className="flex h-2/3 flex-col">
 					<div className="mb-5 flex gap-3">
 						<MailLockIcon />
 						Private Message
 					</div>
 
-					<FriendList />
+					<FriendList friends={friends} />
 				</div>
-				<div className="flex h-1/3 gap-3">
-					<MarkEmailUnreadIcon />
-					Invitation
+				<div className="flex h-1/3 flex-col">
+					<div className="mb-3 flex gap-3">
+						<MarkEmailUnreadIcon />
+						Invitation
+					</div>
+
+					<InviteList invitations={invitations} />
 				</div>
 			</div>
 		</div>

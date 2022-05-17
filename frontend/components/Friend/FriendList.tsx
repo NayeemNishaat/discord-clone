@@ -1,16 +1,14 @@
 import FriendItem from "./FriendItem";
 
-function FriendList() {
-	const friends = [
-		{ name: "Mohim", isOnline: true },
-		{ name: "Saymon", isOnline: false },
-		{ name: "Istiake", isOnline: true }
-	];
-
+function FriendList({
+	friends
+}: {
+	friends: { name: string; isOnline: boolean }[];
+}) {
 	return (
 		<ul className="flex flex-col gap-2">
-			{friends.map((friend) => (
-				<FriendItem isOnline={friend.isOnline}>
+			{friends.map((friend, i) => (
+				<FriendItem key={i} isOnline={friend.isOnline}>
 					{friend.name}
 				</FriendItem>
 			))}
