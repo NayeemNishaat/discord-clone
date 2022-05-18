@@ -19,9 +19,9 @@ const authSlice = createSlice({
 		loginInfo: (
 			state: authState,
 			action: PayloadAction<{
-				_id: string;
-				email: string;
-				username: string;
+				_id: string | null;
+				email: string | null;
+				username: string | null;
 			}>
 		) => {
 			state._id = action.payload._id;

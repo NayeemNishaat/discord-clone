@@ -10,7 +10,9 @@ import { CircularProgress } from "@mui/material";
 
 function dashboard() {
 	const [component, setComponent] = useState(
-		<CircularProgress color="secondary" />
+		<div className="flex h-screen w-full items-center justify-center">
+			<CircularProgress color="secondary" />
+		</div>
 	);
 
 	const router = useRouter();
@@ -30,7 +32,7 @@ function dashboard() {
 							<TopBar />
 						</>
 					),
-				1000
+				2000
 			);
 		}
 
@@ -38,9 +40,7 @@ function dashboard() {
 	}, [loginInfo]);
 
 	return (
-		<section className="relative flex h-screen w-full items-center justify-center bg-[#5866f2]">
-			{component}
-		</section>
+		<section className="relative flex bg-[#5866f2]">{component}</section>
 	);
 }
 

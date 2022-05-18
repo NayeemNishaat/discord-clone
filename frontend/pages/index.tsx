@@ -45,7 +45,7 @@ const Index: NextPage = () => {
 							</div>
 						</div>
 					),
-				1000
+				2000
 			);
 		}
 
