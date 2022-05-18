@@ -12,8 +12,8 @@ const Index: NextPage = () => {
 		<CircularProgress color="secondary" />
 	);
 
-	const loginInfo = useSelector((state: RootState) => state.auth);
 	const router = useRouter();
+	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
 		let timeout: NodeJS.Timeout;
@@ -45,7 +45,7 @@ const Index: NextPage = () => {
 							</div>
 						</div>
 					),
-				2500
+				1000
 			);
 		}
 
