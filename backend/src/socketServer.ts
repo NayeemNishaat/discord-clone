@@ -1,6 +1,6 @@
 import { Server as socketServer, Socket } from "socket.io";
 import { Server as httpServer } from "http";
-import { protect } from "./controllers/authController";
+import verifyJwt from "./lib/verifyJwt";
 
 const configureSocketServer = (httpServer: httpServer) => {
 	const io = new socketServer(httpServer, {
@@ -11,10 +11,9 @@ const configureSocketServer = (httpServer: httpServer) => {
 		}
 	});
 
-	io.use((socket, next) => {
-		console.log(socket.handshake.headers.cookie);
+	io.use(async (socket, next) => {
+		verifyJwt(socket.handshake.headers.cookie, next);
 		next();
-		// protect(socket.request, Response, next);
 	});
 
 	io.on("connection", (socket: Socket) => {
