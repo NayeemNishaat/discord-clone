@@ -29,4 +29,4 @@ try {
 socketServer(httpServer);
 
 const PORT: String = process.env.PORT || process.env.API_PORT;
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+httpServer.listen(PORT, () => console.log(`Listening on port ${PORT}`));

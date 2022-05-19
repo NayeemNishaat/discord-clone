@@ -6,7 +6,14 @@ import { errorHandler } from "./controllers/errorController";
 
 const app: Express = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+	cors({
+		// Important: Both frontend and backend requires "credentials: true" for sending and storing credentials. And origin shouldn't be wildcard!
+		credentials: true,
+		origin: "http://localhost:3000"
+	})
+);
+// app.options("*", cors());
 
 // Chapter: Mounting Routes
 app.use("/api/v1/auth", authRoutes);

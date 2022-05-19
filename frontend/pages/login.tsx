@@ -84,7 +84,8 @@ function login() {
 				body: JSON.stringify({
 					email,
 					password
-				})
+				}),
+				credentials: "include" // Warning: Must use it in order to store the cookie in the browser.
 			});
 
 			const data: {

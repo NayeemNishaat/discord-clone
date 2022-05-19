@@ -12,7 +12,7 @@ const configureSocketServer = (httpServer: httpServer) => {
 	});
 
 	io.use((socket, next) => {
-		console.log(socket);
+		console.log(socket.handshake.headers.cookie);
 		next();
 		// protect(socket.request, Response, next);
 	});
