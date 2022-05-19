@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 import app from "./app";
+import socketServer from "./socketServer";
+import { createServer } from "http";
+
+const httpServer = createServer(app);
 
 // Chapter: DB and Server Connection
 declare const process: {
@@ -22,5 +26,7 @@ try {
 	console.log(err);
 }
 
+socketServer(httpServer);
+
 const PORT: String = process.env.PORT || process.env.API_PORT;
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+httpServer.listen(PORT, () => console.log(`Listening on port ${PORT}`));
