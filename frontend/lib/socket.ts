@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const connectSocketServer = (confirm: boolean = true) => {
+const connectSocketServer = () => {
 	const socket = io("http://localhost:5000", {
 		withCredentials: true
 	});
@@ -9,9 +9,9 @@ const connectSocketServer = (confirm: boolean = true) => {
 		console.log(socket.id);
 	});
 
-	if (confirm) return;
-	socket.disconnect();
-	console.log("disconnected");
+	// if (confirm) return;
+	// socket.disconnect();
+	// console.log("disconnected");
 };
 
 export default connectSocketServer;
