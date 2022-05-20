@@ -8,6 +8,7 @@ import Footer from "../components/Form/Footer";
 import { loginInfo } from "../redux/slices/authSlice";
 import Alert from "../components/UI/Alert";
 import { AlertColor } from "@mui/material/Alert";
+import connectSocketServer from "../lib/socket";
 
 function login() {
 	const [email, setEmail] = useState("");
@@ -111,6 +112,8 @@ function login() {
 				})
 			);
 			localStorage.setItem("loginInfo", JSON.stringify(data.data));
+
+			connectSocketServer();
 
 			timerRef.current = setTimeout(() => {
 				setAlertInfo({
