@@ -58,6 +58,13 @@ const configureSocketServer = (httpServer: httpServer) => {
 	const connectedUsers = new Map();
 
 	io.on("connection", (socket: Socket) => {
+		const values = connectedUsers.values();
+
+		for (const value of values) {
+			if (value !== socket.data._id.toString())
+				connectedUsers.set(socket.id, socket.data._id.toString());
+		}
+
 		if (connectedUsers.size === 0)
 			connectedUsers.set(socket.id, socket.data._id.toString());
 
