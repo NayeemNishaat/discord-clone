@@ -58,9 +58,15 @@ const configureSocketServer = (httpServer: httpServer) => {
 	const connectedUsers = new Map();
 
 	io.on("connection", (socket: Socket) => {
-		connectedUsers.set(socket.id, socket.data._id.toString());
+		if (connectedUsers.size === 0)
+			connectedUsers.set(socket.id, socket.data._id.toString());
 
 		socket.on("disconnect", () => {
+			connectedUsers.delete(socket.id);
+			console.log(connectedUsers);
+		});
+
+		socket.on("removeUser", () => {
 			connectedUsers.delete(socket.id);
 			console.log(connectedUsers);
 		});
