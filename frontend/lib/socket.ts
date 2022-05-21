@@ -1,7 +1,9 @@
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket;
 
 const connectSocketServer = () => {
-	const socket = io("http://localhost:5000", {
+	socket = io("http://localhost:5000", {
 		withCredentials: true
 	});
 
@@ -12,6 +14,11 @@ const connectSocketServer = () => {
 	// if (confirm) return;
 	// socket.disconnect();
 	// console.log("disconnected");
+};
+
+export const disconnectAndRemoveUser = () => {
+	socket.disconnect();
+	socket.emit("removeUser")
 };
 
 export default connectSocketServer;

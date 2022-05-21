@@ -73,6 +73,11 @@ const configureSocketServer = (httpServer: httpServer) => {
 			console.log(connectedUsers);
 		});
 
+		socket.on("removeUser", () => {
+			connectedUsers.delete(socket.id);
+			console.log(connectedUsers);
+		});
+
 		console.log(connectedUsers);
 	});
 };
