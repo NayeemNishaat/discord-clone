@@ -2,10 +2,10 @@ import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Input from "../UI/Input";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 
-export default function ModalA({
+export default function ModalCustom({
 	open,
 	handleClose
 }: {
@@ -33,67 +33,18 @@ export default function ModalA({
 	}, [emailTouched, email, validEmail]);
 
 	const clickHandler = async () => {
+		console.log(email);
+
+		await fetch("http://localhost:5000/api/v1/user/invite", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ invitee: email })
+		});
+
 		setEmailTouched(false);
 		setEmail("");
-
-		// try {
-		// 	const res = await fetch("http://localhost:5000/api/v1/auth/login", {
-		// 		method: "POST",
-		// 		headers: { "Content-Type": "application/json" },
-		// 		body: JSON.stringify({
-		// 			email,
-		// 			password
-		// 		})
-		// 	});
-
-		// 	const data: {
-		// 		status: string;
-		// 		message?: string;
-		// 		data: { _id: string; username: string; email: string };
-		// 	} = await res.json();
-
-		// 	if (data.status === "fail" || data.status === "error")
-		// 		throw Error(data.message);
-
-		// 	setAlertInfo({
-		// 		show: true,
-		// 		type: "success",
-		// 		message: "Successfully Logged In!"
-		// 	});
-
-		// 	dispatch(
-		// 		loginInfo({
-		// 			_id: data.data._id,
-		// 			username: data.data.username,
-		// 			email: data.data.email
-		// 		})
-		// 	);
-		// 	localStorage.setItem("loginInfo", JSON.stringify(data.data));
-
-		// 	timerRef.current = setTimeout(() => {
-		// 		setAlertInfo({
-		// 			show: false,
-		// 			type: "success",
-		// 			message: ""
-		// 		});
-
-		// 		router.push("/dashboard");
-		// 	}, 2000);
-		// } catch (err: any) {
-		// 	setAlertInfo({
-		// 		show: true,
-		// 		type: "error",
-		// 		message: err.message
-		// 	});
-
-		// 	timerRef.current = setTimeout(() => {
-		// 		setAlertInfo({
-		// 			show: false,
-		// 			type: "success",
-		// 			message: ""
-		// 		});
-		// 	}, 5000);
-		// }
 	};
 
 	return (

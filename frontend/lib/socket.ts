@@ -10,15 +10,11 @@ const connectSocketServer = () => {
 	socket.on("connect", () => {
 		console.log(socket.id);
 	});
-
-	// if (confirm) return;
-	// socket.disconnect();
-	// console.log("disconnected");
 };
 
 export const disconnectAndRemoveUser = () => {
 	socket.disconnect();
-	socket.emit("removeUser")
+	socket.emit("removeUser");
 };
 
 export default connectSocketServer;

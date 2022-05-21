@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 import { AppError } from "./lib/error";
 import { errorHandler } from "./controllers/errorController";
 
@@ -17,6 +18,7 @@ app.use(
 
 // Chapter: Mounting Routes
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
 
 // Chapter: Handeling Unwanted Routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

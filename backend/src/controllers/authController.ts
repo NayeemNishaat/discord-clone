@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { catchAsync, AppError } from "../lib/error";
 import User from "../models/userModel";
+import { validMail } from "../lib/validation";
 
 interface customRequest extends Request {
 	user: {
@@ -60,6 +61,9 @@ const createSendToken = (
 
 export const register = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
+		if (!validMail(req.body.email))
+			return next(new AppError("Email is Invalid!", 401));
+
 		const userExist = await User.findOne({
 			email: req.body.email.toLowerCase()
 		});
@@ -80,6 +84,9 @@ export const register = catchAsync(
 
 export const login = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
+		if (!validMail(req.body.email))
+			return next(new AppError("Email is Invalid!", 401));
+
 		const user: userSchema = await User.findOne({
 			email: req.body.email.toLowerCase()
 		}).select("+password");

@@ -113,8 +113,6 @@ function login() {
 			);
 			localStorage.setItem("loginInfo", JSON.stringify(data.data));
 
-			// connectSocketServer();
-
 			timerRef.current = setTimeout(() => {
 				setAlertInfo({
 					show: false,
