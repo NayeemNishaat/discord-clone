@@ -31,17 +31,14 @@ function dashboard() {
 					<>
 						<ActivityBar />
 						<SideBar />
-						<Body />
+						<Body name={loginInfo.username} />
 						<TopBar />
 					</>
 				),
 			2000
 		);
 
-		() => {
-			console.log(999);
-			clearTimeout(timeout);
-		};
+		() => clearTimeout(timeout);
 	}, []);
 
 	return (
