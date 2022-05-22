@@ -83,3 +83,6 @@ const configureSocketServer = (httpServer: httpServer) => {
 };
 
 export default configureSocketServer;
+
+/* lsof -i tcp:5000
+kill -9 pid */

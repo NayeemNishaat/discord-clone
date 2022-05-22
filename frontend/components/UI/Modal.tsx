@@ -58,6 +58,7 @@ export default function ModalCustom({
 					headers: {
 						"Content-Type": "application/json"
 					},
+					credentials: "include",
 					body: JSON.stringify({ invitee: email })
 				}
 			);
