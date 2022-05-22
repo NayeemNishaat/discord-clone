@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
+import connectSocketServer from "../lib/socket";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -19,25 +20,29 @@ function dashboard() {
 	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
-		let timeout: NodeJS.Timeout;
 		if (!loginInfo._id) router.push("/");
-		else {
-			timeout = setTimeout(
-				() =>
-					setComponent(
-						<>
-							<ActivityBar />
-							<SideBar />
-							<Body />
-							<TopBar />
-						</>
-					),
-				2000
-			);
-		}
 
-		() => clearTimeout(timeout);
-	}, [loginInfo]);
+		connectSocketServer();
+
+		let timeout: NodeJS.Timeout;
+		timeout = setTimeout(
+			() =>
+				setComponent(
+					<>
+						<ActivityBar />
+						<SideBar />
+						<Body />
+						<TopBar />
+					</>
+				),
+			2000
+		);
+
+		() => {
+			console.log(999);
+			clearTimeout(timeout);
+		};
+	}, []);
 
 	return (
 		<section className="relative flex bg-[#5866f2]">{component}</section>
