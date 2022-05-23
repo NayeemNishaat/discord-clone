@@ -46,7 +46,20 @@ const userSchema: Schema = new mongoose.Schema({
 			},
 			message: "Please provide a valid Email!"
 		}
-	}
+	},
+	friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	receivedInvitation: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "User"
+		}
+	],
+	sentInvitation: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "User"
+		}
+	]
 });
 
 userSchema.pre<IuserSchema>("save", async function (next) {
