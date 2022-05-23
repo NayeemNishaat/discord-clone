@@ -48,6 +48,6 @@ export const invite = catchAsync(
 			$push: { receivedInvitation: req.user._id }
 		});
 
-		res.status(200).json({ status: "success" });
+		res.status(201).json({ status: "success" });
 	}
 );
