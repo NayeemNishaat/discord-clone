@@ -44,6 +44,12 @@ export default function ModalCustom({
 		if (emailTouched && validEmail) setValid(true);
 		else setValid(false);
 
+		setAlertInfo({
+			show: false,
+			type: "success",
+			message: ""
+		});
+
 		return () => {
 			clearTimeout(timerRef.current as NodeJS.Timeout);
 		};
