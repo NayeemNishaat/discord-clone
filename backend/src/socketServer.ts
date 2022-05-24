@@ -1,9 +1,6 @@
-import { Server as socketServer, Socket } from "socket.io";
+import { Server as socketServer } from "socket.io";
 import { Server as httpServer } from "http";
-import {
-	verifyUser,
-	connectedUsers
-} from "../src/controllers/socketController";
+import { setIoInstance } from "./socketEvents";
 
 const configureSocketServer = (httpServer: httpServer) => {
 	const io = new socketServer(httpServer, {
@@ -14,13 +11,7 @@ const configureSocketServer = (httpServer: httpServer) => {
 		}
 	});
 
-	io.use(async (socket, next) => {
-		verifyUser(socket, next);
-	});
-
-	io.on("connection", (socket: Socket) => {
-		connectedUsers(socket);
-	});
+	setIoInstance(io);
 };
 
 export default configureSocketServer;

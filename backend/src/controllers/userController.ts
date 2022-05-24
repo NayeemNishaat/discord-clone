@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { catchAsync, AppError } from "../lib/error";
 import { validMail } from "../lib/validation";
 import User from "../models/userModel";
+import { sendNotification } from "./socketController";
 
 interface customRequest extends Request {
 	user: {
@@ -47,6 +48,8 @@ export const invite = catchAsync(
 		await User.findByIdAndUpdate(user._id, {
 			$push: { receivedInvitation: req.user._id }
 		});
+
+		sendNotification(user._id, req.user);
 
 		res.status(201).json({ status: "success" });
 	}

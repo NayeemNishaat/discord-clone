@@ -1,9 +1,9 @@
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { AppError } from "../lib/error";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
+import { getIoInstance } from "../socketEvents";
 
 interface JwtPayload {
 	id: string;
@@ -20,8 +20,8 @@ declare const process: {
 
 let token: string;
 export const verifyUser = async (
-	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-	next: { (err?: ExtendedError | undefined): void; (arg0: undefined): void }
+	socket: Socket,
+	next: { (err?: ExtendedError | undefined): void }
 ) => {
 	if (socket.handshake.headers.cookie) {
 		socket.handshake.headers.cookie.split("; ").forEach((el: string) => {
@@ -70,4 +70,24 @@ export const connectedUsers = (socket: Socket) => {
 	});
 
 	console.log(users);
+};
+
+export const sendNotification = (
+	receiver: string,
+	sender: {
+		_id: string;
+		username: string;
+		email: string;
+	}
+) => {
+	const io = getIoInstance();
+	let activeUserIds: string[] = []; // Important: Array because a user could be connected from multiple devices!
+
+	users.forEach((value, key) => {
+		if (value === receiver) activeUserIds.push(key); // Note: Finding active receiver's SockId!
+	});
+
+	activeUserIds.forEach((activeUserId) => {
+		io.to(activeUserId).emit("invitation", sender);
+	});
 };
