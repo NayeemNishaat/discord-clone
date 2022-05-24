@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
-import connectSocketServer from "../lib/socket";
+import _socket from "../lib/socket";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -21,8 +21,6 @@ function dashboard() {
 
 	useEffect(() => {
 		if (!loginInfo._id) router.push("/");
-
-		connectSocketServer();
 
 		let timeout: NodeJS.Timeout;
 		timeout = setTimeout(

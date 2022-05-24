@@ -50,14 +50,11 @@ export const verifyUser = async (
 
 const users = new Map();
 export const connectedUsers = (socket: Socket) => {
-	const values = users.values();
-
-	for (const value of values) {
+	users.size === 0 && users.set(socket.id, socket.data._id.toString());
+	users.forEach((value) => {
 		if (value !== socket.data._id.toString())
 			users.set(socket.id, socket.data._id.toString());
-	}
-
-	users.size === 0 && users.set(socket.id, socket.data._id.toString());
+	});
 
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
@@ -84,10 +81,10 @@ export const sendNotification = (
 	let activeUserIds: string[] = []; // Important: Array because a user could be connected from multiple devices!
 
 	users.forEach((value, key) => {
-		if (value === receiver) activeUserIds.push(key); // Note: Finding active receiver's SockId!
+		if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
 	});
 
 	activeUserIds.forEach((activeUserId) => {
-		io.to(activeUserId).emit("invitation", sender);
+		io.to(activeUserId).emit("invite", sender);
 	});
 };
