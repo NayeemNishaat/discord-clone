@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#custom-scrollbar {
+	overflow-y: scroll;
+}
+#custom-scrollbar::-webkit-scrollbar {
+	width: 4px;
+	cursor: pointer;
+	/* background-color: rgba(229, 231, 235, var(--bg-opacity)); */
+}
+#custom-scrollbar::-webkit-scrollbar-track {
+	/* background-color: rgba(229, 231, 235, 0.2); */
+	cursor: pointer;
+	/* background: red; */
+}
+#custom-scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 2rem;
+	cursor: pointer;
+	background-color: #a0aec0;
+	/* outline: 1px solid slategrey; */
+}

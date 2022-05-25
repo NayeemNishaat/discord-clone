@@ -18,7 +18,7 @@ function InviteItem({
 	const [disable, setDisable] = useState(false); // Fix:
 
 	return (
-		<div className="flex items-center">
+		<div className="mr-1 flex items-center">
 			<Button className="flex w-full items-center justify-between px-0 py-1.5 capitalize text-white">
 				{/* Warning: Should have created a component */}
 				<div className="flex gap-2">

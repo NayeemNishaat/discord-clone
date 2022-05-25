@@ -30,18 +30,21 @@ export const verifyUser = async (
 		});
 	}
 
-	if (!token) return next(new AppError("Please log in to get access!", 401));
+	if (!token) return socket.emit("error", "Please log in to get access!");
 
-	const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+	let decoded: { id: string; email: string };
+	try {
+		decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+	} catch (err) {
+		return socket.emit("error", "Inva;id Token!");
+	}
 
 	const currentUser = await User.findById(decoded.id);
 
 	if (!currentUser)
-		return next(
-			new AppError(
-				"The user belonging to this token does no longer exist.",
-				401
-			)
+		return socket.emit(
+			"error",
+			"The user belonging to this token does no longer exist."
 		);
 
 	socket.data = currentUser;

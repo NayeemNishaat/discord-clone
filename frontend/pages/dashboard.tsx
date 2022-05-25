@@ -25,8 +25,13 @@ function dashboard() {
 	useEffect(() => {
 		if (!loginInfo._id) router.push("/");
 
+		socket.on("error", (msg) => {
+			// Fix: Show an Alert message!
+			localStorage.removeItem("loginInfo");
+			router.push("/");
+		});
+
 		socket.on("invite", (sender) => {
-			console.log(sender);
 			dispatch(receivedInvitations(sender));
 		});
 

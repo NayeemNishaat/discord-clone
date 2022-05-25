@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface userState {
-	friends: { _id: string; username: string }[];
-	receivedInvitations: { name: string; isOnline: boolean }[];
+	friends: { name: string; isOnline: boolean }[];
+	receivedInvitations: { _id: string; username: string }[];
 }
 
 const initialState: userState = {
@@ -30,3 +30,4 @@ const userSlice = createSlice({
 });
 
 export const { receivedInvitations, friends } = userSlice.actions;
+export default userSlice.reducer;

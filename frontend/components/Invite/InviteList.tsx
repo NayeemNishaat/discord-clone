@@ -9,7 +9,7 @@ function InviteList({
 	const rejectInvitation = () => {}; // Fix:
 
 	return (
-		<ul>
+		<ul id="custom-scrollbar">
 			{invitations.map((invitation, i) => (
 				<InviteItem
 					key={i}

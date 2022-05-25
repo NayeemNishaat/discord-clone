@@ -3,6 +3,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Button } from "@mui/material";
 import MailLockIcon from "@mui/icons-material/MailLock";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 import Modal from "../UI/Modal";
 import FriendList from "../Friend/FriendList";
 import InviteList from "../Invite/InviteList";
@@ -13,13 +15,12 @@ const friends = [
 	{ name: "Istiake", isOnline: true }
 ];
 
-const invitations = [
-	{ _id: "1", username: "Nayeem" },
-	{ _id: "2", username: "Ayoub" }
-];
-
 function SideBar() {
 	const [open, setOpen] = useState(false);
+	const invitations = useSelector(
+		(state: RootState) => state.user.receivedInvitations
+	);
+
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
