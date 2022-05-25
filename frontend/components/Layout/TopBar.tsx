@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { loginInfo } from "../../redux/slices/authSlice";
-import { disconnectAndRemoveUser } from "../../lib/socket";
+import { disconnectAndRemoveUser } from "../../lib/socketController";
 
 function TopBar() {
 	const router = useRouter();
