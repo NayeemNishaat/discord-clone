@@ -49,10 +49,16 @@ export const verifyUser = async (
 };
 
 const users = new Map();
-export const connectedUsers = (socket: Socket) => {
+export const connectedUsers = async (socket: Socket) => {
+	const receivedInvitations = await User.findById(
+		socket.data._id,
+		"receivedInvitation"
+	).populate("receivedInvitation", "username");
+
+	socket.emit("invite", receivedInvitations.receivedInvitation);
+
 	if (!Array.from(users.values()).includes(socket.data._id.toString()))
 		users.set(socket.id, socket.data._id.toString());
-
 
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
@@ -83,6 +89,9 @@ export const sendNotification = (
 	});
 
 	activeUserIds.forEach((activeUserId) => {
-		io.to(activeUserId).emit("invite", sender);
+		io.to(activeUserId).emit("invite", {
+			_id: sender._id,
+			username: sender.username
+		});
 	});
 };

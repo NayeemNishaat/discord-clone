@@ -41,9 +41,13 @@ export const invite = catchAsync(
 		if (alreadyFriend)
 			return next(new AppError("You are Already Friends!", 409));
 
-		await User.findByIdAndUpdate(req.user._id, {
-			$push: { sentInvitation: user._id }
-		});
+		req.user = (await User.findByIdAndUpdate(
+			req.user._id,
+			{
+				$push: { sentInvitation: user._id }
+			},
+			{ new: true }
+		)) as customRequest["user"];
 
 		await User.findByIdAndUpdate(user._id, {
 			$push: { receivedInvitation: req.user._id }
