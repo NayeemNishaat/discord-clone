@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { loginInfo } from "../../redux/slices/authSlice";
-import { disconnectAndRemoveUser } from "../../lib/socketController";
+import socket from "../../lib/socketServer";
 
 function TopBar() {
 	const router = useRouter();
@@ -26,7 +26,8 @@ function TopBar() {
 						loginInfo({ _id: null, email: null, username: null })
 					);
 
-					disconnectAndRemoveUser();
+					socket.disconnect();
+					socket.emit("removeUser");
 
 					router.replace("/");
 				}}

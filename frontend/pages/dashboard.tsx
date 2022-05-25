@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
-import {connectWithSocketServer} from "../lib/socketServer";
+import socket from "../lib/socketServer";
+import { useDispatch } from "react-redux";
+import { receivedInvitations } from "../redux/slices/userSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -16,13 +18,17 @@ function dashboard() {
 		</div>
 	);
 
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
 		if (!loginInfo._id) router.push("/");
 
-		connectWithSocketServer();
+		socket.on("invite", (sender) => {
+			console.log(sender);
+			dispatch(receivedInvitations(sender));
+		});
 
 		let timeout: NodeJS.Timeout;
 		timeout = setTimeout(
