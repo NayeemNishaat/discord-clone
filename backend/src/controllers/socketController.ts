@@ -50,11 +50,9 @@ export const verifyUser = async (
 
 const users = new Map();
 export const connectedUsers = (socket: Socket) => {
-	users.size === 0 && users.set(socket.id, socket.data._id.toString());
-	users.forEach((value) => {
-		if (value !== socket.data._id.toString())
-			users.set(socket.id, socket.data._id.toString());
-	});
+	if (!Array.from(users.values()).includes(socket.data._id.toString()))
+		users.set(socket.id, socket.data._id.toString());
+
 
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
