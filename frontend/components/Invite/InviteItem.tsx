@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@mui/material";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 import ClearSharpIcon from "@mui/icons-material/ClearSharp";
@@ -15,8 +14,6 @@ function InviteItem({
 	acceptInvitation: Function;
 	rejectInvitation: Function;
 }) {
-	const [disable, setDisable] = useState(false); // Fix:
-
 	return (
 		<div className="mr-1 flex items-center">
 			<Button className="flex w-full items-center justify-between px-0 py-1.5 capitalize text-white">
