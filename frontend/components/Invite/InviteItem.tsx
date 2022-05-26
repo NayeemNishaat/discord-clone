@@ -12,8 +12,8 @@ function InviteItem({
 }: {
 	id: string;
 	username: string;
-	acceptInvitation: React.ReactEventHandler;
-	rejectInvitation: React.ReactEventHandler;
+	acceptInvitation: Function;
+	rejectInvitation: Function;
 }) {
 	const [disable, setDisable] = useState(false); // Fix:
 
@@ -32,14 +32,14 @@ function InviteItem({
 				<IconButton
 					className="h-6 w-6 border border-solid"
 					color="warning"
-					onClick={acceptInvitation}
+					onClick={acceptInvitation.bind({}, id)}
 				>
 					<CheckSharpIcon />
 				</IconButton>
 				<IconButton
 					className="h-6 w-6 border border-solid"
 					color="warning"
-					onClick={rejectInvitation}
+					onClick={rejectInvitation.bind({}, id)}
 				>
 					<ClearSharpIcon />
 				</IconButton>

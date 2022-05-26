@@ -1,12 +1,22 @@
 import InviteItem from "./InviteItem";
+import { useDispatch } from "react-redux";
+import { receivedInvitations } from "../../redux/slices/userSlice";
 
 function InviteList({
 	invitations
 }: {
 	invitations: { _id: string; username: string }[];
 }) {
-	const acceptInvitation = () => {}; // Fix:
-	const rejectInvitation = () => {}; // Fix:
+	const dispatch = useDispatch();
+
+	const acceptInvitation = (id: string) => {
+		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
+		dispatch(receivedInvitations(filteredInvitations));
+	}; // Fix:
+	const rejectInvitation = (id: string) => {
+		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
+		dispatch(receivedInvitations(filteredInvitations));
+	}; // Fix:
 
 	return (
 		<ul id="custom-scrollbar">
