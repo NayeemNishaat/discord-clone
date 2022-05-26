@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
 import socket from "../lib/socketServer";
+import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
 import { receivedInvitations } from "../redux/slices/userSlice";
 
@@ -24,6 +25,10 @@ function dashboard() {
 
 	useEffect(() => {
 		if (!loginInfo._id) router.push("/");
+
+		const socket = io("http://localhost:5000", {
+			withCredentials: true
+		});
 
 		socket.on("error", (msg) => {
 			// Fix: Show an Alert message!
@@ -49,7 +54,10 @@ function dashboard() {
 			2000
 		);
 
-		() => clearTimeout(timeout);
+		return () => {
+			socket.close();
+			clearTimeout(timeout);
+		};
 	}, []);
 
 	return (

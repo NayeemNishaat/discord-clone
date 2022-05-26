@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
-import { AppError } from "../lib/error";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
 import { getIoInstance } from "../socketEvents";
@@ -65,15 +64,10 @@ export const connectedUsers = async (socket: Socket) => {
 
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
-		console.log(users);
+		console.log("removeUser", users);
 	});
 
-	socket.on("removeUser", () => {
-		users.delete(socket.id);
-		console.log(users);
-	});
-
-	console.log(users);
+	console.log("connected", users);
 };
 
 export const sendNotification = (

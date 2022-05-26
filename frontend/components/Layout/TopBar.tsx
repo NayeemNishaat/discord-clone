@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { loginInfo } from "../../redux/slices/authSlice";
-import socket from "../../lib/socketServer";
+import { receivedInvitations, friends } from "../../redux/slices/userSlice";
 
 function TopBar() {
 	const router = useRouter();
@@ -25,9 +25,8 @@ function TopBar() {
 					dispatch(
 						loginInfo({ _id: null, email: null, username: null })
 					);
-
-					socket.disconnect();
-					socket.emit("removeUser");
+					dispatch(receivedInvitations([]));
+					dispatch(friends([]));
 
 					router.replace("/");
 				}}
