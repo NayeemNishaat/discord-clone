@@ -86,3 +86,11 @@ export const accept = catchAsync(
 		res.status(200).json({ status: "success" });
 	}
 );
+
+export const reject = catchAsync(
+	async (req: customRequest, res: Response, next: NextFunction) => {
+		const { id } = req.body;
+		console.log(id);
+		res.status(200).json({ status: "success" });
+	}
+);

@@ -28,15 +28,12 @@ function InviteList({
 		};
 	}, [timerRef]);
 
-	const acceptInvitation = async (id: string) => {
+	const fetchResponse = async (id: string, status: string) => {
 		clearTimeout(timerRef.current as NodeJS.Timeout);
-
-		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
-		dispatch(receivedInvitations(filteredInvitations));
 
 		try {
 			const res = await fetch(
-				"http://localhost:5000/api/v1/user/accept",
+				`http://localhost:5000/api/v1/user/${status}`,
 				{
 					method: "PATCH",
 					credentials: "include",
@@ -52,7 +49,7 @@ function InviteList({
 				setAlertInfo({
 					show: true,
 					type: "success",
-					message: "Invitation Accepted!"
+					message: `Invitation ${status}ed!`
 				});
 
 				timerRef.current = setTimeout(() => {
@@ -63,11 +60,13 @@ function InviteList({
 					});
 				}, 2000);
 			}
+
+			return false;
 		} catch (err) {
 			setAlertInfo({
 				show: true,
 				type: "error",
-				message: "Failed to Accept Invitation!"
+				message: `Failed to ${status} Invitation!`
 			});
 
 			timerRef.current = setTimeout(() => {
@@ -77,12 +76,26 @@ function InviteList({
 					message: ""
 				});
 			}, 2000);
+
+			return true;
 		}
-	}; // Fix:
-	const rejectInvitation = (id: string) => {
+	};
+
+	const acceptInvitation = async (id: string) => {
+		const err = await fetchResponse(id, "accept");
+		if (err) return;
+
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
 		dispatch(receivedInvitations(filteredInvitations));
-	}; // Fix:
+	};
+
+	const rejectInvitation = async (id: string) => {
+		const err = await fetchResponse(id, "reject");
+		if (err) return;
+
+		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
+		dispatch(receivedInvitations(filteredInvitations));
+	};
 
 	return (
 		<>
