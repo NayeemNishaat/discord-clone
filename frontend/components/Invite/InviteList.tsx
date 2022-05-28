@@ -1,8 +1,9 @@
+import { useState, useEffect, useRef } from "react";
 import InviteItem from "./InviteItem";
 import { useDispatch } from "react-redux";
 import { receivedInvitations } from "../../redux/slices/userSlice";
-import AlertAlt from "../UI/AlertAlt";
-import { useState } from "react";
+import { AlertColor } from "@mui/material/Alert";
+import Alert from "../../components/UI/Alert";
 
 function InviteList({
 	invitations
@@ -10,9 +11,26 @@ function InviteList({
 	invitations: { _id: string; username: string }[];
 }) {
 	const dispatch = useDispatch();
-	const [alert, setAlert] = useState(null);
+	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
+	const [alertInfo, setAlertInfo] = useState<{
+		show: boolean;
+		type: AlertColor;
+		message: string;
+	}>({
+		show: false,
+		type: "success",
+		message: ""
+	});
+
+	useEffect(() => {
+		return () => {
+			clearTimeout(timerRef.current as NodeJS.Timeout);
+		};
+	}, [timerRef]);
 
 	const acceptInvitation = async (id: string) => {
+		clearTimeout(timerRef.current as NodeJS.Timeout);
+
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
 		dispatch(receivedInvitations(filteredInvitations));
 
@@ -31,32 +49,49 @@ function InviteList({
 			const data = await res.json();
 
 			if (data.status === "success") {
-				setAlert({
+				setAlertInfo({
+					show: true,
 					type: "success",
 					message: "Invitation Accepted!"
 				});
+
+				timerRef.current = setTimeout(() => {
+					setAlertInfo({
+						show: false,
+						type: "success",
+						message: ""
+					});
+				}, 2000);
 			}
 		} catch (err) {
-			setAlert({ type: "error", message: "Invitation Accepted!" });
+			setAlertInfo({
+				show: true,
+				type: "error",
+				message: "Failed to Accept Invitation!"
+			});
+
+			timerRef.current = setTimeout(() => {
+				setAlertInfo({
+					show: false,
+					type: "success",
+					message: ""
+				});
+			}, 2000);
 		}
 	}; // Fix:
-
 	const rejectInvitation = (id: string) => {
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
 		dispatch(receivedInvitations(filteredInvitations));
 	}; // Fix:
 
-	const handleClick = (setOpen) => {
-		setOpen(true);
-	};
-
 	return (
 		<>
-			{alert && (
-				<AlertAlt
-					message={alert.message}
-					type={alert.type}
-					handleClick={handleClick}
+			{alertInfo.show && (
+				<Alert
+					show={alertInfo.show}
+					type={alertInfo.type}
+					message={alertInfo.message}
+					setAlertInfo={setAlertInfo}
 				/>
 			)}
 			<ul id="custom-scrollbar">
