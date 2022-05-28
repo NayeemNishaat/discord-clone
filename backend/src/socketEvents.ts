@@ -6,11 +6,11 @@ type io = Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 let ioInstance: io;
 
 export const setIoInstance = (io: io) => {
-	ioInstance = io;
-
 	io.use(async (socket, next) => {
 		verifyUser(socket, next);
 	});
+
+	ioInstance = io;
 
 	io.on("connection", (socket: Socket) => {
 		connectedUsers(socket);

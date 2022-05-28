@@ -58,3 +58,31 @@ export const invite = catchAsync(
 		res.status(201).json({ status: "success" });
 	}
 );
+
+export const accept = catchAsync(
+	async (req: customRequest, res: Response, next: NextFunction) => {
+		const { id } = req.body;
+		console.log(id);
+
+		// const user = await User.findById(id);
+
+		// if (!user) return next(new AppError("User doesn't exist!", 404));
+
+		// const alreadyFriend = await User.findOne({
+		// 	$and: [{ _id: req.user._id }, { friends: { _id: user._id } }]
+		// });
+
+		// if (alreadyFriend)
+		// 	return next(new AppError("You are Already Friends!", 409));
+
+		// await User.findByIdAndUpdate(req.user._id, {
+		// 	$push: { friends: user }
+		// });
+
+		// await User.findByIdAndUpdate(user._id, {
+		// 	$push: { friends: req.user }
+		// });
+
+		res.status(200).json({ status: "success" });
+	}
+);
