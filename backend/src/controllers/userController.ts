@@ -38,9 +38,11 @@ export const invite = catchAsync(
 			$and: [{ _id: req.user._id }, { "friends._id": user._id }]
 		});
 
+		// Part: Check if already friends
 		if (alreadyFriend)
 			return next(new AppError("You are Already Friends!", 409));
 
+		// Part: If not friends, send invitation
 		req.user = (await User.findByIdAndUpdate(
 			req.user._id,
 			{
@@ -53,6 +55,7 @@ export const invite = catchAsync(
 			$push: { receivedInvitation: req.user._id }
 		});
 
+		// Part: Send notification to receiver
 		sendNotification(user._id, req.user);
 
 		res.status(201).json({ status: "success" });
@@ -62,10 +65,17 @@ export const invite = catchAsync(
 export const accept = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		const { id } = req.body;
+
+		// Part: Making the users friends and removing the invitation
 		await User.findByIdAndUpdate(req.user._id, {
 			$pull: { receivedInvitation: id },
 			$push: { friends: id }
 		});
+		await User.findByIdAndUpdate(id, {
+			$push: { friends: req.user._id }
+		});
+
+		// Part: Update the user's friends list dynamically
 
 		res.status(200).json({ status: "success" });
 	}
@@ -74,8 +84,8 @@ export const accept = catchAsync(
 export const reject = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		const { id } = req.body;
-		console.log(id);
 
+		// Part: Removing the invitation
 		await User.findByIdAndUpdate(req.user._id, {
 			$pull: { receivedInvitation: id }
 		});

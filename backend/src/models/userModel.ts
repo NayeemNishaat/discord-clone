@@ -2,10 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
 interface IuserSchema extends Document {
-	username: string;
 	password: string;
 	confirmPassword: string | undefined;
-	email: string;
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -47,17 +45,19 @@ const userSchema: Schema = new mongoose.Schema({
 			message: "Please provide a valid Email!"
 		}
 	},
-	friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	friends: [{ type: Schema.Types.ObjectId, ref: "User", unique: true }],
 	receivedInvitation: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: "User"
+			ref: "User",
+			unique: true
 		}
 	],
 	sentInvitation: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: "User"
+			ref: "User",
+			unique: true
 		}
 	]
 });

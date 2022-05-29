@@ -146,6 +146,7 @@ export const protect = catchAsync(
 		next();
 	}
 );
+
 export const secret = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		res.status(200).json({
