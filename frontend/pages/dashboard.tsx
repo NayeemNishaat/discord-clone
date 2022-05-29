@@ -28,7 +28,6 @@ function dashboard() {
 		socket.open();
 
 		socket.on("error", (msg) => {
-			// Fix: Show an Alert message!
 			localStorage.removeItem("loginInfo");
 			router.push("/");
 		});
