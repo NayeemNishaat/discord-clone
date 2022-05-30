@@ -9,7 +9,7 @@ import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
 import socket from "../lib/socketServer";
 import { useDispatch } from "react-redux";
-import { receivedInvitations } from "../redux/slices/userSlice";
+import { receivedInvitations, friends } from "../redux/slices/userSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -32,8 +32,8 @@ function dashboard() {
 			router.push("/");
 		});
 
-		socket.on("friend", (friends) => {
-			console.log(friends);
+		socket.on("friend", (userFriends) => {
+			dispatch(friends(userFriends));
 		});
 
 		socket.on("invite", (sender) => {

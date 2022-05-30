@@ -9,17 +9,12 @@ import Modal from "../UI/Modal";
 import FriendList from "../Friend/FriendList";
 import InviteList from "../Invite/InviteList";
 
-const friends = [
-	{ name: "Mohim", isOnline: true },
-	{ name: "Saymon", isOnline: false },
-	{ name: "Istiake", isOnline: true }
-];
-
 function SideBar() {
 	const [open, setOpen] = useState(false);
 	const invitations = useSelector(
 		(state: RootState) => state.user.receivedInvitations
 	);
+	const friends = useSelector((state: RootState) => state.user.friends);
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);

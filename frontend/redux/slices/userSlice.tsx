@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface userState {
-	friends: { _id: string; name: string; isOnline: boolean }[];
+	friends: { _id: string; username: string; isOnline: boolean }[];
 	receivedInvitations: { _id: string; username: string }[];
 }
 
