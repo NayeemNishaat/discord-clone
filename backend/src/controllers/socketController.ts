@@ -54,9 +54,24 @@ const users = new Map();
 export const connectedUsers = async (socket: Socket) => {
 	const receivedInvitations = await User.findById(
 		socket.data._id,
-		"receivedInvitation"
-	).populate("receivedInvitation", "username");
+		"receivedInvitation friends"
+	)
+		.populate("receivedInvitation", "username")
+		.populate("friends", "username")
+		.lean();
 
+	const friends = receivedInvitations.friends.map(
+		(friend: { _id: string; isOnline: boolean }) => {
+			if (Array.from(users.values()).includes(friend._id.toString())) {
+				friend.isOnline = true;
+				return friend;
+			}
+			friend.isOnline = false;
+			return friend;
+		}
+	);
+
+	socket.emit("friend", friends);
 	socket.emit("invite", receivedInvitations.receivedInvitation);
 
 	if (!Array.from(users.values()).includes(socket.data._id.toString()))
@@ -64,13 +79,10 @@ export const connectedUsers = async (socket: Socket) => {
 
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
-		console.log("removeUser", users);
 	});
-
-	console.log("connected", users);
 };
 
-export const sendNotification = (
+export const sendInviteNotification = (
 	receiver: string,
 	sender: {
 		_id: string;
@@ -92,3 +104,5 @@ export const sendNotification = (
 		});
 	});
 };
+
+export const sendFriendNotification = () => {};

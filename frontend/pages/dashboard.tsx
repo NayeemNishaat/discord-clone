@@ -32,6 +32,10 @@ function dashboard() {
 			router.push("/");
 		});
 
+		socket.on("friend", (friends) => {
+			console.log(friends);
+		});
+
 		socket.on("invite", (sender) => {
 			dispatch(receivedInvitations(sender));
 		});

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { catchAsync, AppError } from "../lib/error";
 import { validMail } from "../lib/validation";
 import User from "../models/userModel";
-import { sendNotification } from "./socketController";
+import { sendInviteNotification } from "./socketController";
 
 interface customRequest extends Request {
 	user: {
@@ -56,7 +56,7 @@ export const invite = catchAsync(
 		});
 
 		// Part: Send notification to receiver
-		sendNotification(user._id, req.user);
+		sendInviteNotification(user._id, req.user);
 
 		res.status(201).json({ status: "success" });
 	}
