@@ -51,8 +51,12 @@ export const verifyUser = async (
 };
 
 const users = new Map();
+let userInfo: {
+	friends: { _id: string; isOnline: boolean }[];
+	receivedInvitation: {}[];
+};
 export const connectedUsers = async (socket: Socket) => {
-	const userInfo = await User.findById(
+	userInfo = await User.findById(
 		socket.data._id,
 		"receivedInvitation friends"
 	)
@@ -60,16 +64,14 @@ export const connectedUsers = async (socket: Socket) => {
 		.populate("friends", "username")
 		.lean();
 
-	const friends = userInfo.friends?.map(
-		(friend: { _id: string; isOnline: boolean }) => {
-			if (Array.from(users.values()).includes(friend._id.toString())) {
-				friend.isOnline = true;
-				return friend;
-			}
-			friend.isOnline = false;
+	const friends = userInfo.friends?.map((friend) => {
+		if (Array.from(users.values()).includes(friend._id.toString())) {
+			friend.isOnline = true;
 			return friend;
 		}
-	);
+		friend.isOnline = false;
+		return friend;
+	});
 
 	socket.emit("friend", friends);
 	socket.emit("invite", userInfo.receivedInvitation);
@@ -96,12 +98,14 @@ export const sendInviteNotification = (
 	users.forEach((value, key) => {
 		if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
 	});
-
 	activeUserIds.forEach((activeUserId) => {
-		io.to(activeUserId).emit("invite", {
-			_id: sender._id,
-			username: sender.username
-		});
+		io.to(activeUserId).emit("invite", [
+			...userInfo.receivedInvitation,
+			{
+				_id: sender._id,
+				username: sender.username
+			}
+		]);
 	});
 };
 
