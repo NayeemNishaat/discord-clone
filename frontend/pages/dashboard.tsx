@@ -21,6 +21,9 @@ function dashboard() {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const loginInfo = useSelector((state: RootState) => state.auth);
+	const previousInvitations = useSelector(
+		(state: RootState) => state.user.receivedInvitations
+	);
 
 	useEffect(() => {
 		if (!loginInfo._id) router.push("/");
@@ -36,8 +39,10 @@ function dashboard() {
 			dispatch(friends(userFriends));
 		});
 
-		socket.on("invite", (sender) => {
-			dispatch(receivedInvitations(sender));
+		socket.on("invite", (sender: { _id: string; username: string }[]) => {
+			dispatch(
+				receivedInvitations([...previousInvitations, sender].flat())
+			);
 		});
 
 		let timeout: NodeJS.Timeout;

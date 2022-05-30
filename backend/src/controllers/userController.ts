@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { catchAsync, AppError } from "../lib/error";
 import { validMail } from "../lib/validation";
 import User from "../models/userModel";
-import { sendInviteNotification } from "./socketController";
+import {
+	sendInviteNotification,
+	sendFriendNotification
+} from "./socketController";
 
 interface customRequest extends Request {
 	user: {
@@ -26,6 +29,7 @@ export const invite = catchAsync(
 
 		if (!user) return next(new AppError("User doesn't exist!", 404));
 
+		// Part: Check if user is already in friends list
 		const alreadyInvited = await User.findOne({
 			_id: req.user._id,
 			sentInvitation: user._id
@@ -33,12 +37,26 @@ export const invite = catchAsync(
 
 		if (alreadyInvited) return next(new AppError("Already Invited!", 409));
 
+		// Part: Check if user is already in receivedInvitation list
+		const alreadyReceivedInvitation = await User.findOne({
+			_id: req.user._id,
+			receivedInvitation: user._id
+		});
+
+		if (alreadyReceivedInvitation)
+			return next(
+				new AppError(
+					"You have Already Received an Invitation from this User!",
+					409
+				)
+			);
+
+		// Part: Check if already friends
 		const alreadyFriend = await User.findOne({
 			// $and: [{ _id: req.user._id }, { friends: { _id: user._id } }]
 			$and: [{ _id: req.user._id }, { "friends._id": user._id }]
 		});
 
-		// Part: Check if already friends
 		if (alreadyFriend)
 			return next(new AppError("You are Already Friends!", 409));
 
@@ -76,6 +94,7 @@ export const accept = catchAsync(
 		});
 
 		// Part: Update the user's friends list dynamically
+		// sendFriendNotification(req.user._id, id);
 
 		res.status(200).json({ status: "success" });
 	}
@@ -85,9 +104,12 @@ export const reject = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		const { id } = req.body;
 
-		// Part: Removing the invitation
+		// Part: Removing the invitation from both users
 		await User.findByIdAndUpdate(req.user._id, {
 			$pull: { receivedInvitation: id }
+		});
+		await User.findByIdAndUpdate(id, {
+			$pull: { sentInvitation: req.user._id }
 		});
 
 		res.status(200).json({ status: "success" });

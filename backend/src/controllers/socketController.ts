@@ -60,7 +60,7 @@ export const connectedUsers = async (socket: Socket) => {
 		.populate("friends", "username")
 		.lean();
 
-	const friends = userInfo.friends.map(
+	const friends = userInfo.friends?.map(
 		(friend: { _id: string; isOnline: boolean }) => {
 			if (Array.from(users.values()).includes(friend._id.toString())) {
 				friend.isOnline = true;
