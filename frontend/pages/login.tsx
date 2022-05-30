@@ -125,7 +125,7 @@ function login() {
 			setAlertInfo({
 				show: true,
 				type: "error",
-				message: err.message
+				message: "Failed to Login!"
 			});
 
 			timerRef.current = setTimeout(() => {

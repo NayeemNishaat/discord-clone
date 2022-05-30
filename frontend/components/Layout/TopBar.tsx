@@ -1,3 +1,6 @@
+import { useState } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import Slide, { SlideProps } from "@mui/material/Slide";
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
@@ -5,6 +8,8 @@ import { loginInfo } from "../../redux/slices/authSlice";
 import { receivedInvitations, friends } from "../../redux/slices/userSlice";
 
 function TopBar() {
+	const [open, setOpen] = useState(false);
+
 	const router = useRouter();
 	const dispatch = useDispatch();
 
@@ -15,24 +20,46 @@ function TopBar() {
 				variant="outlined"
 				className="mr-5 capitalize"
 				onClick={async () => {
-					localStorage.removeItem("loginInfo");
+					try {
+						localStorage.removeItem("loginInfo");
 
-					await fetch("http://localhost:5000/api/v1/auth/logout", {
-						method: "GET",
-						credentials: "include"
-					});
+						await fetch(
+							"http://localhost:5000/api/v1/auth/logout",
+							{
+								method: "GET",
+								credentials: "include"
+							}
+						);
 
-					dispatch(
-						loginInfo({ _id: null, email: null, username: null })
-					);
-					dispatch(receivedInvitations([]));
-					dispatch(friends([]));
+						dispatch(
+							loginInfo({
+								_id: null,
+								email: null,
+								username: null
+							})
+						);
+						dispatch(receivedInvitations([]));
+						dispatch(friends([]));
 
-					router.replace("/");
+						router.replace("/");
+					} catch (err) {
+						setOpen(true);
+					}
 				}}
 			>
 				Logout
 			</Button>
+
+			<Snackbar
+				anchorOrigin={{ vertical: "top", horizontal: "center" }}
+				open={open}
+				autoHideDuration={5000}
+				message="Failed to Logout"
+				TransitionComponent={(props: SlideProps) => {
+					return <Slide {...props} direction="down" />;
+				}}
+				onClose={() => setOpen(false)}
+			></Snackbar>
 		</div>
 	);
 }

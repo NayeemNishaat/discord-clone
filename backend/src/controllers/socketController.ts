@@ -52,7 +52,7 @@ export const verifyUser = async (
 
 const users = new Map();
 export const connectedUsers = async (socket: Socket) => {
-	const receivedInvitations = await User.findById(
+	const userInfo = await User.findById(
 		socket.data._id,
 		"receivedInvitation friends"
 	)
@@ -60,7 +60,7 @@ export const connectedUsers = async (socket: Socket) => {
 		.populate("friends", "username")
 		.lean();
 
-	const friends = receivedInvitations.friends.map(
+	const friends = userInfo.friends.map(
 		(friend: { _id: string; isOnline: boolean }) => {
 			if (Array.from(users.values()).includes(friend._id.toString())) {
 				friend.isOnline = true;
@@ -72,7 +72,7 @@ export const connectedUsers = async (socket: Socket) => {
 	);
 
 	socket.emit("friend", friends);
-	socket.emit("invite", receivedInvitations.receivedInvitation);
+	socket.emit("invite", userInfo.receivedInvitation);
 
 	if (!Array.from(users.values()).includes(socket.data._id.toString()))
 		users.set(socket.id, socket.data._id.toString());
