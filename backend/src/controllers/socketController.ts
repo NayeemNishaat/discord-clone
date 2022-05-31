@@ -17,6 +17,12 @@ declare const process: {
 	};
 };
 
+interface friends {
+	_id: string;
+	usename: string;
+	isOnline: boolean;
+}
+
 let token: string;
 export const verifyUser = async (
 	socket: Socket,
@@ -35,7 +41,7 @@ export const verifyUser = async (
 	try {
 		decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 	} catch (err) {
-		return socket.emit("error", "Inva;id Token!");
+		return socket.emit("error", "Invalid Token!");
 	}
 
 	const currentUser = await User.findById(decoded.id);
@@ -52,9 +58,21 @@ export const verifyUser = async (
 
 const users = new Map();
 let userInfo: {
-	friends: { _id: string; isOnline: boolean }[];
+	friends: friends[];
 	receivedInvitation: {}[];
 };
+
+const getOnlineFriends = (friends: friends[]) => {
+	return friends.map((friend) => {
+		if (Array.from(users.values()).includes(friend._id.toString())) {
+			friend.isOnline = true;
+			return friend;
+		}
+		friend.isOnline = false;
+		return friend;
+	});
+};
+
 export const connectedUsers = async (socket: Socket) => {
 	userInfo = await User.findById(
 		socket.data._id,
@@ -64,14 +82,7 @@ export const connectedUsers = async (socket: Socket) => {
 		.populate("friends", "username")
 		.lean();
 
-	const friends = userInfo.friends?.map((friend) => {
-		if (Array.from(users.values()).includes(friend._id.toString())) {
-			friend.isOnline = true;
-			return friend;
-		}
-		friend.isOnline = false;
-		return friend;
-	});
+	const friends = getOnlineFriends(userInfo.friends);
 
 	socket.emit("friend", friends);
 	socket.emit("invite", userInfo.receivedInvitation);
@@ -93,6 +104,7 @@ export const sendInviteNotification = (
 	}
 ) => {
 	const io = getIoInstance();
+
 	let activeUserIds: string[] = []; // Important: Array because a user could be connected from multiple devices!
 
 	users.forEach((value, key) => {
@@ -109,4 +121,27 @@ export const sendInviteNotification = (
 	});
 };
 
-export const sendFriendNotification = () => {};
+export const sendFriendNotification = (
+	sender: {
+		_id: string;
+		friends: friends[];
+	},
+	receiver: {
+		_id: string;
+		friends: friends[];
+	}
+) => {
+	const io = getIoInstance();
+
+	users.forEach((value, key) => {
+		if (value === receiver._id.toString()) {
+			const receiverFriends = getOnlineFriends(receiver.friends);
+			io.to(key).emit("friend", receiverFriends);
+		}
+
+		if (value === sender._id.toString()) {
+			const senderFriends = getOnlineFriends(sender.friends);
+			io.to(key).emit("friend", senderFriends);
+		}
+	});
+};

@@ -85,16 +85,25 @@ export const accept = catchAsync(
 		const { id } = req.body;
 
 		// Part: Making the users friends and removing the invitation
-		await User.findByIdAndUpdate(req.user._id, {
-			$pull: { receivedInvitation: id },
-			$push: { friends: id }
-		});
-		await User.findByIdAndUpdate(id, {
-			$push: { friends: req.user._id }
-		});
+		const receiver = await User.findByIdAndUpdate(
+			req.user._id,
+			{
+				$pull: { receivedInvitation: id },
+				$push: { friends: id }
+			},
+			{ new: true, populate: "friends" }
+		).lean();
+		const sender = await User.findByIdAndUpdate(
+			id,
+			{
+				$pull: { sentInvitation: req.user._id },
+				$push: { friends: req.user._id }
+			},
+			{ new: true, populate: "friends" }
+		).lean();
 
-		// Part: Update the user's friends list dynamically
-		// sendFriendNotification(req.user._id, id);
+		// Part: Update the users friends list dynamically
+		sendFriendNotification(sender, receiver);
 
 		res.status(200).json({ status: "success" });
 	}

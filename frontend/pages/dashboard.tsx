@@ -27,14 +27,23 @@ function dashboard() {
 
 		socket.open();
 
-		socket.on("error", (msg) => {
+		socket.on("error", (_msg) => {
 			localStorage.removeItem("loginInfo");
 			router.push("/");
 		});
 
-		socket.on("friend", (userFriends) => {
-			dispatch(friends(userFriends));
-		});
+		socket.on(
+			"friend",
+			(
+				userFriends: {
+					_id: string;
+					username: string;
+					isOnline: boolean;
+				}[]
+			) => {
+				dispatch(friends(userFriends));
+			}
+		);
 
 		socket.on("invite", (sender: { _id: string; username: string }[]) => {
 			dispatch(receivedInvitations(sender));
