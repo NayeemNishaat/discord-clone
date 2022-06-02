@@ -122,10 +122,7 @@ export const connectedUsers = async (socket: Socket) => {
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
 		updateOnlineFriends(socket.data._id, false);
-		console.log("disconnected");
 	});
-
-	// Todo: Whenever a new user is online update the list of online users for the connected users.
 };
 
 export const sendInviteNotification = (
