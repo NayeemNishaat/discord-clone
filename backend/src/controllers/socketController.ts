@@ -79,43 +79,9 @@ const getOnlineFriends = (friends: friends[]) => {
 		friend.isOnline = false;
 		return friend;
 	});
-
-	// const userInfo = Array.from(users.entries());
-	// const arr: friends[] = [];
-	// friends.forEach((friend) => {
-	// 	if (Array.from(userInfo.values()).includes(friend._id.toString())) {
-	// 		friend.isOnline = true;
-	// 		friend.socketId = userInfo.keys();
-	// 	} else {
-	// 		friend.isOnline = false;
-	// 		arr.push(friend);
-	// 	}
-	// 	// userInfo.forEach(([key, value]) => {
-	// 	// 	if (value === friend._id.toString()) {
-	// 	// 		friend.isOnline = true;
-	// 	// 		friend.socketId = key;
-	// 	// 		arr.push(friend);
-	// 	// 	}
-	// 	// });
-	// 	// friend.isOnline = false;
-	// 	// arr.push(friend);
-	// });
-	// // console.log(arr);
-	// return arr;
-	// return friends.flatMap((friend) =>
-	// 	userInfo.map(([key, value]) => {
-	// 		if (value === friend._id.toString()) {
-	// 			friend.isOnline = true;
-	// 			friend.socketId = key;
-	// 			return friend;
-	// 		}
-	// 		friend.isOnline = false;
-	// 		return friend;
-	// 	})
-	// );
 };
 
-const updateOnlineFriends = async (userId: string) => {
+const updateOnlineFriends = async (userId: string, active: boolean = true) => {
 	const io = getIoInstance();
 
 	const user = await User.findById(userId, "friends")
@@ -126,22 +92,13 @@ const updateOnlineFriends = async (userId: string) => {
 
 	friendsStat.forEach((friend) => {
 		if (friend.isOnline === true) {
-			io.to(friend.socketId as string).emit("friendOnline", {
+			return io.to(friend.socketId as string).emit("friendOnline", {
 				_id: user._id,
 				usename: user.username,
-				isOnline: true
+				isOnline: active
 			});
 		}
 	});
-
-	// users.forEach(async (value, key) => {
-	// 	const friends = await User.findById(value, "friends")
-	// 		.populate("friends", "username")
-	// 		.lean();
-
-	// 	// console.log(friends);
-	// 	io.to(key).emit("friend", getOnlineFriends(friends));
-	// });
 };
 
 export const connectedUsers = async (socket: Socket) => {
@@ -164,8 +121,8 @@ export const connectedUsers = async (socket: Socket) => {
 	updateOnlineFriends(socket.data._id);
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
-		// socket.emit("friend", friends);
-		// updateOnlineUsers(friends);
+		updateOnlineFriends(socket.data._id, false);
+		console.log("disconnected");
 	});
 
 	// Todo: Whenever a new user is online update the list of online users for the connected users.
