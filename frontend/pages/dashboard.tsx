@@ -9,7 +9,11 @@ import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
 import socket from "../lib/socketServer";
 import { useDispatch } from "react-redux";
-import { receivedInvitations, friends } from "../redux/slices/userSlice";
+import {
+	receivedInvitations,
+	friends,
+	addActiveFriend
+} from "../redux/slices/userSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -48,6 +52,17 @@ function dashboard() {
 		socket.on("invite", (sender: { _id: string; username: string }[]) => {
 			dispatch(receivedInvitations(sender));
 		});
+
+		socket.on(
+			"friendOnline",
+			(onlineFriend: {
+				_id: string;
+				username: string;
+				isOnline: boolean;
+			}) => {
+				dispatch(addActiveFriend(onlineFriend));
+			}
+		);
 
 		let timeout: NodeJS.Timeout;
 		timeout = setTimeout(

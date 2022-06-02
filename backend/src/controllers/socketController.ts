@@ -19,6 +19,7 @@ declare const process: {
 
 interface friends {
 	_id: string;
+	socketId?: string;
 	usename: string;
 	isOnline: boolean;
 }
@@ -62,18 +63,91 @@ let userInfo: {
 	receivedInvitation: {}[];
 };
 
+const getSocketId = (id: string) => {
+	return [...users].find(
+		([_key, value]: [string, string]) => value === id
+	)![0] as string;
+};
+
 const getOnlineFriends = (friends: friends[]) => {
 	return friends.map((friend) => {
 		if (Array.from(users.values()).includes(friend._id.toString())) {
 			friend.isOnline = true;
+			friend.socketId = getSocketId(friend._id.toString());
 			return friend;
 		}
 		friend.isOnline = false;
 		return friend;
 	});
+
+	// const userInfo = Array.from(users.entries());
+	// const arr: friends[] = [];
+	// friends.forEach((friend) => {
+	// 	if (Array.from(userInfo.values()).includes(friend._id.toString())) {
+	// 		friend.isOnline = true;
+	// 		friend.socketId = userInfo.keys();
+	// 	} else {
+	// 		friend.isOnline = false;
+	// 		arr.push(friend);
+	// 	}
+	// 	// userInfo.forEach(([key, value]) => {
+	// 	// 	if (value === friend._id.toString()) {
+	// 	// 		friend.isOnline = true;
+	// 	// 		friend.socketId = key;
+	// 	// 		arr.push(friend);
+	// 	// 	}
+	// 	// });
+	// 	// friend.isOnline = false;
+	// 	// arr.push(friend);
+	// });
+	// // console.log(arr);
+	// return arr;
+	// return friends.flatMap((friend) =>
+	// 	userInfo.map(([key, value]) => {
+	// 		if (value === friend._id.toString()) {
+	// 			friend.isOnline = true;
+	// 			friend.socketId = key;
+	// 			return friend;
+	// 		}
+	// 		friend.isOnline = false;
+	// 		return friend;
+	// 	})
+	// );
+};
+
+const updateOnlineFriends = async (userId: string) => {
+	const io = getIoInstance();
+
+	const user = await User.findById(userId, "friends")
+		.populate("friends", "username")
+		.lean();
+
+	const friendsStat = getOnlineFriends(user.friends);
+
+	friendsStat.forEach((friend) => {
+		if (friend.isOnline === true) {
+			io.to(friend.socketId as string).emit("friendOnline", {
+				_id: user._id,
+				usename: user.username,
+				isOnline: true
+			});
+		}
+	});
+
+	// users.forEach(async (value, key) => {
+	// 	const friends = await User.findById(value, "friends")
+	// 		.populate("friends", "username")
+	// 		.lean();
+
+	// 	// console.log(friends);
+	// 	io.to(key).emit("friend", getOnlineFriends(friends));
+	// });
 };
 
 export const connectedUsers = async (socket: Socket) => {
+	if (!Array.from(users.values()).includes(socket.data._id.toString()))
+		users.set(socket.id, socket.data._id.toString());
+
 	userInfo = await User.findById(
 		socket.data._id,
 		"receivedInvitation friends"
@@ -87,12 +161,14 @@ export const connectedUsers = async (socket: Socket) => {
 	socket.emit("friend", friends);
 	socket.emit("invite", userInfo.receivedInvitation);
 
-	if (!Array.from(users.values()).includes(socket.data._id.toString()))
-		users.set(socket.id, socket.data._id.toString());
-
+	updateOnlineFriends(socket.data._id);
 	socket.on("disconnect", () => {
 		users.delete(socket.id);
+		// socket.emit("friend", friends);
+		// updateOnlineUsers(friends);
 	});
+
+	// Todo: Whenever a new user is online update the list of online users for the connected users.
 };
 
 export const sendInviteNotification = (
