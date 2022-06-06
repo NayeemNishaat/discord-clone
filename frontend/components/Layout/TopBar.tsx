@@ -4,6 +4,8 @@ import Slide, { SlideProps } from "@mui/material/Slide";
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 import { loginInfo } from "../../redux/slices/authSlice";
 import { receivedInvitations, friends } from "../../redux/slices/userSlice";
 
@@ -11,10 +13,14 @@ function TopBar() {
 	const [open, setOpen] = useState(false);
 
 	const router = useRouter();
+	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 	const dispatch = useDispatch();
 
 	return (
-		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-19rem)] items-center justify-end bg-[#202124]">
+		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-19rem)] items-center justify-between bg-[#202124]">
+			<div>
+				<span className="ml-5 text-white">{activeChat.name}</span>
+			</div>
 			<Button
 				color="warning"
 				variant="outlined"

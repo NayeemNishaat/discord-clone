@@ -8,7 +8,7 @@ function FriendList({
 	return (
 		<ul className="flex flex-col gap-2">
 			{friends.map((friend, i) => (
-				<FriendItem key={i} isOnline={friend.isOnline}>
+				<FriendItem key={i} id={friend._id} isOnline={friend.isOnline}>
 					{friend.username}
 				</FriendItem>
 			))}

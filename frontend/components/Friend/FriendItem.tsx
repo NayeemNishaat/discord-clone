@@ -1,15 +1,34 @@
 import { Button } from "@mui/material";
 import { FiberManualRecord } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { setActiveChat } from "../../redux/slices/chatSlice";
 
 function FriendItem({
 	children,
-	isOnline
+	isOnline,
+	id
 }: {
 	children: string;
 	isOnline: boolean;
+	id: string;
 }) {
+	const dispatch = useDispatch();
+
+	const clickHandler = () => {
+		dispatch(
+			setActiveChat({
+				id,
+				name: children,
+				chatType: "private"
+			})
+		);
+	};
+
 	return (
-		<Button className="flex items-center justify-between px-0 py-1.5 capitalize text-white">
+		<Button
+			onClick={clickHandler}
+			className="flex items-center justify-between px-0 py-1.5 capitalize text-white"
+		>
 			<div className="flex gap-2">
 				<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] leading-none">
 					{children.slice(0, 1)}
