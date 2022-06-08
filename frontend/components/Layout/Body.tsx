@@ -1,5 +1,45 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import MessageList from "../Message/MessageList";
+
+const messages = [
+	{
+		_id: 122,
+		message: "Hi!",
+		sameAuthor: false,
+		username: "Nayeem",
+		date: "22/01/2022",
+		time: "14:26",
+		sameDay: false
+	},
+	{
+		_id: 12,
+		message: "Hello!",
+		sameAuthor: false,
+		username: "Nayeem",
+		date: "22/01/2022",
+		time: "14:26",
+		sameDay: false
+	},
+	{
+		_id: 1,
+		message: "Sup?",
+		sameAuthor: false,
+		username: "Nayeem",
+		date: "22/01/2022",
+		time: "14:26",
+		sameDay: false
+	},
+	{
+		_id: 1,
+		message: "Fine",
+		sameAuthor: false,
+		username: "Nayeem",
+		date: "22/01/2022",
+		time: "14:26",
+		sameDay: false
+	}
+];
 
 function Body({ name }: { name: string | null }) {
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
@@ -21,6 +61,7 @@ function Body({ name }: { name: string | null }) {
 				<span>{activeChat.name}</span>
 			</h2>
 			<p>Start a conversation with {activeChat.name}</p>
+			<MessageList messages={messages} />
 		</div>
 	);
 }
