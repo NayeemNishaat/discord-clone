@@ -10,22 +10,22 @@ const messages = [
 		username: "Nayeem",
 		date: "22/01/2022",
 		time: "14:26",
-		sameDay: false
+		sameDay: true
 	},
 	{
 		_id: 12,
 		message: "Hello!",
-		sameAuthor: false,
+		sameAuthor: true,
 		username: "Nayeem",
 		date: "22/01/2022",
 		time: "14:26",
-		sameDay: false
+		sameDay: true
 	},
 	{
 		_id: 1,
 		message: "Sup?",
 		sameAuthor: false,
-		username: "Nayeem",
+		username: "Saymon",
 		date: "22/01/2022",
 		time: "14:26",
 		sameDay: false
@@ -37,7 +37,7 @@ const messages = [
 		username: "Nayeem",
 		date: "22/01/2022",
 		time: "14:26",
-		sameDay: false
+		sameDay: true
 	}
 ];
 
