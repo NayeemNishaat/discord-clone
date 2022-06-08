@@ -62,8 +62,75 @@ function Body({ name }: { name: string | null }) {
 			</h2>
 			<p>Start a conversation with {activeChat.name}</p>
 			<MessageList messages={messages} />
+			<TextField
+				className="mt-auto w-full p-5"
+				id="filled-textarea"
+				rows={2}
+				sx={{
+					"& .MuiOutlinedInput-root": {
+						padding: "0.8rem",
+						color: "white",
+						"& fieldset": {
+							borderColor: "#fff7"
+						},
+						"&:hover fieldset": {
+							borderColor: "white"
+						},
+						"&.Mui-focused fieldset": {
+							borderColor: "#1976d2"
+						}
+					}
+				}}
+				placeholder="Enter your message!"
+				multiline
+				variant="outlined"
+			/>
 		</div>
 	);
 }
 
 export default Body;
+
+// Test:
+// import * as React from 'react';
+// import Box from '@mui/material/Box';
+import TextField from "@mui/material/TextField";
+
+// export default function MultilineTextFields() {
+// 	const [value, setValue] = React.useState("Controlled");
+
+// 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+// 		setValue(event.target.value);
+// 	};
+
+// 	return (
+// 		<>
+// 			<div>
+// 				<TextField
+// 					id="filled-multiline-flexible"
+// 					label="Multiline"
+// 					multiline
+// 					maxRows={4}
+// 					value={value}
+// 					onChange={handleChange}
+// 					variant="filled"
+// 				/>
+// 				<TextField
+// 					id="filled-textarea"
+// 					label="Multiline Placeholder"
+// 					placeholder="Placeholder"
+// 					multiline
+// 					variant="filled"
+// 				/>
+// 				<TextField
+// 					id="filled-multiline-static"
+// 					label="Multiline"
+// 					multiline
+// 					rows={4}
+// 					defaultValue="Default Value"
+// 					variant="filled"
+// 				/>
+// 			</div>
+// 		</>
+// 	);
+// }

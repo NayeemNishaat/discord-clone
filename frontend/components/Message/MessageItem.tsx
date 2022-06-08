@@ -15,8 +15,6 @@ function MessageItem({
 	time: string;
 	sameDay: boolean;
 }) {
-	// if (sameAuthor) return ``;
-
 	return (
 		<li>
 			{!sameDay && (
