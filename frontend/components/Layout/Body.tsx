@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
+import { useRef } from "react";
 import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
+import socket from "../../lib/socketServer";
 
 const messages = [
 	{
@@ -45,6 +47,8 @@ const messages = [
 function Body({ name }: { name: string | null }) {
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 
+	const inputRef = useRef<HTMLDivElement>(null);
+
 	if (!activeChat.id)
 		return (
 			<div className="mt-[4.5rem] flex flex-1 flex-col items-center justify-center bg-[#36393f] text-white">
@@ -52,6 +56,16 @@ function Body({ name }: { name: string | null }) {
 				<p>Please select a conversation to start chatting!</p>
 			</div>
 		);
+
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter" && e.ctrlKey) {
+			socket.emit("private", {
+				to: activeChat.id,
+				message: (e.target as HTMLInputElement).value
+			});
+			(e.target as HTMLInputElement).value = "";
+		}
+	};
 
 	return (
 		<div className="mt-[4.5rem] flex flex-1 flex-col items-center bg-[#36393f] text-white">
@@ -82,9 +96,11 @@ function Body({ name }: { name: string | null }) {
 						}
 					}
 				}}
-				placeholder="Enter your message!"
+				placeholder="Enter your message (press ctrl + enter to send)."
 				multiline
 				variant="outlined"
+				ref={inputRef}
+				onKeyDown={handleKeyDown}
 			/>
 		</div>
 	);
