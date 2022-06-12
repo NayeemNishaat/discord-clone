@@ -147,12 +147,11 @@ export const protect = catchAsync(
 	}
 );
 
-export const secret = catchAsync(
+export const checkLogin = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		res.status(200).json({
 			status: "success",
-			message: "You are accessing a protected route!",
-			user: req.user
+			message: "You are logged in!"
 		});
 	}
 );

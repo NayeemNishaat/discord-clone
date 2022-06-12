@@ -5,12 +5,12 @@ import {
 	login,
 	logout,
 	protect,
-	secret
+	checkLogin
 } from "../controllers/authController";
 
 router.post("/register", register);
 router.post("/login", login);
 router.get("/logout", logout);
-router.post("/test", protect, secret);
+router.post("/check-login", protect, checkLogin);
 
 export default router;

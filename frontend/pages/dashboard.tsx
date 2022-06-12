@@ -27,6 +27,27 @@ function dashboard() {
 	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
+		(async () => {
+			try {
+				const res = await fetch(
+					"http://localhost:5000/api/v1/auth/check-login",
+					{
+						method: "POST",
+						credentials: "include"
+					}
+				);
+
+				const data = await res.json();
+				if (data.status !== "success") {
+					localStorage.removeItem("loginInfo");
+					router.push("/");
+				}
+			} catch (err) {
+				localStorage.removeItem("loginInfo");
+				router.push("/");
+			}
+		})();
+
 		if (!loginInfo._id) router.push("/");
 
 		socket.open();
