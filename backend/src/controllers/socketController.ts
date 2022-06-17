@@ -170,8 +170,8 @@ const handlePrivateMessage = async (
 				_id: conversation._id
 			},
 			{
-				messages: {
-					$push: {
+				$push: {
+					messages: {
 						author: senderId,
 						message: data.message,
 						date: new Date(),
