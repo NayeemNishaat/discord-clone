@@ -40,12 +40,8 @@ function dashboard() {
 				const data = await res.json();
 				if (data.status !== "success") {
 					localStorage.removeItem("loginInfo");
-					router.push("/");
 				}
-			} catch (err) {
-				localStorage.removeItem("loginInfo");
-				router.push("/");
-			}
+			} catch (err) {}
 		})();
 
 		if (!loginInfo._id) router.push("/");

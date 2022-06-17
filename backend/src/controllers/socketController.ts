@@ -101,30 +101,6 @@ const updateOnlineFriends = async (userId: string, active: boolean = true) => {
 	});
 };
 
-export const connectedUsers = async (socket: Socket) => {
-	if (!Array.from(users.values()).includes(socket.data._id.toString()))
-		users.set(socket.id, socket.data._id.toString());
-
-	userInfo = await User.findById(
-		socket.data._id,
-		"receivedInvitation friends"
-	)
-		.populate("receivedInvitation", "username")
-		.populate("friends", "username")
-		.lean();
-
-	const friends = getOnlineFriends(userInfo.friends);
-
-	socket.emit("friend", friends);
-	socket.emit("invite", userInfo.receivedInvitation);
-
-	updateOnlineFriends(socket.data._id);
-	socket.on("disconnect", () => {
-		users.delete(socket.id);
-		updateOnlineFriends(socket.data._id, false);
-	});
-};
-
 export const sendInviteNotification = (
 	receiver: string,
 	sender: {
@@ -173,5 +149,41 @@ export const sendFriendNotification = (
 			const senderFriends = getOnlineFriends(sender.friends);
 			io.to(key).emit("friend", senderFriends);
 		}
+	});
+};
+
+const handlePrivateMessage = (
+	socket: Socket,
+	data: { to: string; message: string }
+) => {
+	//
+};
+
+export const connectedUsers = async (socket: Socket) => {
+	if (!Array.from(users.values()).includes(socket.data._id.toString()))
+		users.set(socket.id, socket.data._id.toString());
+
+	userInfo = await User.findById(
+		socket.data._id,
+		"receivedInvitation friends"
+	)
+		.populate("receivedInvitation", "username")
+		.populate("friends", "username")
+		.lean();
+
+	const friends = getOnlineFriends(userInfo.friends);
+
+	socket.emit("friend", friends);
+	socket.emit("invite", userInfo.receivedInvitation);
+
+	updateOnlineFriends(socket.data._id);
+
+	socket.on("private", (data) => {
+		handlePrivateMessage(socket, data);
+	});
+
+	socket.on("disconnect", () => {
+		users.delete(socket.id);
+		updateOnlineFriends(socket.data._id, false);
 	});
 };
