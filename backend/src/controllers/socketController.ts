@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
+import Conversation from "../models/conversationModel";
 import { getIoInstance } from "../socketEvents";
 
 interface JwtPayload {
@@ -152,11 +153,46 @@ export const sendFriendNotification = (
 	});
 };
 
-const handlePrivateMessage = (
+const handlePrivateMessage = async (
 	socket: Socket,
 	data: { to: string; message: string }
 ) => {
-	//
+	const senderId = socket.data._id;
+	const receiverId = data.to;
+
+	const conversation = await Conversation.findOne({
+		participents: { $all: [senderId, receiverId] }
+	});
+
+	if (conversation) {
+		await Conversation.updateOne(
+			{
+				_id: conversation._id
+			},
+			{
+				messages: {
+					$push: {
+						author: senderId,
+						message: data.message,
+						date: new Date(),
+						type: "private"
+					}
+				}
+			}
+		);
+	} else {
+		Conversation.create({
+			participents: [senderId, receiverId],
+			messages: [
+				{
+					author: senderId,
+					message: data.message,
+					date: new Date(),
+					type: "private"
+				}
+			]
+		});
+	}
 };
 
 export const connectedUsers = async (socket: Socket) => {

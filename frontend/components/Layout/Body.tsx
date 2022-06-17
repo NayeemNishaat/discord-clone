@@ -58,6 +58,8 @@ function Body({ name }: { name: string | null }) {
 		);
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (!(e.target as HTMLInputElement).value) return;
+
 		if (e.key === "Enter" && e.ctrlKey) {
 			socket.emit("private", {
 				to: activeChat.id,
