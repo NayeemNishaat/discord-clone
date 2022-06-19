@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { FiberManualRecord } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
+import socket from "../../lib/socketServer";
 import { setActiveChat } from "../../redux/slices/chatSlice";
 
 function FriendItem({
@@ -15,6 +16,8 @@ function FriendItem({
 	const dispatch = useDispatch();
 
 	const clickHandler = () => {
+		socket.emit("privateHistory", id);
+
 		dispatch(
 			setActiveChat({
 				id,

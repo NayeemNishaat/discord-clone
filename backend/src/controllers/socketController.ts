@@ -153,6 +153,20 @@ export const sendFriendNotification = (
 	});
 };
 
+const getPrivateHistory = async (socket: Socket, friendId: string) => {
+	const conversation = await Conversation.findOne({
+		participents: { $all: [socket.data._id, friendId] }
+	}).populate({
+		path: "messages",
+		populate: { path: "author", select: "username" }
+	});
+
+	if (!conversation) return socket.emit("privateHistory", null);
+
+	console.log(conversation.messages);
+	return socket.emit("privateHistory", conversation.messages);
+};
+
 const handlePrivateMessage = async (
 	socket: Socket,
 	data: { to: string; message: string }
@@ -213,6 +227,10 @@ export const connectedUsers = async (socket: Socket) => {
 	socket.emit("invite", userInfo.receivedInvitation);
 
 	updateOnlineFriends(socket.data._id);
+
+	socket.on("privateHistory", async (friendId: string) => {
+		getPrivateHistory(socket, friendId);
+	});
 
 	socket.on("private", (data) => {
 		handlePrivateMessage(socket, data);
