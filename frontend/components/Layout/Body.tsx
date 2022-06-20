@@ -1,59 +1,22 @@
-import { useSelector } from "react-redux";
-import { useRef, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useRef, useEffect } from "react";
+import { setMessages } from "../../redux/slices/chatSlice";
 import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
 
-// const messages = [
-// 	{
-// 		_id: 122,
-// 		message: "Hi!",
-// 		sameAuthor: false,
-// 		username: "Nayeem",
-// 		date: "22/01/2022",
-// 		time: "14:26",
-// 		sameDay: true
-// 	},
-// 	{
-// 		_id: 12,
-// 		message: "Hello!",
-// 		sameAuthor: true,
-// 		username: "Nayeem",
-// 		date: "22/01/2022",
-// 		time: "14:26",
-// 		sameDay: true
-// 	},
-// 	{
-// 		_id: 1,
-// 		message: "Sup?",
-// 		sameAuthor: false,
-// 		username: "Saymon",
-// 		date: "22/01/2022",
-// 		time: "14:26",
-// 		sameDay: false
-// 	},
-// 	{
-// 		_id: 1,
-// 		message: "Fine",
-// 		sameAuthor: false,
-// 		username: "Nayeem",
-// 		date: "22/01/2022",
-// 		time: "14:26",
-// 		sameDay: true
-// 	}
-// ];
-
 function Body({ name }: { name: string | null }) {
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
+	const messages = useSelector((state: RootState) => state.chat.messages);
 
-	const [messages, setMessages] = useState<[] | null>([]);
+	const dispatch = useDispatch();
 
 	const inputRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		socket.on("privateHistory", (receivedMessages) => {
-			if (!receivedMessages) return setMessages(null);
+			if (!receivedMessages) return dispatch(setMessages([]));
 
 			const messages = receivedMessages.map(
 				(
@@ -89,9 +52,9 @@ function Body({ name }: { name: string | null }) {
 					return message;
 				}
 			);
-			setMessages(messages);
+			dispatch(setMessages(messages));
 		});
-	}, []);
+	}, [socket]);
 
 	if (!activeChat.id)
 		return (
@@ -122,7 +85,7 @@ function Body({ name }: { name: string | null }) {
 				<span>{activeChat.name}</span>
 			</h2>
 			<p>Start a conversation with {activeChat.name}</p>
-			{!messages ? (
+			{!messages.length ? (
 				<p className="mt-2 text-xl font-bold text-[#ed6c02]">
 					You don't have any conversation with {activeChat.name}!
 				</p>

@@ -7,7 +7,7 @@ function MessageItem({
 	time,
 	sameDay
 }: {
-	_id: number;
+	_id: string;
 	message: string;
 	sameAuthor: boolean;
 	username: string;
