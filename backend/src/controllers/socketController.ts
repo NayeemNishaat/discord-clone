@@ -163,7 +163,6 @@ const getPrivateHistory = async (socket: Socket, friendId: string) => {
 
 	if (!conversation) return socket.emit("privateHistory", null);
 
-	console.log(conversation.messages);
 	return socket.emit("privateHistory", conversation.messages);
 };
 
