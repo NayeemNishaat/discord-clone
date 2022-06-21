@@ -11,11 +11,7 @@ type messages = {
 	author: { username: string };
 	message: string;
 	type: string;
-	// sameAuthor: boolean;
-	// username: string;
 	date: string;
-	// time: string;
-	// sameDay: boolean;
 }[];
 
 type message = {
@@ -23,16 +19,11 @@ type message = {
 	author: { username: string };
 	message: string;
 	type: string;
-	// sameAuthor: boolean;
-	// username: string;
 	date: string;
-	// time: string;
-	// sameDay: boolean;
 };
 
 type processedMessage = {
 	_id: string;
-	// author: { username: string };
 	message: string;
 	type: string;
 	sameAuthor: boolean;
@@ -43,8 +34,6 @@ type processedMessage = {
 };
 
 const processMessage = (processedMessages: messages) => {
-	// const processedMessages: processedMessages = [];
-
 	const messages = processedMessages.map((message, i: number) => {
 		const dateTime = new Date(message.date).toISOString().split("T");
 
@@ -64,18 +53,6 @@ const processMessage = (processedMessages: messages) => {
 			date: dateTime[0],
 			time: dateTime[1].slice(0, -8)
 		};
-		// processesMessage.username = message.author.username;
-		// processesMessage.sameAuthor =
-		// 	i > 0 &&
-		// 	processedMessages[i].author.username ===
-		// 		processedMessages[i - 1].author.username;
-		// const dateTime = new Date(message.date).toISOString().split("T");
-		// processesMessage.sameDay =
-		// 	i > 0 &&
-		// 	new Date(processedMessages[i].date).toDateString() ===
-		// 		new Date(processedMessages[i - 1].date).toDateString();
-		// processesMessage.date = dateTime[0];
-		// processesMessage.time = dateTime[1].slice(0, -8);
 
 		return processesMessage;
 	});
@@ -102,28 +79,6 @@ function Body({ name }: { name: string | null }) {
 		socket.on("privateHistory", (messages: messages) => {
 			if (!messages) return dispatch(setMessages([]));
 
-			// const messages = receivedMessages.map(
-			// 	(message: message, i: number) => {
-			// 		message.username = message.author.username;
-			// 		message.sameAuthor =
-			// 			i > 0 &&
-			// 			receivedMessages[i].author.username ===
-			// 				receivedMessages[i - 1].author.username;
-			// 		const dateTime = new Date(message.date)
-			// 			.toISOString()
-			// 			.split("T");
-			// 		message.sameDay =
-			// 			i > 0 &&
-			// 			new Date(receivedMessages[i].date).toDateString() ===
-			// 				new Date(
-			// 					receivedMessages[i - 1].date
-			// 				).toDateString();
-			// 		message.date = dateTime[0];
-			// 		message.time = dateTime[1].slice(0, -8);
-
-			// 		return message;
-			// 	}
-			// );
 			dispatch(setMessages(messages));
 		});
 	}, []);

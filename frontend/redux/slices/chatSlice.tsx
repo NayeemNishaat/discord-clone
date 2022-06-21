@@ -11,22 +11,14 @@ interface chatState {
 		author: { username: string };
 		message: string;
 		type: string;
-		// sameAuthor: boolean;
-		// username: string;
 		date: string;
-		// time: string;
-		// sameDay: boolean;
 	}[];
 	message: {
 		_id: string;
 		author: { username: string };
 		message: string;
 		type: string;
-		// sameAuthor: boolean;
-		// username: string;
 		date: string;
-		// time: string;
-		// sameDay: boolean;
 	};
 }
 
@@ -42,11 +34,7 @@ const initialState: chatState = {
 			author: { username: "" },
 			message: "",
 			type: "",
-			// sameAuthor: false,
-			// username: "",
 			date: new Date().toISOString()
-			// time: "",
-			// sameDay: false
 		}
 	],
 	message: {
@@ -54,11 +42,7 @@ const initialState: chatState = {
 		author: { username: "" },
 		message: "",
 		type: "",
-		// sameAuthor: false,
-		// username: "",
 		date: new Date().toISOString()
-		// time: "",
-		// sameDay: false
 	}
 };
 
