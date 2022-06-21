@@ -67,7 +67,7 @@ let userInfo: {
 const getSocketId = (id: string) => {
 	return [...users].find(
 		([_key, value]: [string, string]) => value === id
-	)![0] as string;
+	)?.[0] as string;
 };
 
 const getOnlineFriends = (friends: friends[]) => {
@@ -170,6 +170,7 @@ const handlePrivateMessage = async (
 	socket: Socket,
 	data: { to: string; message: string }
 ) => {
+	const io = getIoInstance();
 	const senderId = socket.data._id;
 	const receiverId = data.to;
 
@@ -177,35 +178,47 @@ const handlePrivateMessage = async (
 		participents: { $all: [senderId, receiverId] }
 	});
 
-	if (conversation) {
-		await Conversation.updateOne(
-			{
-				_id: conversation._id
-			},
-			{
-				$push: {
-					messages: {
-						author: senderId,
-						message: data.message,
-						date: new Date(),
-						type: "private"
-					}
-				}
-			}
-		);
-	} else {
-		Conversation.create({
-			participents: [senderId, receiverId],
-			messages: [
-				{
-					author: senderId,
-					message: data.message,
-					date: new Date(),
-					type: "private"
-				}
-			]
-		});
-	}
+	// if (conversation) {
+	// 	await Conversation.updateOne(
+	// 		{
+	// 			_id: conversation._id
+	// 		},
+	// 		{
+	// 			$push: {
+	// 				messages: {
+	// 					author: senderId,
+	// 					message: data.message,
+	// 					date: new Date(),
+	// 					type: "private"
+	// 				}
+	// 			}
+	// 		}
+	// 	);
+	// } else {
+	// 	Conversation.create({
+	// 		participents: [senderId, receiverId],
+	// 		messages: [
+	// 			{
+	// 				author: senderId,
+	// 				message: data.message,
+	// 				date: new Date(),
+	// 				type: "private"
+	// 			}
+	// 		]
+	// 	});
+	// }
+
+	[senderId, receiverId].forEach((id) => {
+		const activeUser = getSocketId(id.toString());
+
+		activeUser &&
+			io.to(activeUser).emit("private", {
+				author: senderId,
+				message: data.message,
+				date: new Date(),
+				type: "private"
+			});
+	});
 };
 
 export const connectedUsers = async (socket: Socket) => {

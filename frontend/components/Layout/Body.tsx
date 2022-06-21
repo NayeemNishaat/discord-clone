@@ -6,6 +6,17 @@ import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
 
+type message = {
+	_id: string;
+	author: { username: string };
+	message: string;
+	sameAuthor: boolean;
+	username: string;
+	date: string;
+	time: string;
+	sameDay: boolean;
+};
+
 function Body({ name }: { name: string | null }) {
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 	const messages = useSelector((state: RootState) => state.chat.messages);
@@ -15,23 +26,15 @@ function Body({ name }: { name: string | null }) {
 	const inputRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		socket.on("private", (message: message) => {
+			console.log(message);
+		});
+
 		socket.on("privateHistory", (receivedMessages) => {
 			if (!receivedMessages) return dispatch(setMessages([]));
 
 			const messages = receivedMessages.map(
-				(
-					message: {
-						_id: string;
-						author: { username: string };
-						message: string;
-						sameAuthor: boolean;
-						username: string;
-						date: string;
-						time: string;
-						sameDay: boolean;
-					},
-					i: number
-				) => {
+				(message: message, i: number) => {
 					message.username = message.author.username;
 					message.sameAuthor =
 						i > 0 &&
@@ -54,7 +57,7 @@ function Body({ name }: { name: string | null }) {
 			);
 			dispatch(setMessages(messages));
 		});
-	}, [socket]);
+	}, []);
 
 	if (!activeChat.id)
 		return (
