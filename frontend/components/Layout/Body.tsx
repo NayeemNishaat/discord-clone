@@ -72,7 +72,6 @@ function Body({ name }: { name: string | null }) {
 
 	useEffect(() => {
 		socket.on("private", (message: message) => {
-			console.log(message);
 			dispatch(pushMessage(message));
 		});
 
@@ -114,7 +113,7 @@ function Body({ name }: { name: string | null }) {
 			<p>Start a conversation with {activeChat.name}</p>
 			{!messages.length ? (
 				<p className="mt-2 text-xl font-bold text-[#ed6c02]">
-					You don't have any conversation with {activeChat.name}!
+					No conversation yet!
 				</p>
 			) : (
 				<MessageList messages={messages} />

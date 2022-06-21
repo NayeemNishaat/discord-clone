@@ -26,11 +26,15 @@ function MessageItem({
 			)}
 			{(!sameAuthor || !sameDay) && (
 				<div className="flex items-baseline gap-1 pt-2">
-					<span className="flex h-6 w-6 justify-center rounded-full bg-[#2196f3]">
-						{username.slice(0, 1)}
-					</span>
-					<h3 className="text-lg font-bold">{username}</h3>
-					<span className="text-xs text-[#777]">{time}</span>
+					{username && (
+						<>
+							<span className="flex h-6 w-6 justify-center rounded-full bg-[#2196f3]">
+								{username.slice(0, 1)}
+							</span>
+							<h3 className="text-lg font-bold">{username}</h3>
+							<span className="text-xs text-[#777]">{time}</span>
+						</>
+					)}
 				</div>
 			)}
 
