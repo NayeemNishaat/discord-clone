@@ -1,15 +1,40 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useRef, useEffect } from "react";
-import { setMessages } from "../../redux/slices/chatSlice";
+import { setMessages, pushMessage } from "../../redux/slices/chatSlice";
 import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
 
+type messages = {
+	_id: string;
+	author: { username: string };
+	message: string;
+	type: string;
+	// sameAuthor: boolean;
+	// username: string;
+	date: string;
+	// time: string;
+	// sameDay: boolean;
+}[];
+
 type message = {
 	_id: string;
 	author: { username: string };
 	message: string;
+	type: string;
+	// sameAuthor: boolean;
+	// username: string;
+	date: string;
+	// time: string;
+	// sameDay: boolean;
+};
+
+type processedMessage = {
+	_id: string;
+	// author: { username: string };
+	message: string;
+	type: string;
 	sameAuthor: boolean;
 	username: string;
 	date: string;
@@ -17,9 +42,52 @@ type message = {
 	sameDay: boolean;
 };
 
+const processMessage = (processedMessages: messages) => {
+	// const processedMessages: processedMessages = [];
+
+	const messages = processedMessages.map((message, i: number) => {
+		const dateTime = new Date(message.date).toISOString().split("T");
+
+		const processesMessage: processedMessage = {
+			_id: message._id,
+			username: message.author.username,
+			message: message.message,
+			type: message.type,
+			sameAuthor:
+				i > 0 &&
+				processedMessages[i].author.username ===
+					processedMessages[i - 1].author.username,
+			sameDay:
+				i > 0 &&
+				new Date(processedMessages[i].date).toDateString() ===
+					new Date(processedMessages[i - 1].date).toDateString(),
+			date: dateTime[0],
+			time: dateTime[1].slice(0, -8)
+		};
+		// processesMessage.username = message.author.username;
+		// processesMessage.sameAuthor =
+		// 	i > 0 &&
+		// 	processedMessages[i].author.username ===
+		// 		processedMessages[i - 1].author.username;
+		// const dateTime = new Date(message.date).toISOString().split("T");
+		// processesMessage.sameDay =
+		// 	i > 0 &&
+		// 	new Date(processedMessages[i].date).toDateString() ===
+		// 		new Date(processedMessages[i - 1].date).toDateString();
+		// processesMessage.date = dateTime[0];
+		// processesMessage.time = dateTime[1].slice(0, -8);
+
+		return processesMessage;
+	});
+
+	return messages;
+};
+
 function Body({ name }: { name: string | null }) {
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
-	const messages = useSelector((state: RootState) => state.chat.messages);
+	const messages = processMessage(
+		useSelector((state: RootState) => state.chat.messages)
+	);
 
 	const dispatch = useDispatch();
 
@@ -28,33 +96,34 @@ function Body({ name }: { name: string | null }) {
 	useEffect(() => {
 		socket.on("private", (message: message) => {
 			console.log(message);
+			dispatch(pushMessage(message));
 		});
 
-		socket.on("privateHistory", (receivedMessages) => {
-			if (!receivedMessages) return dispatch(setMessages([]));
+		socket.on("privateHistory", (messages: messages) => {
+			if (!messages) return dispatch(setMessages([]));
 
-			const messages = receivedMessages.map(
-				(message: message, i: number) => {
-					message.username = message.author.username;
-					message.sameAuthor =
-						i > 0 &&
-						receivedMessages[i].author.username ===
-							receivedMessages[i - 1].author.username;
-					const dateTime = new Date(message.date)
-						.toISOString()
-						.split("T");
-					message.sameDay =
-						i > 0 &&
-						new Date(receivedMessages[i].date).toDateString() ===
-							new Date(
-								receivedMessages[i - 1].date
-							).toDateString();
-					message.date = dateTime[0];
-					message.time = dateTime[1].slice(0, -8);
+			// const messages = receivedMessages.map(
+			// 	(message: message, i: number) => {
+			// 		message.username = message.author.username;
+			// 		message.sameAuthor =
+			// 			i > 0 &&
+			// 			receivedMessages[i].author.username ===
+			// 				receivedMessages[i - 1].author.username;
+			// 		const dateTime = new Date(message.date)
+			// 			.toISOString()
+			// 			.split("T");
+			// 		message.sameDay =
+			// 			i > 0 &&
+			// 			new Date(receivedMessages[i].date).toDateString() ===
+			// 				new Date(
+			// 					receivedMessages[i - 1].date
+			// 				).toDateString();
+			// 		message.date = dateTime[0];
+			// 		message.time = dateTime[1].slice(0, -8);
 
-					return message;
-				}
-			);
+			// 		return message;
+			// 	}
+			// );
 			dispatch(setMessages(messages));
 		});
 	}, []);
@@ -96,7 +165,7 @@ function Body({ name }: { name: string | null }) {
 				<MessageList messages={messages} />
 			)}
 			<TextField
-				className="mt-auto w-full p-5"
+				className="mt-auto w-full p-5 pt-0"
 				id="filled-textarea"
 				rows={2}
 				sx={{

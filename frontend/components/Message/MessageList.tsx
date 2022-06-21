@@ -14,7 +14,7 @@ function MessageList({
 	}[];
 }) {
 	return (
-		<ul className="w-full p-5">
+		<ul className="h-[431px] w-full overflow-y-scroll border-b-[1rem] border-transparent p-5">
 			{messages.map((message, i) => (
 				<MessageItem key={i} {...message} />
 			))}

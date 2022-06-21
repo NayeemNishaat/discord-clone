@@ -24,7 +24,7 @@ function MessageItem({
 					<span className="h-[1px] flex-1 bg-[#888]"></span>
 				</div>
 			)}
-			{!sameAuthor && (
+			{(!sameAuthor || !sameDay) && (
 				<div className="flex items-baseline gap-1 pt-2">
 					<span className="flex h-6 w-6 justify-center rounded-full bg-[#2196f3]">
 						{username.slice(0, 1)}

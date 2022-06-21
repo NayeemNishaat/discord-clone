@@ -10,12 +10,24 @@ interface chatState {
 		_id: string;
 		author: { username: string };
 		message: string;
-		sameAuthor: boolean;
-		username: string;
+		type: string;
+		// sameAuthor: boolean;
+		// username: string;
 		date: string;
-		time: string;
-		sameDay: boolean;
+		// time: string;
+		// sameDay: boolean;
 	}[];
+	message: {
+		_id: string;
+		author: { username: string };
+		message: string;
+		type: string;
+		// sameAuthor: boolean;
+		// username: string;
+		date: string;
+		// time: string;
+		// sameDay: boolean;
+	};
 }
 
 const initialState: chatState = {
@@ -29,13 +41,25 @@ const initialState: chatState = {
 			_id: "",
 			author: { username: "" },
 			message: "",
-			sameAuthor: false,
-			username: "",
-			date: "",
-			time: "",
-			sameDay: false
+			type: "",
+			// sameAuthor: false,
+			// username: "",
+			date: new Date().toISOString()
+			// time: "",
+			// sameDay: false
 		}
-	]
+	],
+	message: {
+		_id: "",
+		author: { username: "" },
+		message: "",
+		type: "",
+		// sameAuthor: false,
+		// username: "",
+		date: new Date().toISOString()
+		// time: "",
+		// sameDay: false
+	}
 };
 
 const chatSlice = createSlice({
@@ -55,9 +79,15 @@ const chatSlice = createSlice({
 			action: PayloadAction<chatState["messages"]>
 		) => {
 			state.messages = action.payload;
+		},
+		pushMessage: (
+			state: chatState,
+			action: PayloadAction<chatState["message"]>
+		) => {
+			state.messages.push(action.payload);
 		}
 	}
 });
 
-export const { setActiveChat, setMessages } = chatSlice.actions;
+export const { setActiveChat, setMessages, pushMessage } = chatSlice.actions;
 export default chatSlice.reducer;

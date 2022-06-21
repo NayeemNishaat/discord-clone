@@ -213,7 +213,7 @@ const handlePrivateMessage = async (
 
 		activeUser &&
 			io.to(activeUser).emit("private", {
-				author: senderId,
+				author: { username: socket.data.username },
 				message: data.message,
 				date: new Date(),
 				type: "private"
