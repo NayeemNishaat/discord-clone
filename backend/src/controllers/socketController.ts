@@ -178,35 +178,35 @@ const handlePrivateMessage = async (
 		participents: { $all: [senderId, receiverId] }
 	});
 
-	// if (conversation) {
-	// 	await Conversation.updateOne(
-	// 		{
-	// 			_id: conversation._id
-	// 		},
-	// 		{
-	// 			$push: {
-	// 				messages: {
-	// 					author: senderId,
-	// 					message: data.message,
-	// 					date: new Date(),
-	// 					type: "private"
-	// 				}
-	// 			}
-	// 		}
-	// 	);
-	// } else {
-	// 	Conversation.create({
-	// 		participents: [senderId, receiverId],
-	// 		messages: [
-	// 			{
-	// 				author: senderId,
-	// 				message: data.message,
-	// 				date: new Date(),
-	// 				type: "private"
-	// 			}
-	// 		]
-	// 	});
-	// }
+	if (conversation) {
+		await Conversation.updateOne(
+			{
+				_id: conversation._id
+			},
+			{
+				$push: {
+					messages: {
+						author: senderId,
+						message: data.message,
+						date: new Date(),
+						type: "private"
+					}
+				}
+			}
+		);
+	} else {
+		Conversation.create({
+			participents: [senderId, receiverId],
+			messages: [
+				{
+					author: senderId,
+					message: data.message,
+					date: new Date(),
+					type: "private"
+				}
+			]
+		});
+	}
 
 	[senderId, receiverId].forEach((id) => {
 		const activeUser = getSocketId(id.toString());
