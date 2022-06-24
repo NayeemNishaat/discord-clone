@@ -33,20 +33,20 @@ function Input({
 					setValue(e.target.value);
 					setTouched(true);
 				}}
-				sx={{
-					".MuiInputLabel-root": {
-						color: "white"
-					},
-					".MuiInput-root": {
-						color: "white"
-					},
-					".MuiInput-root::before": {
-						"border-bottom": "1px solid #ffffffaa"
-					},
-					".MuiInput-root:hover:not(.Mui-disabled):before": {
-						"border-bottom": "2px solid white"
-					}
-				}}
+				// sx={{
+				// 	".MuiInputLabel-root": {
+				// 		color: "white"
+				// 	},
+				// 	".MuiInput-root": {
+				// 		color: "white"
+				// 	},
+				// 	".MuiInput-root::before": {
+				// 		"border-bottom": "1px solid #ffffffaa"
+				// 	},
+				// 	".MuiInput-root:hover:not(.Mui-disabled):before": {
+				// 		"border-bottom": "2px solid white"
+				// 	}
+				// }}
 			/>
 		</div>
 	);
