@@ -112,7 +112,7 @@ function Body({ name }: { name: string | null }) {
 			</h2>
 			<p>Start a conversation with {activeChat.name}</p>
 			{!messages.length ? (
-				<p className="mt-2 text-xl font-bold text-[#ed6c02]">
+				<p className="mt-2 flex-1 text-xl font-bold text-[#ed6c02]">
 					No conversation yet!
 				</p>
 			) : (
@@ -122,21 +122,6 @@ function Body({ name }: { name: string | null }) {
 				className="mt-auto w-full p-5 pt-0"
 				id="filled-textarea"
 				rows={2}
-				sx={{
-					"& .MuiOutlinedInput-root": {
-						padding: "0.8rem",
-						color: "white",
-						"& fieldset": {
-							borderColor: "#fff7"
-						},
-						"&:hover fieldset": {
-							borderColor: "white"
-						},
-						"&.Mui-focused fieldset": {
-							borderColor: "#1976d2"
-						}
-					}
-				}}
 				placeholder="Enter your message (press ctrl + enter to send)."
 				multiline
 				variant="outlined"

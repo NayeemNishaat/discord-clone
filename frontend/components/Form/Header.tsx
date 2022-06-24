@@ -1,8 +1,8 @@
 function Header({ title, subtitle }: { title: string; subtitle: string }) {
 	return (
 		<div>
-			<h3 className="text-center text-white">{title}</h3>
-			<p className="text-[#b9bbbe]">{subtitle}</p>
+			<h3 className="text-center">{title}</h3>
+			<p>{subtitle}</p>
 		</div>
 	);
 }

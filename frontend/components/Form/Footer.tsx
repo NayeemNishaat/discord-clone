@@ -27,7 +27,7 @@ function Footer({
 			>
 				Submit
 			</Button>
-			<p className="mt-5 text-white">
+			<p className="mt-5">
 				{text}{" "}
 				<Link href={link}>
 					<a className="text-blue-500 underline">{children}</a>

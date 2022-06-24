@@ -16,10 +16,10 @@ function InviteItem({
 }) {
 	return (
 		<div className="mr-1 flex items-center">
-			<Button className="flex w-full items-center justify-between px-0 py-1.5 capitalize text-white">
+			<Button className="flex w-full items-center justify-between px-0 py-1.5 capitalize">
 				{/* Warning: Should have created a component */}
 				<div className="flex gap-2">
-					<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] leading-none">
+					<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] leading-none text-white">
 						{username.slice(0, 1)}
 					</span>
 					<span>{username}</span>

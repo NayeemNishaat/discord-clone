@@ -22,9 +22,9 @@ function TopBar() {
 				<span className="ml-5 text-white">{activeChat.name}</span>
 			</div>
 			<Button
+				sx={{ marginRight: "20px" }}
 				color="warning"
 				variant="outlined"
-				className="mr-5 capitalize"
 				onClick={async () => {
 					try {
 						localStorage.removeItem("loginInfo");

@@ -136,7 +136,7 @@ export default function ModalCustom({
 				}}
 			>
 				<Fade in={open}>
-					<div className="absolute top-1/2 left-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 rounded bg-black p-5 text-center text-white">
+					<div className="absolute top-1/2 left-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 rounded bg-[#d3d3d3] p-5 text-center">
 						<h4 className="font-bold">Invite</h4>
 						<p>Insert your friend's email to invite</p>
 						<Input
@@ -151,9 +151,12 @@ export default function ModalCustom({
 						/>
 						<Button
 							variant="outlined"
-							className="mt-10 font-bold"
 							disabled={!valid}
 							onClick={clickHandler}
+							sx={{
+								marginTop: "10px",
+								fontWeight: "bold"
+							}}
 						>
 							Submit
 						</Button>
