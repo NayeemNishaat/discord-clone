@@ -112,14 +112,16 @@ function Body({ name }: { name: string | null }) {
 			</h2>
 			<p>Start a conversation with {activeChat.name}</p>
 			{!messages.length ? (
-				<p className="mt-2 flex-1 text-xl font-bold text-[#ed6c02]">
+				<p className="flex-1 text-xl font-bold text-[#ed6c02]">
 					No conversation yet!
 				</p>
 			) : (
 				<MessageList messages={messages} />
 			)}
 			<TextField
-				className="mt-auto w-full p-5 pt-0"
+				InputLabelProps={{
+					style: { color: "#fff" }
+				}}
 				id="filled-textarea"
 				rows={2}
 				placeholder="Enter your message (press ctrl + enter to send)."
@@ -127,6 +129,11 @@ function Body({ name }: { name: string | null }) {
 				variant="outlined"
 				ref={inputRef}
 				onKeyDown={handleKeyDown}
+				sx={{
+					marginTop: "auto",
+					padding: "0 20px 20px 20px",
+					width: "100%"
+				}}
 			/>
 		</div>
 	);

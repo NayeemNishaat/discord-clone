@@ -14,7 +14,7 @@ function MessageList({
 	}[];
 }) {
 	return (
-		<div className="flex h-[431px] w-full flex-col-reverse overflow-auto">
+		<div className="flex h-[420px] w-full flex-col-reverse overflow-auto">
 			<ul className="flex-1 border-b-[1rem] border-transparent p-5">
 				{messages.map((message, i) => (
 					<MessageItem key={i} {...message} />

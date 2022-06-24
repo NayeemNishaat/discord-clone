@@ -6,7 +6,7 @@ function FriendList({
 	friends: { _id: string; username: string; isOnline: boolean }[];
 }) {
 	return (
-		<ul className="flex flex-col gap-2">
+		<ul className="flex flex-col items-start gap-2">
 			{friends.map((friend, i) => (
 				<FriendItem key={i} id={friend._id} isOnline={friend.isOnline}>
 					{friend.username}
