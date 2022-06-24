@@ -18,9 +18,12 @@ function Footer({
 		<>
 			<Button
 				variant="outlined"
-				className="mt-10 font-bold"
 				disabled={disabled}
 				onClick={click}
+				sx={{
+					fontWeight: "bold",
+					marginTop: "20px"
+				}}
 			>
 				Submit
 			</Button>
