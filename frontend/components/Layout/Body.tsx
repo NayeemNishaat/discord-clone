@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
+import { color } from "@mui/system";
 
 type messages = {
 	_id: string;
@@ -119,12 +120,12 @@ function Body({ name }: { name: string | null }) {
 				<MessageList messages={messages} />
 			)}
 			<TextField
-				InputLabelProps={{
+				InputProps={{
 					style: { color: "#fff" }
 				}}
 				id="filled-textarea"
 				rows={2}
-				placeholder="Enter your message (press ctrl + enter to send)."
+				placeholder="Enter your message (press ctrl + enter to send)!"
 				multiline
 				variant="outlined"
 				ref={inputRef}

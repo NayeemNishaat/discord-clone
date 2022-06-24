@@ -30,10 +30,10 @@ function FriendItem({
 	return (
 		<Button
 			onClick={clickHandler}
-			className="flex items-center justify-between px-0 py-1.5 capitalize"
+			className="flex w-full items-center !justify-between px-0 py-1.5 capitalize"
 		>
 			<div className="flex gap-2">
-				<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] leading-none text-white">
+				<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] !leading-loose text-white">
 					{children.slice(0, 1)}
 				</span>
 				<span>{children}</span>

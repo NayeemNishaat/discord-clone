@@ -29,7 +29,10 @@ const Index: NextPage = () => {
 							<div className="mt-5 flex justify-center gap-5">
 								<Link href="/login">
 									<a>
-										<Button className="bg-black text-lg text-white hover:bg-[#ff0038]">
+										<Button
+											variant="contained"
+											color="success"
+										>
 											Log In
 										</Button>
 									</a>
@@ -37,7 +40,10 @@ const Index: NextPage = () => {
 
 								<Link href="/register">
 									<a>
-										<Button className="bg-white text-lg text-black hover:bg-[#ff7b00]">
+										<Button
+											variant="contained"
+											color="secondary"
+										>
 											Register
 										</Button>
 									</a>
