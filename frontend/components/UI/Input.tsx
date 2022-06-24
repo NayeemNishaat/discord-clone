@@ -34,18 +34,18 @@ function Input({
 					setTouched(true);
 				}}
 				sx={{
-					".css-1c2i806-MuiFormLabel-root-MuiInputLabel-root": {
+					".MuiInputLabel-root": {
 						color: "white"
 					},
-					".css-aqpgxn-MuiFormLabel-root-MuiInputLabel-root": {
+					".MuiInput-root": {
 						color: "white"
 					},
-					".MuiInput-input": { color: "white" },
-					".css-1ptx2yq-MuiInputBase-root-MuiInput-root:before": {
-						borderBottom: "1px solid white"
+					".MuiInput-root::before": {
+						"border-bottom": "1px solid #ffffffaa"
 					},
-					".css-1ptx2yq-MuiInputBase-root-MuiInput-root:hover:not(.Mui-disabled):before":
-						{ borderBottom: "2px solid white" }
+					".MuiInput-root:hover:not(.Mui-disabled):before": {
+						"border-bottom": "2px solid white"
+					}
 				}}
 			/>
 		</div>
