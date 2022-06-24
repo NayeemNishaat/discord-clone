@@ -6,7 +6,7 @@ import Header from "../components/Form/Header";
 import Footer from "../components/Form/Footer";
 import { AlertColor } from "@mui/material/Alert";
 import { useDispatch } from "react-redux";
-import { loginInfo } from "../redux/slices/authSlice";
+import { setLoginInfo } from "../redux/slices/authSlice";
 import Alert from "../components/UI/Alert";
 
 function register() {
@@ -141,7 +141,7 @@ function register() {
 			});
 
 			dispatch(
-				loginInfo({
+				setLoginInfo({
 					_id: data.data._id,
 					username: data.data.username,
 					email: data.data.email

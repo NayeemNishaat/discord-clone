@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loginInfo } from "../../redux/slices/authSlice";
+import { setLoginInfo } from "../../redux/slices/authSlice";
 
 function Layout(props: { children: React.ReactNode }) {
 	const dispatch = useDispatch();
@@ -13,7 +13,7 @@ function Layout(props: { children: React.ReactNode }) {
 		} = JSON.parse(localStorage.getItem("loginInfo") || "null");
 
 		if (!storedLoginInfo) return;
-		dispatch(loginInfo(storedLoginInfo));
+		dispatch(setLoginInfo(storedLoginInfo));
 	}, []);
 
 	return <>{props.children}</>;

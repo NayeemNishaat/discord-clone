@@ -5,7 +5,7 @@ import Form from "../components/Form/Form";
 import Input from "../components/UI/Input";
 import Header from "../components/Form/Header";
 import Footer from "../components/Form/Footer";
-import { loginInfo } from "../redux/slices/authSlice";
+import { setLoginInfo } from "../redux/slices/authSlice";
 import Alert from "../components/UI/Alert";
 import { AlertColor } from "@mui/material/Alert";
 
@@ -104,7 +104,7 @@ function login() {
 			});
 
 			dispatch(
-				loginInfo({
+				setLoginInfo({
 					_id: data.data._id,
 					username: data.data.username,
 					email: data.data.email

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { loginInfo } from "../../redux/slices/authSlice";
+import { setLoginInfo } from "../../redux/slices/authSlice";
 import { receivedInvitations, friends } from "../../redux/slices/userSlice";
 
 function TopBar() {
@@ -38,7 +38,7 @@ function TopBar() {
 						);
 
 						dispatch(
-							loginInfo({
+							setLoginInfo({
 								_id: null,
 								email: null,
 								username: null

@@ -14,6 +14,7 @@ import {
 	friends,
 	addActiveFriend
 } from "../redux/slices/userSlice";
+import { setLoginInfo } from "../redux/slices/authSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -40,6 +41,10 @@ function dashboard() {
 				const data = await res.json();
 				if (data.status !== "success") {
 					localStorage.removeItem("loginInfo");
+					dispatch(
+						setLoginInfo({ _id: null, email: null, username: null })
+					);
+					router.replace("/");
 				}
 			} catch (err) {}
 		})();
