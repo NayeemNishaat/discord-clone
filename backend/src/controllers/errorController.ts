@@ -57,7 +57,6 @@ export const errorHandler = (
 	} else {
 		let error = { ...err };
 		error.message = err.message;
-		console.log(error);
 
 		if (error._message === "User validation failed")
 			error = handleValidationErrorDB(error);
