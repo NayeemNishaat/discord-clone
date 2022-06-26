@@ -86,6 +86,10 @@ function dashboard() {
 			}
 		);
 
+		socket.on("group", (groupData) => {
+			console.log(groupData);
+		});
+
 		let timeout: NodeJS.Timeout;
 		timeout = setTimeout(
 			() =>

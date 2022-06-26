@@ -153,6 +153,14 @@ export const sendFriendNotification = (
 	});
 };
 
+export const sendGroupNotification = (userId: string, groups: []) => {
+	const io = getIoInstance();
+
+	const userSocketId = getSocketId(userId.toString());
+
+	io.to(userSocketId).emit("group", groups);
+};
+
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
 	const conversation = await Conversation.findOne({
 		participents: { $all: [socket.data._id, friendId] }

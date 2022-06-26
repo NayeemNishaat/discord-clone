@@ -10,10 +10,6 @@ function ActivityBar() {
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
-	// const createGroupHandler = () => {
-	// 	console.log(5);
-	// };
-
 	return (
 		<div className="flex h-screen w-20 flex-col items-center gap-5 bg-[#202225] pt-5">
 			<IconButton

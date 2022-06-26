@@ -4,7 +4,8 @@ import { validMail } from "../lib/validation";
 import User from "../models/userModel";
 import {
 	sendInviteNotification,
-	sendFriendNotification
+	sendFriendNotification,
+	sendGroupNotification
 } from "./socketController";
 
 interface customRequest extends Request {
@@ -83,11 +84,18 @@ export const invite = catchAsync(
 export const createGroup = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		const { groupName } = req.body;
-		console.log(groupName);
 
-		res.status(200).json({
-			status: "success"
-		});
+		const groups = await User.findByIdAndUpdate(
+			req.user._id,
+			{
+				$push: { groups: { name: groupName, members: [req.user._id] } }
+			},
+			{ new: true, select: "groups" }
+		);
+
+		sendGroupNotification(req.user._id, groups);
+
+		res.status(201).json({ status: "success" });
 	}
 );
 
