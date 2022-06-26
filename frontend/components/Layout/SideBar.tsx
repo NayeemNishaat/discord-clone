@@ -1,8 +1,8 @@
 import { useState } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Button } from "@mui/material";
-import MailLockIcon from "@mui/icons-material/MailLock";
-import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import PeopleIcon from "@mui/icons-material/People";
+import EmailIcon from "@mui/icons-material/Email";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Modal from "../UI/Modal";
@@ -32,17 +32,17 @@ function SideBar() {
 			<Modal open={open} handleClose={handleClose} />
 
 			<div className="mt-10 flex w-4/5 flex-1 flex-col text-white">
-				<div className="flex h-2/3 flex-col">
-					<div className="mb-5 flex gap-3">
-						<MailLockIcon />
-						Private Message
+				<div className="flex h-2/3 flex-col overflow-y-auto">
+					<div className="mb-5 flex items-center gap-3">
+						<PeopleIcon />
+						Friend
 					</div>
 
 					<FriendList friends={friends} />
 				</div>
-				<div className="flex h-1/3 flex-col">
-					<div className="mb-3 flex gap-3">
-						<MarkEmailUnreadIcon />
+				<div className="flex h-1/3 flex-col overflow-y-auto">
+					<div className="mb-3 flex items-center gap-3">
+						<EmailIcon />
 						Invitation
 					</div>
 

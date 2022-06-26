@@ -125,7 +125,7 @@ function Body({ name }: { name: string | null }) {
 				}}
 				id="filled-textarea"
 				rows={2}
-				placeholder="Enter your message (press ctrl + enter to send)!"
+				placeholder="Enter your message (press ctrl + enter to send)."
 				multiline
 				variant="outlined"
 				ref={inputRef}
