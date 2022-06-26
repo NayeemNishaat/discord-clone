@@ -80,6 +80,17 @@ export const invite = catchAsync(
 	}
 );
 
+export const createGroup = catchAsync(
+	async (req: customRequest, res: Response, next: NextFunction) => {
+		const { groupName } = req.body;
+		console.log(groupName);
+
+		res.status(200).json({
+			status: "success"
+		});
+	}
+);
+
 export const accept = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
 		const { id } = req.body;

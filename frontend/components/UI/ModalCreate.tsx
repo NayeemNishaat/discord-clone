@@ -1,22 +1,22 @@
 import Backdrop from "@mui/material/Backdrop";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Input from "../UI/Input";
+import Input from "./Input";
 import { useState, useEffect, SyntheticEvent, useRef } from "react";
 import { Button } from "@mui/material";
 import { AlertColor } from "@mui/material/Alert";
 import Alert from "./Alert";
 
-export default function ModalCustom({
+export default function ModalCreate({
 	open,
 	handleClose
 }: {
 	open: boolean;
-	handleClose: React.ReactEventHandler;
+	handleClose: Function;
 }) {
-	const [email, setEmail] = useState("");
-	const [validEmail, setValidEmail] = useState(true);
-	const [emailTouched, setEmailTouched] = useState(false);
+	const [name, setName] = useState("");
+	const [validName, setValidName] = useState(true);
+	const [nameTouched, setNameTouched] = useState(false);
 	const [valid, setValid] = useState(false);
 	const [alertInfo, setAlertInfo] = useState<{
 		show: boolean;
@@ -31,17 +31,10 @@ export default function ModalCustom({
 	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
 
 	useEffect(() => {
-		if (
-			emailTouched &&
-			(email === "" ||
-				!new RegExp(
-					/^[^\W][a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-				).test(email.toLowerCase()))
-		)
-			setValidEmail(false);
-		else setValidEmail(true);
+		if (nameTouched && name === "") setValidName(false);
+		else setValidName(true);
 
-		if (emailTouched && validEmail) setValid(true);
+		if (nameTouched && validName) setValid(true);
 		else setValid(false);
 
 		setAlertInfo({
@@ -53,26 +46,26 @@ export default function ModalCustom({
 		return () => {
 			clearTimeout(timerRef.current as NodeJS.Timeout);
 		};
-	}, [emailTouched, email, validEmail]);
+	}, [nameTouched, name, validName]);
 
 	const clickHandler = async () => {
 		try {
 			const res = await fetch(
-				"http://localhost:5000/api/v1/user/invite",
+				"http://localhost:5000/api/v1/user/create-group",
 				{
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json"
 					},
 					credentials: "include",
-					body: JSON.stringify({ invitee: email })
+					body: JSON.stringify({ groupName: name })
 				}
 			);
 
 			const data = await res.json();
 
-			setEmailTouched(false);
-			setEmail("");
+			setNameTouched(false);
+			setName("");
 
 			if (data.status === "fail" || data.status === "error")
 				throw Error(data.message);
@@ -80,8 +73,10 @@ export default function ModalCustom({
 			setAlertInfo({
 				show: true,
 				type: "success",
-				message: "Invitation Sent!"
+				message: "Group Created!"
 			});
+
+			handleClose();
 
 			timerRef.current = setTimeout(() => {
 				setAlertInfo({
@@ -137,17 +132,17 @@ export default function ModalCustom({
 			>
 				<Fade in={open}>
 					<div className="absolute top-1/2 left-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 rounded bg-[#d3d3d3] p-5 text-center">
-						<h4 className="font-bold">Invite</h4>
-						<p>Insert your friend's email to invite</p>
+						<h4 className="font-bold">Create Group</h4>
+						<p>Insert Group Name</p>
 						<Input
-							label="Email"
-							placeholder="Enter Your Email"
-							type="email"
-							value={email}
-							setValue={setEmail}
-							error={!validEmail}
-							helperText={!validEmail ? "Invalid Email" : ""}
-							setTouched={setEmailTouched}
+							label="Name"
+							placeholder="Enter Group Name"
+							type="text"
+							value={name}
+							setValue={setName}
+							error={!validName}
+							helperText={!validName ? "Invalid Group Name" : ""}
+							setTouched={setNameTouched}
 						/>
 						<Button
 							variant="outlined"

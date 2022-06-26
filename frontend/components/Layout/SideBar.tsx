@@ -5,7 +5,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import EmailIcon from "@mui/icons-material/Email";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import Modal from "../UI/Modal";
+import Modal from "../UI/ModalInvite";
 import FriendList from "../Friend/FriendList";
 import InviteList from "../Invite/InviteList";
 
