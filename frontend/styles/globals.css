@@ -6,7 +6,7 @@
 	overflow-y: scroll;
 }
 #custom-scrollbar::-webkit-scrollbar {
-	width: 4px;
+	width: 3px;
 	cursor: pointer;
 	/* background-color: rgba(229, 231, 235, var(--bg-opacity)); */
 }
@@ -16,7 +16,7 @@
 	/* background: red; */
 }
 #custom-scrollbar::-webkit-scrollbar-thumb {
-	border-radius: 2rem;
+	border-radius: 5rem;
 	cursor: pointer;
 	background-color: #a0aec0;
 	/* outline: 1px solid slategrey; */

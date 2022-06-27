@@ -65,6 +65,7 @@ let userInfo: {
 };
 
 const getSocketId = (id: string) => {
+	console.log(users);
 	return [...users].find(
 		([_key, value]: [string, string]) => value === id
 	)?.[0] as string;
@@ -160,15 +161,16 @@ export const sendGroupNotification = async (
 ) => {
 	const io = getIoInstance();
 
+	if (!socketId) socketId = getSocketId(userId.toString());
+
 	if (!groups) {
-		socketId = getSocketId(userId.toString());
 		groups = await User.findById(userId, "groups").populate(
 			"groups.members",
 			"username"
 		);
 	}
 
-	io.to(socketId!).emit("group", groups);
+	io.to(socketId).emit("group", groups);
 };
 
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
