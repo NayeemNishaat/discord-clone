@@ -65,7 +65,6 @@ let userInfo: {
 };
 
 const getSocketId = (id: string) => {
-	console.log(users);
 	return [...users].find(
 		([_key, value]: [string, string]) => value === id
 	)?.[0] as string;
