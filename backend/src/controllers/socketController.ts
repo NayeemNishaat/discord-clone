@@ -153,11 +153,18 @@ export const sendFriendNotification = (
 	});
 };
 
-export const sendGroupNotification = (userId: string, groups: []) => {
+export const sendGroupNotification = async (
+	userId: string,
+	groups: [] | null
+) => {
 	const io = getIoInstance();
 
 	const userSocketId = getSocketId(userId.toString());
 
+	if (!groups) {
+		groups = await User.findById(userId, "groups");
+	}
+	console.log(14);
 	io.to(userSocketId).emit("group", groups);
 };
 
@@ -246,18 +253,20 @@ export const connectedUsers = async (socket: Socket) => {
 	socket.emit("friend", friends);
 	socket.emit("invite", userInfo.receivedInvitation);
 
-	updateOnlineFriends(socket.data._id);
+	await updateOnlineFriends(socket.data._id);
+
+	await sendGroupNotification(socket.data._id, null);
 
 	socket.on("privateHistory", async (friendId: string) => {
-		getPrivateHistory(socket, friendId);
+		await getPrivateHistory(socket, friendId);
 	});
 
-	socket.on("private", (data) => {
-		handlePrivateMessage(socket, data);
+	socket.on("private", async (data) => {
+		await handlePrivateMessage(socket, data);
 	});
 
-	socket.on("disconnect", () => {
+	socket.on("disconnect", async () => {
 		users.delete(socket.id);
-		updateOnlineFriends(socket.data._id, false);
+		await updateOnlineFriends(socket.data._id, false);
 	});
 };
