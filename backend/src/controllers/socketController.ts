@@ -164,7 +164,7 @@ export const sendGroupNotification = async (
 	if (!groups) {
 		groups = await User.findById(userId, "groups");
 	}
-	console.log(14);
+
 	io.to(userSocketId).emit("group", groups);
 };
 

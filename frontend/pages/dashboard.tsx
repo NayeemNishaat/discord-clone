@@ -14,7 +14,6 @@ import {
 	friends,
 	addActiveFriend
 } from "../redux/slices/userSlice";
-import { setLoginInfo } from "../redux/slices/authSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -28,28 +27,19 @@ function dashboard() {
 	const loginInfo = useSelector((state: RootState) => state.auth);
 
 	useEffect(() => {
-		(async () => {
-			try {
-				const res = await fetch(
-					"http://localhost:5000/api/v1/auth/check-login",
-					{
-						method: "POST",
-						credentials: "include"
-					}
-				);
+		if (!loginInfo._id) {
+			router.push("/");
+			return;
+		}
 
-				const data = await res.json();
-				if (data.status !== "success") {
-					localStorage.removeItem("loginInfo");
-					dispatch(
-						setLoginInfo({ _id: null, email: null, username: null })
-					);
-					router.replace("/");
-				}
-			} catch (err) {}
-		})();
-
-		if (!loginInfo._id) router.push("/");
+		setComponent(
+			<>
+				<ActivityBar />
+				<SideBar />
+				<Body name={loginInfo.username} />
+				<TopBar />
+			</>
+		);
 
 		socket.open();
 
@@ -90,25 +80,10 @@ function dashboard() {
 			console.log(groupData);
 		});
 
-		let timeout: NodeJS.Timeout;
-		timeout = setTimeout(
-			() =>
-				setComponent(
-					<>
-						<ActivityBar />
-						<SideBar />
-						<Body name={loginInfo.username} />
-						<TopBar />
-					</>
-				),
-			2000
-		);
-
 		return () => {
 			socket.close();
-			clearTimeout(timeout);
 		};
-	}, []);
+	}, [loginInfo._id]);
 
 	return (
 		<section className="relative flex bg-[#5866f2]">{component}</section>
