@@ -3,11 +3,17 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface userState {
 	friends: { _id: string; username: string; isOnline: boolean }[];
 	receivedInvitations: { _id: string; username: string }[];
+	groups: {
+		_id: string;
+		name: string;
+		members: [{ username: string; _id: string }];
+	}[];
 }
 
 const initialState: userState = {
 	friends: [],
-	receivedInvitations: []
+	receivedInvitations: [],
+	groups: []
 };
 
 const userSlice = createSlice({
@@ -39,10 +45,22 @@ const userSlice = createSlice({
 					friend.isOnline = action.payload.isOnline;
 				}
 			});
+		},
+		groups: (
+			state: userState,
+			action: PayloadAction<
+				{
+					_id: string;
+					name: string;
+					members: [{ username: string; _id: string }];
+				}[]
+			>
+		) => {
+			state.groups = action.payload;
 		}
 	}
 });
 
-export const { receivedInvitations, friends, addActiveFriend } =
+export const { receivedInvitations, friends, addActiveFriend, groups } =
 	userSlice.actions;
 export default userSlice.reducer;

@@ -12,7 +12,8 @@ import { useDispatch } from "react-redux";
 import {
 	receivedInvitations,
 	friends,
-	addActiveFriend
+	addActiveFriend,
+	groups
 } from "../redux/slices/userSlice";
 
 function dashboard() {
@@ -76,8 +77,8 @@ function dashboard() {
 			}
 		);
 
-		socket.on("group", (groupData) => {
-			console.log(groupData);
+		socket.on("group", ({ groups: groupsData }) => {
+			dispatch(groups(groupsData));
 		});
 
 		return () => {

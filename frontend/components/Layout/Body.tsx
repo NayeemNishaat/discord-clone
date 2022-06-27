@@ -5,7 +5,6 @@ import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
-import { color } from "@mui/system";
 
 type messages = {
 	_id: string;
