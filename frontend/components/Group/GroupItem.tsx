@@ -25,12 +25,13 @@ function GroupItem({ children, id }: { children: string; id: string }) {
 
 	return (
 		<Button
+			sx={{ textTransform: "none" }}
 			onClick={clickHandler}
-			className="flex w-full flex-col items-center !justify-between px-0 py-1.5 capitalize"
+			className="flex w-full flex-col items-center !justify-between px-0 py-1.5"
 		>
 			<span
 				title={children}
-				className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196f3] !leading-loose text-white"
+				className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ed6c02] !leading-loose text-white"
 			>
 				{children.slice(0, 2)}
 			</span>

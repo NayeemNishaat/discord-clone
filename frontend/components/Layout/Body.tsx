@@ -104,13 +104,25 @@ function Body({ name }: { name: string | null }) {
 
 	return (
 		<div className="mt-[4.5rem] flex flex-1 flex-col items-center bg-[#36393f] text-white">
-			<h2 className="mt-3 flex gap-2 text-2xl leading-none">
-				<span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2196f3]">
-					{activeChat.name.slice(0, 1)}
+			<h2 className="mt-3 flex items-center gap-2 text-2xl leading-none">
+				<span
+					className={`flex h-8 w-8 items-center justify-center rounded-full ${
+						activeChat.chatType === "private"
+							? "bg-[#2196f3]"
+							: "bg-[#ed6c02]"
+					}`}
+				>
+					{activeChat.chatType === "private"
+						? activeChat.name.slice(0, 1)
+						: activeChat.name.slice(0, 2)}
 				</span>
 				<span>{activeChat.name}</span>
 			</h2>
-			<p>Start a conversation with {activeChat.name}</p>
+			<p>
+				{activeChat.chatType === "private"
+					? `Start a conversation with ${activeChat.name}`
+					: `Start a group conversation in ${activeChat.name}`}
+			</p>
 			{!messages.length ? (
 				<p className="flex-1 text-xl font-bold text-[#ed6c02]">
 					No conversation yet!
