@@ -6,7 +6,7 @@ interface userState {
 	groups: {
 		_id: string;
 		name: string;
-		members: [{ username: string; _id: string }];
+		members: { _id: string; username: string; isOnline: boolean }[];
 	}[];
 }
 
@@ -52,7 +52,11 @@ const userSlice = createSlice({
 				{
 					_id: string;
 					name: string;
-					members: [{ username: string; _id: string }];
+					members: {
+						_id: string;
+						username: string;
+						isOnline: boolean;
+					}[];
 				}[]
 			>
 		) => {

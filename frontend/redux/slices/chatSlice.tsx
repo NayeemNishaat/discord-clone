@@ -20,6 +20,7 @@ interface chatState {
 		type: string;
 		date: string;
 	};
+	members: { _id: string; username: string; isOnline: boolean }[];
 }
 
 const initialState: chatState = {
@@ -43,7 +44,8 @@ const initialState: chatState = {
 		message: "",
 		type: "",
 		date: new Date().toISOString()
-	}
+	},
+	members: []
 };
 
 const chatSlice = createSlice({
@@ -69,9 +71,16 @@ const chatSlice = createSlice({
 			action: PayloadAction<chatState["message"]>
 		) => {
 			state.messages.push(action.payload);
+		},
+		setMembers: (
+			state: chatState,
+			action: PayloadAction<chatState["members"]>
+		) => {
+			state.members = action.payload;
 		}
 	}
 });
 
-export const { setActiveChat, setMessages, pushMessage } = chatSlice.actions;
+export const { setActiveChat, setMessages, pushMessage, setMembers } =
+	chatSlice.actions;
 export default chatSlice.reducer;

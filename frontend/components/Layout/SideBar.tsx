@@ -6,7 +6,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Modal from "../UI/ModalInvite";
-import FriendList from "../Friend/FriendList";
+import MemberList from "../Member/MemberList";
 import InviteList from "../Invite/InviteList";
 
 function SideBar() {
@@ -14,7 +14,8 @@ function SideBar() {
 	const invitations = useSelector(
 		(state: RootState) => state.user.receivedInvitations
 	);
-	const friends = useSelector((state: RootState) => state.user.friends);
+	const members = useSelector((state: RootState) => state.chat.members);
+	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
@@ -35,10 +36,12 @@ function SideBar() {
 				<div className="flex h-2/3 flex-col overflow-y-auto">
 					<div className="mb-5 flex items-center gap-3">
 						<PeopleIcon />
-						Friend
+						{activeChat.chatType === "group"
+							? "Members"
+							: "Friends"}
 					</div>
 
-					<FriendList friends={friends} />
+					<MemberList members={members} />
 				</div>
 				<div className="flex h-1/3 flex-col overflow-y-auto">
 					<div className="mb-3 flex items-center gap-3">

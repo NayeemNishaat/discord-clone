@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { setActiveChat } from "../../redux/slices/chatSlice";
+import { setMembers } from "../../redux/slices/chatSlice";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -13,6 +15,9 @@ function ActivityBar() {
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
+	const dispatch = useDispatch();
+
+	const friends = useSelector((store: RootState) => store.user.friends);
 	const groups = useSelector((store: RootState) => store.user.groups);
 
 	return (
@@ -22,6 +27,16 @@ function ActivityBar() {
 				className="border border-solid"
 				aria-label="Private"
 				color="warning"
+				onClick={() => {
+					dispatch(setMembers(friends));
+					dispatch(
+						setActiveChat({
+							id: "",
+							name: "",
+							chatType: "private"
+						})
+					);
+				}}
 			>
 				<ChatIcon />
 			</IconButton>

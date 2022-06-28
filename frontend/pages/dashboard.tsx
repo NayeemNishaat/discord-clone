@@ -15,6 +15,7 @@ import {
 	addActiveFriend,
 	groups
 } from "../redux/slices/userSlice";
+import { setMembers } from "../redux/slices/chatSlice";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -59,6 +60,7 @@ function dashboard() {
 				}[]
 			) => {
 				dispatch(friends(userFriends));
+				dispatch(setMembers(userFriends));
 			}
 		);
 

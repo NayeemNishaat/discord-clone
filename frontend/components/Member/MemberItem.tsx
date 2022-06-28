@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import socket from "../../lib/socketServer";
 import { setActiveChat } from "../../redux/slices/chatSlice";
 
-function FriendItem({
+function MemberItem({
 	children,
 	isOnline,
 	id
@@ -43,4 +43,4 @@ function FriendItem({
 	);
 }
 
-export default FriendItem;
+export default MemberItem;
