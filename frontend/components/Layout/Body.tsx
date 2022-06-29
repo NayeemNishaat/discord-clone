@@ -65,6 +65,7 @@ function Body({ name }: { name: string | null }) {
 	const messages = processMessage(
 		useSelector((state: RootState) => state.chat.messages)
 	);
+	const username = useSelector((state: RootState) => state.auth.username);
 
 	const dispatch = useDispatch();
 
@@ -120,7 +121,11 @@ function Body({ name }: { name: string | null }) {
 			</h2>
 			<p>
 				{activeChat.chatType === "private"
-					? `Start a conversation with ${activeChat.name}`
+					? `Start a conversation with ${
+							activeChat.name === username
+								? "yourself"
+								: activeChat.name
+					  }`
 					: `Start a group conversation in ${activeChat.name}`}
 			</p>
 			{!messages.length ? (
