@@ -27,7 +27,7 @@ function SideBar() {
 				startIcon={<PersonAddIcon />}
 				onClick={handleOpen}
 			>
-				Invite Friend
+				Invite
 			</Button>
 
 			<Modal open={open} handleClose={handleClose} />

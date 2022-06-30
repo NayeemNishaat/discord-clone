@@ -13,7 +13,7 @@ function GroupItem({ children, id }: { children: string; id: string }) {
 		const { members } = groups.filter((group) => group._id === id)[0];
 		dispatch(setMembers(members));
 		dispatch(setActiveChat({ id, name: children, chatType: "group" }));
-		// socket.emit("groupHistory", id);
+		socket.emit("groupHistory", id);
 		// dispatch(
 		// 	setActiveChat({
 		// 		id,

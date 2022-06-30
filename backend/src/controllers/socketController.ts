@@ -174,7 +174,7 @@ export const sendGroupNotification = async (
 
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
 	const conversation = await Conversation.findOne({
-		participents: [friendId, socket.data._id]
+		participents: [socket.data._id, friendId]
 	}).populate({
 		path: "messages",
 		populate: { path: "author", select: "username" }
@@ -183,6 +183,17 @@ const getPrivateHistory = async (socket: Socket, friendId: string) => {
 	if (!conversation) return socket.emit("privateHistory", null);
 
 	return socket.emit("privateHistory", conversation.messages);
+};
+
+const getGroupHistory = async (socket: Socket, friendId: string) => {
+	// const conversation = await Conversation.findOne({
+	// 	participents: [friendId, socket.data._id]
+	// }).populate({
+	// 	path: "messages",
+	// 	populate: { path: "author", select: "username" }
+	// });
+	// if (!conversation) return socket.emit("privateHistory", null);
+	// return socket.emit("privateHistory", conversation.messages);
 };
 
 const handlePrivateMessage = async (
@@ -263,6 +274,10 @@ export const connectedUsers = async (socket: Socket) => {
 
 	socket.on("privateHistory", async (friendId: string) => {
 		await getPrivateHistory(socket, friendId);
+	});
+
+	socket.on("groupHistory", async (groupId: string) => {
+		await getGroupHistory(socket, groupId);
 	});
 
 	socket.on("private", async (data) => {

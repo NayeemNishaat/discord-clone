@@ -18,7 +18,7 @@ interface customRequest extends Request {
 
 export const invite = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
-		const { invitee } = req.body;
+		const { invitee, groupId } = req.body;
 
 		if (!validMail(invitee))
 			return next(new AppError("Email is Invalid!", 401));
@@ -39,29 +39,49 @@ export const invite = catchAsync(
 		if (alreadyInvited) return next(new AppError("Already Invited!", 409));
 
 		// Part: Check if user is already in receivedInvitation list
-		const alreadyReceivedInvitation = await User.findOne({
-			_id: req.user._id,
-			receivedInvitation: user._id
-		});
+		if (!groupId) {
+			const alreadyReceivedInvitation = await User.findOne({
+				_id: req.user._id,
+				receivedInvitation: user._id
+			});
 
-		if (alreadyReceivedInvitation)
-			return next(
-				new AppError(
-					"You have Already Received an Invitation from this User!",
-					409
-				)
-			);
+			if (alreadyReceivedInvitation)
+				return next(
+					new AppError(
+						"You have Already Received an Invitation from this User!",
+						409
+					)
+				);
+		}
 
 		// Part: Check if already friends
 		const alreadyFriend = await User.findOne({
-			// $and: [{ _id: req.user._id }, { friends: { _id: user._id } }]
-			$and: [{ _id: req.user._id }, { "friends._id": user._id }]
+			_id: req.user._id,
+			friends: user._id
 		});
 
-		if (alreadyFriend)
-			return next(new AppError("You are Already Friends!", 409));
+		if (groupId) {
+			if (!alreadyFriend)
+				return next(
+					new AppError("You can only invite your friends!", 409)
+				);
 
-		// Part: If not friends, send invitation
+			// Part: Check if already in group
+			const alreadyInGroup = await User.findOne({
+				_id: req.user._id,
+				"groups._id": groupId,
+				"groups.members": user._id
+			});
+
+			if (alreadyInGroup)
+				return next(new AppError("User already in group!", 409));
+		}
+
+		if (!groupId && alreadyFriend) {
+			return next(new AppError("You are Already Friends!", 409));
+		}
+
+		// Part: Send invitation
 		req.user = (await User.findByIdAndUpdate(
 			req.user._id,
 			{
