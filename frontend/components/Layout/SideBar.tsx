@@ -21,7 +21,7 @@ function SideBar() {
 	const handleClose = () => setOpen(false);
 
 	return (
-		<div className="flex h-screen w-56 flex-col items-center bg-[#2f313c] pt-5">
+		<div className="flex h-screen w-64 flex-col items-center bg-[#2f313c] pt-5">
 			<Button
 				variant="outlined"
 				startIcon={<PersonAddIcon />}
@@ -32,7 +32,7 @@ function SideBar() {
 
 			<Modal open={open} handleClose={handleClose} />
 
-			<div className="mt-10 flex w-4/5 flex-1 flex-col text-white">
+			<div className="mt-10 flex w-[90%] flex-1 flex-col text-white">
 				<div className="flex h-2/3 flex-col overflow-y-auto">
 					<div className="mb-5 flex items-center gap-3">
 						<PeopleIcon />

@@ -56,14 +56,23 @@ const userSchema: Schema = new mongoose.Schema({
 	],
 	receivedInvitation: [
 		{
-			type: Schema.Types.ObjectId,
-			ref: "User"
+			user: {
+				type: Schema.Types.ObjectId,
+				ref: "User"
+			},
+			groupId: Schema.Types.ObjectId,
+			groupName: {
+				type: String
+			}
 		}
 	],
 	sentInvitation: [
 		{
-			type: Schema.Types.ObjectId,
-			ref: "User"
+			user: {
+				type: Schema.Types.ObjectId,
+				ref: "User"
+			},
+			groupId: Schema.Types.ObjectId
 		}
 	]
 });

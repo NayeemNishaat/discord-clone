@@ -8,7 +8,12 @@ import Alert from "../../components/UI/Alert";
 function InviteList({
 	invitations
 }: {
-	invitations: { _id: string; username: string }[];
+	invitations: {
+		_id: string;
+		username: string;
+		groupId: string;
+		groupName: string;
+	}[];
 }) {
 	const dispatch = useDispatch();
 	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
@@ -113,6 +118,8 @@ function InviteList({
 						key={i}
 						id={invitation._id}
 						username={invitation.username}
+						groupId={invitation.groupId}
+						groupName={invitation.groupName}
 						acceptInvitation={acceptInvitation}
 						rejectInvitation={rejectInvitation}
 					/>

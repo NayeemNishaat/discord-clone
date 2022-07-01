@@ -17,7 +17,7 @@ function TopBar() {
 	const dispatch = useDispatch();
 
 	return (
-		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-19rem)] items-center justify-between bg-[#202124]">
+		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
 			<div>
 				<span className="ml-5 text-white">{activeChat.name}</span>
 			</div>

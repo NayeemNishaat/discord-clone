@@ -62,6 +62,10 @@ export default function ModalInvite({
 						groupId:
 							activeChat.chatType === "group"
 								? activeChat.id
+								: null,
+						groupName:
+							activeChat.chatType === "group"
+								? activeChat.name
 								: null
 					})
 				}

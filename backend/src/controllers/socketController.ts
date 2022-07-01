@@ -102,13 +102,15 @@ const updateOnlineFriends = async (userId: string, active: boolean = true) => {
 	});
 };
 
-export const sendInviteNotification = (
+export const sendInviteNotification = async (
 	receiver: string,
 	sender: {
 		_id: string;
 		username: string;
 		email: string;
-	}
+	},
+	groupId: string,
+	groupName: string
 ) => {
 	const io = getIoInstance();
 
@@ -122,7 +124,9 @@ export const sendInviteNotification = (
 			...userInfo.receivedInvitation,
 			{
 				_id: sender._id,
-				username: sender.username
+				username: sender.username,
+				groupName: groupName,
+				groupId: groupId
 			}
 		]);
 	});
@@ -255,18 +259,39 @@ export const connectedUsers = async (socket: Socket) => {
 	if (!Array.from(users.values()).includes(socket.data._id.toString()))
 		users.set(socket.id, socket.data._id.toString());
 
-	userInfo = await User.findById(
+	const userInfo = await User.findById(
 		socket.data._id,
 		"receivedInvitation friends"
 	)
-		.populate("receivedInvitation", "username")
+		.populate({
+			path: "receivedInvitation",
+			populate: { path: "user", select: "username" }
+		})
 		.populate("friends", "username")
 		.lean();
 
 	const friends = getOnlineFriends(userInfo.friends);
 
+	if (userInfo.receivedInvitation) {
+		let invArr: {}[] = [];
+		userInfo.receivedInvitation.forEach(
+			(inv: {
+				user: { _id: string; username: string };
+				groupName: string;
+				groupId: string;
+			}) => {
+				invArr.push({
+					_id: inv.user._id,
+					username: inv.user.username,
+					groupName: inv.groupName,
+					groupId: inv.groupId
+				});
+			}
+		);
+		socket.emit("invite", invArr);
+	}
+
 	socket.emit("friend", friends);
-	socket.emit("invite", userInfo.receivedInvitation);
 
 	await updateOnlineFriends(socket.data._id);
 

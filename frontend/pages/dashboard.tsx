@@ -64,9 +64,19 @@ function dashboard() {
 			}
 		);
 
-		socket.on("invite", (sender: { _id: string; username: string }[]) => {
-			dispatch(receivedInvitations(sender));
-		});
+		socket.on(
+			"invite",
+			(
+				sender: {
+					_id: string;
+					username: string;
+					groupId: string;
+					groupName: string;
+				}[]
+			) => {
+				dispatch(receivedInvitations(sender));
+			}
+		);
 
 		socket.on(
 			"friendOnline",

@@ -18,7 +18,7 @@ interface customRequest extends Request {
 
 export const invite = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
-		const { invitee, groupId } = req.body;
+		const { invitee, groupId, groupName } = req.body;
 
 		if (!validMail(invitee))
 			return next(new AppError("Email is Invalid!", 401));
@@ -30,13 +30,23 @@ export const invite = catchAsync(
 
 		if (!user) return next(new AppError("User doesn't exist!", 404));
 
-		// Part: Check if user is already in friends list
+		// Part: Check if user is already invited
 		const alreadyInvited = await User.findOne({
 			_id: req.user._id,
-			sentInvitation: user._id
+			"sentInvitation.user": user._id
 		});
 
 		if (alreadyInvited) return next(new AppError("Already Invited!", 409));
+
+		if (groupId) {
+			const alreadyInvited = await User.findOne({
+				_id: req.user._id,
+				"sentInvitation.user": user._id,
+				"sentInvitation.groupId": groupId
+			});
+			if (alreadyInvited)
+				return next(new AppError("Already Invited!", 409));
+		}
 
 		// Part: Check if user is already in receivedInvitation list
 		if (!groupId) {
@@ -85,17 +95,28 @@ export const invite = catchAsync(
 		req.user = (await User.findByIdAndUpdate(
 			req.user._id,
 			{
-				$push: { sentInvitation: user._id }
+				$push: {
+					sentInvitation: {
+						user: user._id,
+						groupId: groupId ? groupId : null
+					}
+				}
 			},
 			{ new: true }
 		)) as customRequest["user"];
 
 		await User.findByIdAndUpdate(user._id, {
-			$push: { receivedInvitation: req.user._id }
+			$push: {
+				receivedInvitation: {
+					user: req.user._id,
+					groupId: groupId ? groupId : null,
+					groupName: groupName ? groupName : null
+				}
+			}
 		});
 
 		// Part: Send notification to receiver
-		sendInviteNotification(user._id, req.user);
+		sendInviteNotification(user._id, req.user, groupId, groupName);
 
 		res.status(201).json({ status: "success" });
 	}
