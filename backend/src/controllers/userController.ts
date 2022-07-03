@@ -174,12 +174,16 @@ export const reject = catchAsync(
 		const { id } = req.body;
 
 		// Part: Removing the invitation from both users
-		await User.findByIdAndUpdate(req.user._id, {
-			$pull: { receivedInvitation: id }
-		});
-		await User.findByIdAndUpdate(id, {
-			$pull: { sentInvitation: req.user._id }
-		});
+		try {
+			await User.findByIdAndUpdate(req.user._id, {
+				$pull: { receivedInvitation: { user: id } }
+			});
+			await User.findByIdAndUpdate(id, {
+				$pull: { sentInvitation: { user: req.user._id } }
+			});
+		} catch (error) {
+			console.log(error);
+		}
 
 		res.status(200).json({ status: "success" });
 	}
