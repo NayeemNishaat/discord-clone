@@ -40,7 +40,7 @@ function InviteItem({
 				<IconButton
 					className="h-6 w-6 border border-solid"
 					color="warning"
-					onClick={acceptInvitation.bind({}, id)}
+					onClick={acceptInvitation.bind({}, id, groupName, groupId)}
 				>
 					<CheckSharpIcon />
 				</IconButton>

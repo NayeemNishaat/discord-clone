@@ -142,22 +142,32 @@ export const createGroup = catchAsync(
 
 export const accept = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
-		const { id } = req.body;
+		const { id, groupId, groupName } = req.body;
 
 		// Part: Making the users friends and removing the invitation
-		const receiver = await User.findByIdAndUpdate(
-			req.user._id,
+		const receiver = await User.findOneAndUpdate(
+			{ _id: req.user._id, "groups._id": groupId },
 			{
-				$pull: { receivedInvitation: id },
-				$push: { friends: id }
+				$pull: { receivedInvitation: { user: id } },
+				$push: groupId
+					? {
+							"groups.$.members": {
+								$each: [id, req.user._id],
+								"groups.name": groupName
+							}
+					  }
+					: { friends: id }
 			},
-			{ new: true, populate: "friends" }
+			{ new: true, populate: "friends", upsert: true }
 		).lean();
-		const sender = await User.findByIdAndUpdate(
-			id,
+
+		const sender = await User.findOneAndUpdate(
+			{ _id: id, "groups._id": groupId },
 			{
-				$pull: { sentInvitation: req.user._id },
-				$push: { friends: req.user._id }
+				$pull: { sentInvitation: { user: req.user._id } },
+				$push: groupId
+					? { "groups.$.members": req.user._id }
+					: { friends: req.user._id }
 			},
 			{ new: true, populate: "friends" }
 		).lean();
@@ -174,16 +184,12 @@ export const reject = catchAsync(
 		const { id } = req.body;
 
 		// Part: Removing the invitation from both users
-		try {
-			await User.findByIdAndUpdate(req.user._id, {
-				$pull: { receivedInvitation: { user: id } }
-			});
-			await User.findByIdAndUpdate(id, {
-				$pull: { sentInvitation: { user: req.user._id } }
-			});
-		} catch (error) {
-			console.log(error);
-		}
+		await User.findByIdAndUpdate(req.user._id, {
+			$pull: { receivedInvitation: { user: id } }
+		});
+		await User.findByIdAndUpdate(id, {
+			$pull: { sentInvitation: { user: req.user._id } }
+		});
 
 		res.status(200).json({ status: "success" });
 	}

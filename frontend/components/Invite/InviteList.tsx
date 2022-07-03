@@ -33,7 +33,12 @@ function InviteList({
 		};
 	}, [timerRef]);
 
-	const fetchResponse = async (id: string, status: string) => {
+	const fetchResponse = async (
+		id: string,
+		status: string,
+		groupName?: string,
+		groupId?: string
+	) => {
 		clearTimeout(timerRef.current as NodeJS.Timeout);
 
 		try {
@@ -45,7 +50,7 @@ function InviteList({
 					headers: {
 						"Content-Type": "application/json"
 					},
-					body: JSON.stringify({ id })
+					body: JSON.stringify({ id, groupName, groupId })
 				}
 			);
 			const data = await res.json();
@@ -86,8 +91,8 @@ function InviteList({
 		}
 	};
 
-	const acceptInvitation = async (id: string) => {
-		const err = await fetchResponse(id, "accept");
+	const acceptInvitation = async (id: string, groupId: string) => {
+		const err = await fetchResponse(id, "accept", groupId);
 		if (err) return;
 
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
