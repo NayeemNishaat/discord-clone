@@ -165,8 +165,11 @@ export const sendGroupNotification = async (
 
 	if (!socketId) socketId = getSocketId(userId.toString());
 
-	const groups = await User.findById(userId, "groups").populate("groups");
-	console.log(groups);
+	const { groups } = await User.findById(userId, "groups").populate({
+		path: "groups",
+		select: "name owner members",
+		populate: { path: "members", select: "username" }
+	});
 
 	io.to(socketId).emit("group", groups);
 };

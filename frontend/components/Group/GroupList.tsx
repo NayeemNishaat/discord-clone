@@ -1,6 +1,6 @@
 import GroupItem from "./GroupItem";
 
-function FriendList({ groups }: { groups: { _id: string; name: string }[] }) {
+function GroupList({ groups }: { groups: { _id: string; name: string }[] }) {
 	return (
 		<ul
 			className="flex flex-col items-start gap-2 overflow-y-auto"
@@ -15,4 +15,4 @@ function FriendList({ groups }: { groups: { _id: string; name: string }[] }) {
 	);
 }
 
-export default FriendList;
+export default GroupList;
