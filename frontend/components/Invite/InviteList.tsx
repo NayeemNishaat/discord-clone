@@ -91,8 +91,12 @@ function InviteList({
 		}
 	};
 
-	const acceptInvitation = async (id: string, groupId: string) => {
-		const err = await fetchResponse(id, "accept", groupId);
+	const acceptInvitation = async (
+		id: string,
+		groupName: string,
+		groupId: string
+	) => {
+		const err = await fetchResponse(id, "accept", groupName, groupId);
 		if (err) return;
 
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);

@@ -159,19 +159,14 @@ export const sendFriendNotification = (
 
 export const sendGroupNotification = async (
 	userId: string,
-	groups: {}[] | null,
 	socketId?: string
 ) => {
 	const io = getIoInstance();
 
 	if (!socketId) socketId = getSocketId(userId.toString());
 
-	if (!groups) {
-		groups = await User.findById(userId, "groups").populate(
-			"groups.members",
-			"username"
-		);
-	}
+	const groups = await User.findById(userId, "groups").populate("groups");
+	console.log(groups);
 
 	io.to(socketId).emit("group", groups);
 };
@@ -295,7 +290,7 @@ export const connectedUsers = async (socket: Socket) => {
 
 	await updateOnlineFriends(socket.data._id);
 
-	await sendGroupNotification(socket.data._id, null, socket.id);
+	await sendGroupNotification(socket.data._id, socket.id);
 
 	socket.on("privateHistory", async (friendId: string) => {
 		await getPrivateHistory(socket, friendId);

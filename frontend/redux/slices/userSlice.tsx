@@ -57,6 +57,7 @@ const userSlice = createSlice({
 				{
 					_id: string;
 					name: string;
+					owner: string;
 					members: {
 						_id: string;
 						username: string;

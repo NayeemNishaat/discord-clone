@@ -48,10 +48,8 @@ const userSchema: Schema = new mongoose.Schema({
 	friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	groups: [
 		{
-			name: {
-				type: String
-			},
-			members: [{ type: Schema.Types.ObjectId, ref: "User" }]
+			type: Schema.Types.ObjectId,
+			ref: "GroupConversation"
 		}
 	],
 	receivedInvitation: [

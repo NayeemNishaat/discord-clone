@@ -51,7 +51,7 @@ export const errorHandler = (
 ) => {
 	err.statuscode = err.statuscode || 500;
 	err.status = err.status || "error";
-	console.log(process.env.NODE_ENV);
+
 	if (process.env.NODE_ENV === "development") {
 		sendError(err, req, res, "development");
 	} else {
