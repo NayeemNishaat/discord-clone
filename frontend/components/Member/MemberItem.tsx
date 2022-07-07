@@ -7,11 +7,13 @@ import { setActiveChat } from "../../redux/slices/chatSlice";
 function MemberItem({
 	children,
 	isOnline,
-	id
+	id,
+	disabled
 }: {
 	children: string;
 	isOnline: boolean;
 	id: string;
+	disabled: boolean;
 }) {
 	const dispatch = useDispatch();
 
@@ -29,6 +31,7 @@ function MemberItem({
 
 	return (
 		<Button
+			disabled={disabled}
 			onClick={clickHandler}
 			className="flex w-full items-center !justify-between px-0 py-1.5 capitalize"
 		>

@@ -41,7 +41,12 @@ function SideBar() {
 							: "Friends"}
 					</div>
 
-					<MemberList members={members} />
+					<MemberList
+						members={members}
+						disabled={
+							activeChat.chatType === "group" ? true : false
+						}
+					/>
 				</div>
 				<div className="flex h-1/3 flex-col overflow-y-auto">
 					<div className="mb-3 flex items-center gap-3">

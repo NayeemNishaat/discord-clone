@@ -224,7 +224,7 @@ export const sendGroupNotification = async (
 
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
 	const conversation = await Conversation.findOne({
-		participents: [socket.data._id, friendId]
+		participents: { $all: [socket.data._id, friendId] }
 	}).populate({
 		path: "messages",
 		populate: { path: "author", select: "username" }
