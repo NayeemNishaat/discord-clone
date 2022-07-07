@@ -80,7 +80,7 @@ export const invite = catchAsync(
 			// Part: Check if already in group
 			const alreadyInGroup = await GroupConversation.findOne({
 				_id: groupId,
-				"participents._id": user._id
+				"members._id": user._id
 			});
 
 			if (alreadyInGroup)

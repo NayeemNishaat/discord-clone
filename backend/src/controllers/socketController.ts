@@ -119,6 +119,11 @@ export const sendInviteNotification = async (
 	users.forEach((value, key) => {
 		if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
 	});
+
+	userInfo = await User.findById(receiver, "receivedInvitation friends")
+		.populate("receivedInvitation", "username")
+		.lean();
+
 	activeUserIds.forEach((activeUserId) => {
 		io.to(activeUserId).emit("invite", [
 			...userInfo.receivedInvitation,
@@ -165,13 +170,44 @@ export const sendGroupNotification = async (
 
 	if (!socketId) socketId = getSocketId(userId.toString());
 
-	const { groups } = await User.findById(userId, "groups").populate({
-		path: "groups",
-		select: "name owner members",
-		populate: { path: "members", select: "username" }
-	});
+	const { groups } = (await User.findById(userId, "groups")
+		.populate({
+			path: "groups",
+			select: "name owner members",
+			populate: { path: "members", select: "username" }
+		})
+		.lean()) as {
+		groups: {
+			_id: string;
+			name: string;
+			owner: string;
+			members: { _id: string; username: string }[];
+		}[];
+	};
 
-	io.to(socketId).emit("group", groups);
+	const updateOnlineStatus = () => {
+		groups.forEach((group) => {
+			group.members = getOnlineFriends(
+				group.members as unknown as friends[]
+			) as unknown as {
+				_id: string;
+				username: string;
+				isOnline: boolean;
+				socketId: string;
+			}[];
+		});
+
+		io.to(socketId as string).emit("group", groups);
+	};
+	updateOnlineStatus();
+
+	const timeoutIntv = () => {
+		setTimeout(() => {
+			updateOnlineStatus();
+			timeoutIntv();
+		}, 10000);
+	};
+	timeoutIntv();
 };
 
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
