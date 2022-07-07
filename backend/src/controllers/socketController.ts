@@ -164,7 +164,8 @@ export const sendFriendNotification = (
 
 export const sendGroupNotification = async (
 	userId: string,
-	socketId?: string
+	socketId?: string,
+	groupId?: string
 ) => {
 	const io = getIoInstance();
 
@@ -181,7 +182,12 @@ export const sendGroupNotification = async (
 			_id: string;
 			name: string;
 			owner: string;
-			members: { _id: string; username: string }[];
+			members: {
+				_id: string;
+				username: string;
+				isOnline: boolean;
+				socketId: string;
+			}[];
 		}[];
 	};
 
@@ -195,6 +201,12 @@ export const sendGroupNotification = async (
 				isOnline: boolean;
 				socketId: string;
 			}[];
+
+			if (groupId && groupId === group._id) {
+				group.members.forEach((member) => {
+					io.to(member.socketId).emit("group", group);
+				});
+			}
 		});
 
 		io.to(socketId as string).emit("group", groups);

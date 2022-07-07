@@ -145,43 +145,51 @@ export const createGroup = catchAsync(
 
 export const accept = catchAsync(
 	async (req: customRequest, res: Response, next: NextFunction) => {
-		const { id, groupName, groupId } = req.body;
+		const { id, groupId } = req.body;
 
 		// Part: Making the users friends and removing the invitation
-		const receiver = await User.findOneAndUpdate(
-			{ _id: req.user._id },
-			{
-				$pull: { receivedInvitation: { user: id } },
-				$push: groupId
-					? {
-							groups: {
-								name: groupName,
-								members: [id, req.user._id]
-							}
-					  }
-					: { friends: id }
-			},
-			{
-				new: true,
-				populate: "friends"
-			}
-		).lean();
+		if (groupId) {
+			await GroupConversation.findByIdAndUpdate(groupId, {
+				$push: { members: req.user._id }
+			});
 
-		const sender = await User.findOneAndUpdate(
-			{ _id: id, "groups._id": groupId },
-			{
-				$pull: { sentInvitation: { user: req.user._id } },
-				$push: groupId
-					? { "groups.$.members": req.user._id }
-					: { friends: req.user._id }
-			},
-			{ new: true, populate: "friends" }
-		).lean();
+			await User.findByIdAndUpdate(req.user._id, {
+				$push: { groups: groupId }
+			});
 
-		// Part: Update the users friends list dynamically
-		groupId
-			? sendGroupNotification(req.user._id, receiver.groups)
-			: sendFriendNotification(sender, receiver);
+			await User.findByIdAndUpdate(req.user._id, {
+				$pull: { receivedInvitation: { user: id } }
+			});
+
+			await User.findByIdAndUpdate(id, {
+				$pull: { sentInvitation: { user: req.user._id } }
+			});
+
+			sendGroupNotification(req.user._id, undefined, groupId);
+		} else {
+			const receiver = await User.findOneAndUpdate(
+				{ _id: req.user._id },
+				{
+					$pull: { receivedInvitation: { user: id } },
+					$push: { friends: id }
+				},
+				{
+					new: true,
+					populate: "friends"
+				}
+			).lean();
+
+			const sender = await User.findOneAndUpdate(
+				{ _id: id },
+				{
+					$pull: { sentInvitation: { user: req.user._id } },
+					$push: { friends: req.user._id }
+				},
+				{ new: true, populate: "friends" }
+			).lean();
+
+			sendFriendNotification(sender, receiver);
+		}
 
 		res.status(200).json({ status: "success" });
 	}
