@@ -76,6 +76,10 @@ function Body({ name }: { name: string | null }) {
 			dispatch(pushMessage(message));
 		});
 
+		socket.on("group", (message: message) => {
+			dispatch(pushMessage(message));
+		});
+
 		socket.on("privateHistory", (messages: messages) => {
 			if (!messages) return dispatch(setMessages([]));
 
@@ -101,10 +105,18 @@ function Body({ name }: { name: string | null }) {
 		if (!(e.target as HTMLInputElement).value) return;
 
 		if (e.key === "Enter" && e.ctrlKey) {
-			socket.emit("private", {
-				to: activeChat.id,
-				message: (e.target as HTMLInputElement).value
-			});
+			if (activeChat.chatType === "private") {
+				socket.emit("private", {
+					to: activeChat.id,
+					message: (e.target as HTMLInputElement).value
+				});
+			} else {
+				socket.emit("group", {
+					to: activeChat.id,
+					message: (e.target as HTMLInputElement).value
+				});
+			}
+
 			(e.target as HTMLInputElement).value = "";
 		}
 	};

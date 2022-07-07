@@ -205,12 +205,12 @@ export const sendGroupNotification = async (
 
 			if (groupId && groupId === group._id) {
 				group.members.forEach((member) => {
-					io.to(member.socketId).emit("group", group);
+					io.to(member.socketId).emit("groupList", group);
 				});
 			}
 		});
 
-		io.to(socketId as string).emit("group", groups);
+		io.to(socketId as string).emit("groupList", groups);
 	};
 	updateOnlineStatus();
 
@@ -239,7 +239,8 @@ const getPrivateHistory = async (socket: Socket, friendId: string) => {
 const getGroupHistory = async (socket: Socket, groupId: string) => {
 	const groupConversation = await GroupConversation.findById(
 		groupId,
-		"messages"
+		"messages",
+		{ populate: { path: "messages.author", select: "username" } }
 	);
 
 	if (!groupConversation.messages.length)
@@ -303,6 +304,42 @@ const handlePrivateMessage = async (
 	});
 };
 
+const handleGroupMessage = async (
+	socket: Socket,
+	data: { to: string; message: string }
+) => {
+	const io = getIoInstance();
+	const senderId = socket.data._id;
+	const groupId = data.to;
+
+	const group = await GroupConversation.findByIdAndUpdate(
+		groupId,
+		{
+			$push: {
+				messages: {
+					author: senderId,
+					message: data.message,
+					date: new Date(),
+					type: "group"
+				}
+			}
+		},
+		{ projection: "members" }
+	);
+
+	group.members.forEach((member: string) => {
+		const activeUser = getSocketId(member.toString());
+
+		activeUser &&
+			io.to(activeUser).emit("group", {
+				author: { username: socket.data.username },
+				message: data.message,
+				date: new Date(),
+				type: "group"
+			});
+	});
+};
+
 export const connectedUsers = async (socket: Socket) => {
 	if (!Array.from(users.values()).includes(socket.data._id.toString()))
 		users.set(socket.id, socket.data._id.toString());
@@ -355,6 +392,10 @@ export const connectedUsers = async (socket: Socket) => {
 
 	socket.on("private", async (data) => {
 		await handlePrivateMessage(socket, data);
+	});
+
+	socket.on("group", async (data) => {
+		await handleGroupMessage(socket, data);
 	});
 
 	socket.on("disconnect", async () => {

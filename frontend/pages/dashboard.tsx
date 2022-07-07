@@ -89,7 +89,7 @@ function dashboard() {
 			}
 		);
 
-		socket.on("group", (groupsData) => {
+		socket.on("groupList", (groupsData) => {
 			dispatch(groups(groupsData));
 		});
 
