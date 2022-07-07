@@ -16,14 +16,7 @@ function GroupItem({ children, id }: { children: string; id: string }) {
 		dispatch(setMembers(members));
 		dispatch(setActiveChat({ id, name: children, chatType: "group" }));
 
-		// socket.emit("groupHistory", id);
-		// dispatch(
-		// 	setActiveChat({
-		// 		id,
-		// 		name: children,
-		// 		chatType: "private"
-		// 	})
-		// );
+		socket.emit("groupHistory", id);
 	};
 
 	return (

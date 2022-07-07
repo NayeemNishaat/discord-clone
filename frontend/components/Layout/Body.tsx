@@ -81,6 +81,12 @@ function Body({ name }: { name: string | null }) {
 
 			dispatch(setMessages(messages));
 		});
+
+		socket.on("groupHistory", (messages: messages) => {
+			if (!messages) return dispatch(setMessages([]));
+
+			dispatch(setMessages(messages));
+		});
 	}, []);
 
 	if (!activeChat.id)

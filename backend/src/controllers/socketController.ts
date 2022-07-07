@@ -3,6 +3,7 @@ import { ExtendedError } from "socket.io/dist/namespace";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
 import Conversation from "../models/conversationModel";
+import GroupConversation from "../models/groupConversationModel";
 import { getIoInstance } from "../socketEvents";
 
 interface JwtPayload {
@@ -235,15 +236,16 @@ const getPrivateHistory = async (socket: Socket, friendId: string) => {
 	return socket.emit("privateHistory", conversation.messages);
 };
 
-const getGroupHistory = async (socket: Socket, friendId: string) => {
-	// const conversation = await Conversation.findOne({
-	// 	participents: [friendId, socket.data._id]
-	// }).populate({
-	// 	path: "messages",
-	// 	populate: { path: "author", select: "username" }
-	// });
-	// if (!conversation) return socket.emit("privateHistory", null);
-	// return socket.emit("privateHistory", conversation.messages);
+const getGroupHistory = async (socket: Socket, groupId: string) => {
+	const groupConversation = await GroupConversation.findById(
+		groupId,
+		"messages"
+	);
+
+	if (!groupConversation.messages.length)
+		return socket.emit("groupHistory", null);
+
+	return socket.emit("groupHistory", groupConversation.messages);
 };
 
 const handlePrivateMessage = async (
