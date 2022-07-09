@@ -1,7 +1,82 @@
-function CallWindow() {
+import { useState } from "react";
+import {
+	VideocamOff,
+	OpenInFull,
+	CloseFullscreen,
+	Close,
+	Mic,
+	ScreenShare,
+	StopScreenShare,
+	MicOff,
+	Videocam
+} from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+
+function CallWindow(
+	this: any,
+	{ setOpenCallWindow }: { setOpenCallWindow: Function }
+) {
+	const [fullScreen, setFullScreen] = useState(false);
+	const [mute, setMute] = useState(false);
+	const [webcam, setWebcam] = useState(false);
+	const [screenShare, setScreenShare] = useState(false);
+
 	return (
-		<div className="fixed bottom-[110px] right-[10px] flex h-[250px] w-[250px] rounded bg-black text-white">
-			<div className="mt-auto h-10 flex-1 rounded-b bg-[#1976d2]"></div>
+		<div
+			className={`fixed ${
+				fullScreen
+					? "top-0 left-0 right-0 bottom-0 h-screen w-screen p-2"
+					: "bottom-[110px] right-[10px] h-[250px] w-[250px]"
+			} flex rounded bg-black text-white`}
+		>
+			<div className="mt-auto flex h-10 flex-1 items-center rounded-b bg-[#1976d2] px-2">
+				<IconButton
+					className="h-6 w-6"
+					color="inherit"
+					onClick={() => {
+						setScreenShare((prevScreenShare) => !prevScreenShare);
+					}}
+				>
+					{screenShare ? <StopScreenShare /> : <ScreenShare />}
+				</IconButton>
+				<div className="mx-auto flex gap-2">
+					<IconButton
+						className="h-6 w-6"
+						color="inherit"
+						onClick={() => {
+							setMute((prevMute) => !prevMute);
+						}}
+					>
+						{mute ? <Mic /> : <MicOff />}
+					</IconButton>
+					<IconButton
+						className="h-6 w-6"
+						color="inherit"
+						onClick={setOpenCallWindow.bind(this, false)}
+					>
+						<Close />
+					</IconButton>
+					<IconButton
+						className="h-6 w-6"
+						color="inherit"
+						onClick={() => {
+							setWebcam((prevWebcam) => !prevWebcam);
+						}}
+					>
+						{webcam ? <Videocam /> : <VideocamOff />}
+					</IconButton>
+				</div>
+
+				<IconButton
+					className="h-6 w-6"
+					color="inherit"
+					onClick={() => {
+						setFullScreen((prevFullscreen) => !prevFullscreen);
+					}}
+				>
+					{fullScreen ? <CloseFullscreen /> : <OpenInFull />}
+				</IconButton>
+			</div>
 		</div>
 	);
 }
