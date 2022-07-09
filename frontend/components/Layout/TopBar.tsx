@@ -14,7 +14,10 @@ import CallWindow from "../UI/CallWindow";
 
 function TopBar() {
 	const [open, setOpen] = useState(false);
-	const [openCallWindow, setOpenCallWindow] = useState(false);
+	const [openCallWindow, setOpenCallWindow] = useState({
+		status: false,
+		type: ""
+	});
 
 	const router = useRouter();
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
@@ -26,13 +29,27 @@ function TopBar() {
 				<span className="ml-5  text-white">{activeChat.name}</span>
 				{activeChat.name && (
 					<>
-						<IconButton className="h-6 w-6" color="warning">
+						<IconButton
+							className="h-6 w-6"
+							color="warning"
+							onClick={() =>
+								setOpenCallWindow({
+									status: true,
+									type: "audio"
+								})
+							}
+						>
 							<AddIcCall />
 						</IconButton>
 						<IconButton
 							className="h-6 w-6"
 							color="warning"
-							onClick={() => setOpenCallWindow(true)}
+							onClick={() =>
+								setOpenCallWindow({
+									status: true,
+									type: "video"
+								})
+							}
 						>
 							<VideoCall />
 						</IconButton>
@@ -85,8 +102,11 @@ function TopBar() {
 				onClose={() => setOpen(false)}
 			></Snackbar>
 
-			{openCallWindow && (
-				<CallWindow setOpenCallWindow={setOpenCallWindow} />
+			{openCallWindow.status && (
+				<CallWindow
+					setOpenCallWindow={setOpenCallWindow}
+					CallType={openCallWindow.type}
+				/>
 			)}
 		</div>
 	);
