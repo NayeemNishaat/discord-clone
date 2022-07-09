@@ -8,9 +8,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { setLoginInfo } from "../../redux/slices/authSlice";
 import { receivedInvitations, friends } from "../../redux/slices/userSlice";
+import { Call, Videocam } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import CallWindow from "../UI/CallWindow";
 
 function TopBar() {
 	const [open, setOpen] = useState(false);
+	const [openCallWindow, setOpenCallWindow] = useState(false);
 
 	const router = useRouter();
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
@@ -18,8 +22,22 @@ function TopBar() {
 
 	return (
 		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
-			<div>
-				<span className="ml-5 text-white">{activeChat.name}</span>
+			<div className="flex gap-5">
+				<span className="ml-5  text-white">{activeChat.name}</span>
+				<IconButton
+					className="h-6 w-6"
+					color="warning"
+					// onClick={acceptInvitation.bind({}, id, groupId)}
+				>
+					<Call />
+				</IconButton>
+				<IconButton
+					className="h-6 w-6"
+					color="warning"
+					onClick={() => setOpenCallWindow(true)}
+				>
+					<Videocam />
+				</IconButton>
 			</div>
 			<Button
 				sx={{ marginRight: "20px" }}
@@ -66,6 +84,8 @@ function TopBar() {
 				}}
 				onClose={() => setOpen(false)}
 			></Snackbar>
+
+			{openCallWindow && <CallWindow />}
 		</div>
 	);
 }
