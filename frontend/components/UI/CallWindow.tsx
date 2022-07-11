@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	VideocamOff,
 	OpenInFull,
@@ -11,6 +11,7 @@ import {
 	Videocam
 } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import MediaList from "../Media/MediaList";
 
 function CallWindow(
 	this: any,
@@ -23,6 +24,21 @@ function CallWindow(
 	const [mute, setMute] = useState(false);
 	const [webcam, setWebcam] = useState(false);
 	const [screenShare, setScreenShare] = useState(false);
+	const [streams, setStreams] = useState<MediaStream[]>([]);
+
+	useEffect(() => {
+		(async () => {
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: true,
+				audio: true
+			});
+
+			setStreams((streams) => {
+				const updatedStreams = [...streams, stream];
+				return updatedStreams;
+			});
+		})();
+	}, []);
 
 	return (
 		<div
@@ -30,9 +46,11 @@ function CallWindow(
 				fullScreen
 					? "top-0 left-0 right-0 bottom-0 h-screen w-screen p-2"
 					: "bottom-[110px] right-[10px] h-[250px] w-[250px]"
-			} flex flex-col rounded bg-black text-white`}
+			} flex flex-col overflow-hidden rounded bg-black text-white`}
 		>
-			<div className="flex-1">sjfh</div>
+			<div className="flex flex-1">
+				{streams.length > 0 ? <MediaList streams={streams} /> : null}
+			</div>
 			<div className="mt-auto flex h-10 items-center justify-center gap-2 rounded-b bg-[#1976d2] px-2">
 				{CallType === "video" && (
 					<IconButton
