@@ -12,6 +12,8 @@ import {
 } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import MediaList from "../Media/MediaList";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 function CallWindow(
 	this: any,
@@ -24,22 +26,41 @@ function CallWindow(
 	const [mute, setMute] = useState(false);
 	const [webcam, setWebcam] = useState(false);
 	const [screenShare, setScreenShare] = useState(false);
-	const [streams, setStreams] = useState<MediaStream[]>([]);
-	const [currentStream, setCurrentStream] = useState<MediaStream | null>(
-		null
-	);
+	const [streamsInfo, setStreamsInfo] = useState<
+		{
+			stream: MediaStream;
+			user: {
+				_id: string | null;
+				username: string | null;
+			};
+		}[]
+	>([]);
+	const [currentStreamInfo, setCurrentStreamInfo] = useState<{
+		stream: MediaStream;
+		user: {
+			_id: string | null;
+			username: string | null;
+		};
+	} | null>(null);
+
+	const user = useSelector((state: RootState) => ({
+		_id: state.auth._id,
+		username: state.auth.username
+	}));
 
 	useEffect(() => {
 		(async () => {
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: true,
+				video: CallType === "video" ? true : false,
 				audio: true
 			});
 
-			setCurrentStream(stream);
+			const modifiedStream = { stream, user };
 
-			setStreams((streams) => {
-				const updatedStreams = [...streams, stream];
+			setCurrentStreamInfo(modifiedStream);
+
+			setStreamsInfo((streamsInfo) => {
+				const updatedStreams = [...streamsInfo, modifiedStream];
 				return updatedStreams;
 			});
 		})();
@@ -54,10 +75,11 @@ function CallWindow(
 			} flex flex-col overflow-hidden rounded bg-black text-white`}
 		>
 			<div className="flex flex-1">
-				{streams.length > 0 ? (
+				{streamsInfo.length > 0 ? (
 					<MediaList
-						streams={streams}
-						currentStream={currentStream}
+						streamsInfo={streamsInfo}
+						currentStreamInfo={currentStreamInfo}
+						CallType={CallType}
 					/>
 				) : null}
 			</div>
@@ -92,9 +114,11 @@ function CallWindow(
 							status: false
 						});
 
-						currentStream?.getTracks().forEach((track) => {
-							track.stop();
-						});
+						currentStreamInfo?.stream
+							.getTracks()
+							.forEach((track) => {
+								track.stop();
+							});
 					}}
 				>
 					<Close />
@@ -125,14 +149,6 @@ function CallWindow(
 }
 
 export default CallWindow;
-
-// Bug: Mute audio playback when user is talking!
-// const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true})
-// console.log(stream)
-// const vdo=document.createElement("video")
-// vdo.srcObject=stream
-// vdo.autoplay=true
-// document.querySelector("body").appendChild(vdo)
 
 // const streamAudio=await navigator.mediaDevices.getUserMedia({video:false,audio:true})
 // const streamVideo=await navigator.mediaDevices.getUserMedia({video:true,audio:false})

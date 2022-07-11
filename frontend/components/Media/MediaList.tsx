@@ -1,21 +1,52 @@
-import MediaItem from "./MediaItem";
+import VideoItem from "./VideoItem";
+import AudioItem from "./AudioItem";
 
 function MediaList({
-	streams,
-	currentStream
+	streamsInfo,
+	currentStreamInfo,
+	CallType
 }: {
-	streams: MediaStream[];
-	currentStream: MediaStream | null;
+	streamsInfo: {
+		stream: MediaStream;
+		user: {
+			_id: string | null;
+			username: string | null;
+		};
+	}[];
+	currentStreamInfo: {
+		stream: MediaStream;
+		user: {
+			_id: string | null;
+			username: string | null;
+		};
+	} | null;
+	CallType: string;
 }) {
 	return (
-		<div className="flex-1">
-			{streams.map((stream, i) => (
-				<MediaItem
-					key={i}
-					stream={stream}
-					currentStream={currentStream?.id === stream.id}
-				/>
-			))}
+		<div className="flex flex-1 items-center justify-center">
+			{streamsInfo.map((streamInfo, i) =>
+				CallType === "video" ? (
+					<VideoItem
+						key={i}
+						stream={streamInfo.stream}
+						user={streamInfo.user}
+						currentStream={
+							currentStreamInfo?.stream.id ===
+							streamInfo.stream.id
+						}
+					/>
+				) : (
+					<AudioItem
+						key={i}
+						stream={streamInfo.stream}
+						user={streamInfo.user}
+						currentStream={
+							currentStreamInfo?.stream.id ===
+							streamInfo.stream.id
+						}
+					/>
+				)
+			)}
 		</div>
 	);
 }

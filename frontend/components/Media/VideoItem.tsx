@@ -2,10 +2,15 @@ import { useRef, useEffect } from "react";
 
 function MediaItem({
 	stream,
-	currentStream
+	currentStream,
+	user
 }: {
 	stream: MediaStream;
 	currentStream: boolean;
+	user: {
+		_id: string | null;
+		username: string | null;
+	};
 }) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 
