@@ -87,9 +87,15 @@ function CallWindow(
 				<IconButton
 					className="h-6 w-6"
 					color="inherit"
-					onClick={setOpenCallWindow.bind(this, {
-						status: false
-					})}
+					onClick={() => {
+						setOpenCallWindow({
+							status: false
+						});
+
+						currentStream?.getTracks().forEach((track) => {
+							track.stop();
+						});
+					}}
 				>
 					<Close />
 				</IconButton>
