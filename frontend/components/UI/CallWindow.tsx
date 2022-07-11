@@ -30,9 +30,10 @@ function CallWindow(
 				fullScreen
 					? "top-0 left-0 right-0 bottom-0 h-screen w-screen p-2"
 					: "bottom-[110px] right-[10px] h-[250px] w-[250px]"
-			} flex rounded bg-black text-white`}
+			} flex flex-col rounded bg-black text-white`}
 		>
-			<div className="mt-auto flex h-10 flex-1 items-center justify-center gap-2 rounded-b bg-[#1976d2] px-2">
+			<div className="flex-1">sjfh</div>
+			<div className="mt-auto flex h-10 items-center justify-center gap-2 rounded-b bg-[#1976d2] px-2">
 				{CallType === "video" && (
 					<IconButton
 						className="h-6 w-6"
@@ -90,3 +91,19 @@ function CallWindow(
 }
 
 export default CallWindow;
+
+// Bug: Mute audio playback when user is talking!
+// const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true})
+// console.log(stream)
+// const vdo=document.createElement("video")
+// vdo.srcObject=stream
+// vdo.autoplay=true
+// document.querySelector("body").appendChild(vdo)
+
+// const streamAudio=await navigator.mediaDevices.getUserMedia({video:false,audio:true})
+// const streamVideo=await navigator.mediaDevices.getUserMedia({video:true,audio:false})
+// const combinedStream = new MediaStream([...streamVideo.getVideoTracks(), ...streamAudio.getAudioTracks()])
+// const vdo=document.createElement("video")
+// vdo.srcObject=combinedStream
+// vdo.autoplay=true
+// document.querySelector("body").appendChild(vdo)
