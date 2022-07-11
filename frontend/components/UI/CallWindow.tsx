@@ -25,6 +25,9 @@ function CallWindow(
 	const [webcam, setWebcam] = useState(false);
 	const [screenShare, setScreenShare] = useState(false);
 	const [streams, setStreams] = useState<MediaStream[]>([]);
+	const [currentStream, setCurrentStream] = useState<MediaStream | null>(
+		null
+	);
 
 	useEffect(() => {
 		(async () => {
@@ -32,6 +35,8 @@ function CallWindow(
 				video: true,
 				audio: true
 			});
+
+			setCurrentStream(stream);
 
 			setStreams((streams) => {
 				const updatedStreams = [...streams, stream];
@@ -49,7 +54,12 @@ function CallWindow(
 			} flex flex-col overflow-hidden rounded bg-black text-white`}
 		>
 			<div className="flex flex-1">
-				{streams.length > 0 ? <MediaList streams={streams} /> : null}
+				{streams.length > 0 ? (
+					<MediaList
+						streams={streams}
+						currentStream={currentStream}
+					/>
+				) : null}
 			</div>
 			<div className="mt-auto flex h-10 items-center justify-center gap-2 rounded-b bg-[#1976d2] px-2">
 				{CallType === "video" && (

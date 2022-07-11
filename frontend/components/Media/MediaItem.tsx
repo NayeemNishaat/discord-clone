@@ -1,6 +1,12 @@
 import { useRef, useEffect } from "react";
 
-function MediaItem({ stream }: { stream: MediaStream }) {
+function MediaItem({
+	stream,
+	currentStream
+}: {
+	stream: MediaStream;
+	currentStream: boolean;
+}) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
@@ -9,7 +15,7 @@ function MediaItem({ stream }: { stream: MediaStream }) {
 
 	return (
 		<video
-			muted
+			muted={currentStream}
 			autoPlay
 			ref={videoRef}
 			className="h-full object-cover"
