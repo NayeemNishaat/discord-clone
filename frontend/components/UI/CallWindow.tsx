@@ -14,6 +14,7 @@ import { IconButton } from "@mui/material";
 import MediaList from "../Media/MediaList";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { getStream } from "../../lib/webRtc";
 
 function CallWindow(
 	this: any,
@@ -50,10 +51,10 @@ function CallWindow(
 
 	useEffect(() => {
 		(async () => {
-			const stream = await navigator.mediaDevices.getUserMedia({
-				video: CallType === "video" ? true : false,
-				audio: true
-			});
+			const stream = await getStream(
+				true,
+				CallType === "video" ? true : false
+			);
 
 			const modifiedStream = { stream, user };
 
