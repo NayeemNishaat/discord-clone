@@ -1,4 +1,5 @@
 import { useState } from "react";
+import socket from "../../lib/socketServer";
 import Snackbar from "@mui/material/Snackbar";
 import Slide, { SlideProps } from "@mui/material/Slide";
 import { Button } from "@mui/material";
@@ -21,6 +22,8 @@ function TopBar() {
 
 	const router = useRouter();
 	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
+	const members = useSelector((state: RootState) => state.chat.members);
+	const userId = useSelector((state: RootState) => state.auth._id);
 	const dispatch = useDispatch();
 
 	return (
@@ -44,12 +47,22 @@ function TopBar() {
 						<IconButton
 							className="h-6 w-6"
 							color="warning"
-							onClick={() =>
+							onClick={() => {
 								setOpenCallWindow({
 									status: true,
 									type: "video"
-								})
-							}
+								});
+
+								const activeMembers = members.filter(
+									(member) =>
+										member.isOnline || userId !== member._id
+								);
+
+								socket.emit("call", {
+									...activeChat,
+									activeMembers
+								});
+							}}
 						>
 							<VideoCall />
 						</IconButton>

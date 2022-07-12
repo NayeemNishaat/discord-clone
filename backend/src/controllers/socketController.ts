@@ -398,6 +398,10 @@ export const connectedUsers = async (socket: Socket) => {
 		await handleGroupMessage(socket, data);
 	});
 
+	socket.on("call", async (data) => {
+		console.log(data);
+	});
+
 	socket.on("disconnect", async () => {
 		users.delete(socket.id);
 		await updateOnlineFriends(socket.data._id, false);

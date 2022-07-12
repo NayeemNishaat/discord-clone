@@ -149,11 +149,3 @@ function CallWindow(
 }
 
 export default CallWindow;
-
-// const streamAudio=await navigator.mediaDevices.getUserMedia({video:false,audio:true})
-// const streamVideo=await navigator.mediaDevices.getUserMedia({video:true,audio:false})
-// const combinedStream = new MediaStream([...streamVideo.getVideoTracks(), ...streamAudio.getAudioTracks()])
-// const vdo=document.createElement("video")
-// vdo.srcObject=combinedStream
-// vdo.autoplay=true
-// document.querySelector("body").appendChild(vdo)
