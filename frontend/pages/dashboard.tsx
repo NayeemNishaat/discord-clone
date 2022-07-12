@@ -93,6 +93,10 @@ function dashboard() {
 			dispatch(groups(groupsData));
 		});
 
+		socket.on("connInit", (id) => {
+			console.log(id);
+		});
+
 		return () => {
 			socket.close();
 		};

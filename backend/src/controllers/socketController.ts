@@ -398,8 +398,27 @@ export const connectedUsers = async (socket: Socket) => {
 		await handleGroupMessage(socket, data);
 	});
 
-	socket.on("call", async (data) => {
-		console.log(data);
+	socket.on("callInit", async (data) => {
+		const io = getIoInstance();
+		if (data.chatType === "private") {
+			io.to(getSocketId(data.id.toString())).emit(
+				"connInit",
+				socket.data._id
+			);
+		} else {
+			data.activeMembers.forEach(
+				(member: {
+					_id: string;
+					username: string;
+					isOnline: boolean;
+				}) => {
+					io.to(getSocketId(member._id.toString())).emit(
+						"connInit",
+						socket.data._id
+					);
+				}
+			);
+		}
 	});
 
 	socket.on("disconnect", async () => {

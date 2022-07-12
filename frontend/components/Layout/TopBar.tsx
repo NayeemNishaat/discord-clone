@@ -26,6 +26,17 @@ function TopBar() {
 	const userId = useSelector((state: RootState) => state.auth._id);
 	const dispatch = useDispatch();
 
+	const initCall = () => {
+		const activeMembers = members.filter(
+			(member) => userId !== member._id && member.isOnline
+		);
+
+		socket.emit("callInit", {
+			...activeChat,
+			activeMembers
+		});
+	};
+
 	return (
 		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
 			<div className="flex gap-5">
@@ -35,12 +46,14 @@ function TopBar() {
 						<IconButton
 							className="h-6 w-6"
 							color="warning"
-							onClick={() =>
+							onClick={() => {
 								setOpenCallWindow({
 									status: true,
 									type: "audio"
-								})
-							}
+								});
+
+								initCall();
+							}}
 						>
 							<AddIcCall />
 						</IconButton>
@@ -53,15 +66,7 @@ function TopBar() {
 									type: "video"
 								});
 
-								const activeMembers = members.filter(
-									(member) =>
-										member.isOnline || userId !== member._id
-								);
-
-								socket.emit("call", {
-									...activeChat,
-									activeMembers
-								});
+								initCall();
 							}}
 						>
 							<VideoCall />
