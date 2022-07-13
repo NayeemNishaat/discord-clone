@@ -21,6 +21,13 @@ interface chatState {
 		date: string;
 	};
 	members: { _id: string; username: string; isOnline: boolean }[];
+	currentUserStreamInfo: {
+		stream: MediaStream;
+		user: {
+			_id: string | null;
+			username: string | null;
+		};
+	} | null;
 }
 
 const initialState: chatState = {
@@ -45,7 +52,8 @@ const initialState: chatState = {
 		type: "",
 		date: new Date().toISOString()
 	},
-	members: []
+	members: [],
+	currentUserStreamInfo: null
 };
 
 const chatSlice = createSlice({
@@ -77,10 +85,21 @@ const chatSlice = createSlice({
 			action: PayloadAction<chatState["members"]>
 		) => {
 			state.members = action.payload;
+		},
+		currentUserStreamInfo: (
+			state: chatState,
+			action: PayloadAction<chatState["currentUserStreamInfo"]>
+		) => {
+			state.currentUserStreamInfo = action.payload;
 		}
 	}
 });
 
-export const { setActiveChat, setMessages, pushMessage, setMembers } =
-	chatSlice.actions;
+export const {
+	setActiveChat,
+	setMessages,
+	pushMessage,
+	setMembers,
+	currentUserStreamInfo
+} = chatSlice.actions;
 export default chatSlice.reducer;

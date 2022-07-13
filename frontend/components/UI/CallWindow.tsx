@@ -12,8 +12,9 @@ import {
 } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import MediaList from "../Media/MediaList";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
+import { currentUserStreamInfo } from "../../redux/slices/chatSlice";
 import { getStream } from "../../lib/webRtc";
 
 function CallWindow(
@@ -36,6 +37,9 @@ function CallWindow(
 			};
 		}[]
 	>([]);
+
+	const dispatch = useDispatch();
+
 	const [currentStreamInfo, setCurrentStreamInfo] = useState<{
 		stream: MediaStream;
 		user: {
@@ -59,6 +63,7 @@ function CallWindow(
 			const modifiedStream = { stream, user };
 
 			setCurrentStreamInfo(modifiedStream);
+			dispatch(currentUserStreamInfo(modifiedStream));
 
 			setStreamsInfo((streamsInfo) => {
 				const updatedStreams = [...streamsInfo, modifiedStream];

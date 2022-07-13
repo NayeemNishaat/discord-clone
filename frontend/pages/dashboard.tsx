@@ -16,6 +16,7 @@ import {
 	groups
 } from "../redux/slices/userSlice";
 import { setMembers } from "../redux/slices/chatSlice";
+import { initPeerConnection, handleConnectionInfo } from "../lib/webRtc";
 
 function dashboard() {
 	const [component, setComponent] = useState(
@@ -27,6 +28,9 @@ function dashboard() {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const loginInfo = useSelector((state: RootState) => state.auth);
+	const currentUserStreamInfo = useSelector(
+		(state: RootState) => state.chat.currentUserStreamInfo
+	);
 
 	useEffect(() => {
 		if (!loginInfo._id) {
@@ -94,7 +98,17 @@ function dashboard() {
 		});
 
 		socket.on("connInit", (id) => {
-			console.log(id);
+			initPeerConnection(id, false, currentUserStreamInfo);
+
+			socket.emit("establishConn", id);
+		});
+
+		socket.on("establishConn", (id) => {
+			initPeerConnection(id, true, currentUserStreamInfo);
+		});
+
+		socket.on("signalInfo", (connectionInfo) => {
+			handleConnectionInfo(connectionInfo);
 		});
 
 		return () => {
