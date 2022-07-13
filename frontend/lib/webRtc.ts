@@ -28,11 +28,7 @@ const getConfig = () => {
 
 let peers: {
 	[x: string]: Instance;
-};
-
-export const getRemoteStream = (remoteStream: MediaStream) => {
-	return remoteStream;
-};
+} = {};
 
 export const initPeerConnection = (
 	id: string,
@@ -59,13 +55,13 @@ export const initPeerConnection = (
 		const signalInfo = { signal: data, id };
 
 		// Remark: Send signalInfo to other users
-		socket.emit("signalInfo", signalInfo);
+		socket.emit("connSignal", signalInfo);
 	});
 
 	peers[id].on("stream", (remoteStream) => {
 		// TODO: Add remote stream to video element
-		// const updatedStream = { ...};
-		getRemoteStream(remoteStream);
+		console.log(remoteStream);
+		console.log(100);
 	});
 };
 

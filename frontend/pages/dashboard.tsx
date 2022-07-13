@@ -97,17 +97,17 @@ function dashboard() {
 			dispatch(groups(groupsData));
 		});
 
-		socket.on("connInit", (id) => {
+		socket.on("connPrepare", (id) => {
 			initPeerConnection(id, false, currentUserStreamInfo);
 
-			socket.emit("establishConn", id);
+			socket.emit("connInit", id);
 		});
 
-		socket.on("establishConn", (id) => {
+		socket.on("connInit", (id) => {
 			initPeerConnection(id, true, currentUserStreamInfo);
 		});
 
-		socket.on("signalInfo", (connectionInfo) => {
+		socket.on("connSignal", (connectionInfo) => {
 			handleConnectionInfo(connectionInfo);
 		});
 

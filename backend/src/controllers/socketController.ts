@@ -401,7 +401,10 @@ export const connectedUsers = async (socket: Socket) => {
 	socket.on("callInit", async (data) => {
 		const io = getIoInstance();
 		if (data.chatType === "private") {
-			io.to(getSocketId(data.id.toString())).emit("connInit", socket.id);
+			io.to(getSocketId(data.id.toString())).emit(
+				"connPrepare",
+				socket.id
+			);
 		} else {
 			data.activeMembers.forEach(
 				(member: {
@@ -410,7 +413,7 @@ export const connectedUsers = async (socket: Socket) => {
 					isOnline: boolean;
 				}) => {
 					io.to(getSocketId(member._id.toString())).emit(
-						"connInit",
+						"connPrepare",
 						socket.id
 					);
 				}
@@ -418,12 +421,12 @@ export const connectedUsers = async (socket: Socket) => {
 		}
 	});
 
-	socket.on("establishConn", (id) => {
-		socket.to(id).emit("establishConn", socket.id);
+	socket.on("connInit", (id) => {
+		socket.to(id).emit("connInit", socket.id);
 	});
 
-	socket.on("signalInfo", (signalInfo) => {
-		socket.to(signalInfo.id).emit("establishConn", signalInfo);
+	socket.on("connSignal", (signalInfo) => {
+		socket.to(signalInfo.id).emit("connSignal", signalInfo);
 	});
 
 	socket.on("disconnect", async () => {
