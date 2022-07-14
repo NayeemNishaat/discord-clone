@@ -7,430 +7,432 @@ import GroupConversation from "../models/groupConversationModel";
 import { getIoInstance } from "../socketEvents";
 
 interface JwtPayload {
-	id: string;
-	email: string;
+    id: string;
+    email: string;
 }
 
 declare const process: {
-	env: {
-		JWT_SECRET: string;
-		JWT_EXPIRES_IN: string;
-		JWT_COOKIE_EXPIRES_IN: number;
-	};
+    env: {
+        JWT_SECRET: string;
+        JWT_EXPIRES_IN: string;
+        JWT_COOKIE_EXPIRES_IN: number;
+    };
 };
 
 interface friends {
-	_id: string;
-	socketId?: string;
-	usename: string;
-	isOnline: boolean;
+    _id: string;
+    socketId?: string;
+    usename: string;
+    isOnline: boolean;
 }
 
 let token: string;
 export const verifyUser = async (
-	socket: Socket,
-	next: { (err?: ExtendedError | undefined): void }
+    socket: Socket,
+    next: { (err?: ExtendedError | undefined): void }
 ) => {
-	if (socket.handshake.headers.cookie) {
-		socket.handshake.headers.cookie.split("; ").forEach((el: string) => {
-			const arr = el.split("=");
-			if (arr[0] === "jwt") token = arr[1];
-		});
-	}
+    if (socket.handshake.headers.cookie) {
+        socket.handshake.headers.cookie.split("; ").forEach((el: string) => {
+            const arr = el.split("=");
+            if (arr[0] === "jwt") token = arr[1];
+        });
+    }
 
-	if (!token) return socket.emit("error", "Please log in to get access!");
+    if (!token) return socket.emit("error", "Please log in to get access!");
 
-	let decoded: { id: string; email: string };
-	try {
-		decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-	} catch (err) {
-		return socket.emit("error", "Invalid Token!");
-	}
+    let decoded: { id: string; email: string };
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+    } catch (err) {
+        return socket.emit("error", "Invalid Token!");
+    }
 
-	const currentUser = await User.findById(decoded.id);
+    const currentUser = await User.findById(decoded.id);
 
-	if (!currentUser)
-		return socket.emit(
-			"error",
-			"The user belonging to this token does no longer exist."
-		);
+    if (!currentUser)
+        return socket.emit(
+            "error",
+            "The user belonging to this token does no longer exist."
+        );
 
-	socket.data = currentUser;
-	next();
+    socket.data = currentUser;
+    next();
 };
 
 const users = new Map();
 let userInfo: {
-	friends: friends[];
-	receivedInvitation: {}[];
+    friends: friends[];
+    receivedInvitation: {}[];
 };
 
 const getSocketId = (id: string) => {
-	return [...users].find(
-		([_key, value]: [string, string]) => value === id
-	)?.[0] as string;
+    return [...users].find(
+        ([_key, value]: [string, string]) => value === id
+    )?.[0] as string;
 };
 
 const getOnlineFriends = (friends: friends[]) => {
-	return friends.map((friend) => {
-		if (Array.from(users.values()).includes(friend._id.toString())) {
-			friend.isOnline = true;
-			friend.socketId = getSocketId(friend._id.toString());
-			return friend;
-		}
-		friend.isOnline = false;
-		return friend;
-	});
+    return friends.map((friend) => {
+        if (Array.from(users.values()).includes(friend._id.toString())) {
+            friend.isOnline = true;
+            friend.socketId = getSocketId(friend._id.toString());
+            return friend;
+        }
+        friend.isOnline = false;
+        return friend;
+    });
 };
 
 const updateOnlineFriends = async (userId: string, active: boolean = true) => {
-	const io = getIoInstance();
+    const io = getIoInstance();
 
-	const user = await User.findById(userId, "friends")
-		.populate("friends", "username")
-		.lean();
+    const user = await User.findById(userId, "friends")
+        .populate("friends", "username")
+        .lean();
 
-	const friendsStat = getOnlineFriends(user.friends);
+    const friendsStat = getOnlineFriends(user.friends);
 
-	friendsStat.forEach((friend) => {
-		if (friend.isOnline === true) {
-			return io.to(friend.socketId as string).emit("friendOnline", {
-				_id: user._id,
-				usename: user.username,
-				isOnline: active
-			});
-		}
-	});
+    friendsStat.forEach((friend) => {
+        if (friend.isOnline === true) {
+            return io.to(friend.socketId as string).emit("friendOnline", {
+                _id: user._id,
+                usename: user.username,
+                isOnline: active
+            });
+        }
+    });
 };
 
 export const sendInviteNotification = async (
-	receiver: string,
-	sender: {
-		_id: string;
-		username: string;
-		email: string;
-	},
-	groupId: string,
-	groupName: string
+    receiver: string,
+    sender: {
+        _id: string;
+        username: string;
+        email: string;
+    },
+    groupId: string,
+    groupName: string
 ) => {
-	const io = getIoInstance();
+    const io = getIoInstance();
 
-	let activeUserIds: string[] = []; // Important: Array because a user could be connected from multiple devices!
+    let activeUserIds: string[] = []; // Important: Array because a user could be connected from multiple devices!
 
-	users.forEach((value, key) => {
-		if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
-	});
+    users.forEach((value, key) => {
+        if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
+    });
 
-	userInfo = await User.findById(receiver, "receivedInvitation friends")
-		.populate("receivedInvitation", "username")
-		.lean();
+    userInfo = await User.findById(receiver, "receivedInvitation friends")
+        .populate("receivedInvitation", "username")
+        .lean();
 
-	activeUserIds.forEach((activeUserId) => {
-		io.to(activeUserId).emit("invite", [
-			...userInfo.receivedInvitation,
-			{
-				_id: sender._id,
-				username: sender.username,
-				groupName: groupName,
-				groupId: groupId
-			}
-		]);
-	});
+    activeUserIds.forEach((activeUserId) => {
+        io.to(activeUserId).emit("invite", [
+            ...userInfo.receivedInvitation,
+            {
+                _id: sender._id,
+                username: sender.username,
+                groupName: groupName,
+                groupId: groupId
+            }
+        ]);
+    });
 };
 
 export const sendFriendNotification = (
-	sender: {
-		_id: string;
-		friends: friends[];
-	},
-	receiver: {
-		_id: string;
-		friends: friends[];
-	}
+    sender: {
+        _id: string;
+        friends: friends[];
+    },
+    receiver: {
+        _id: string;
+        friends: friends[];
+    }
 ) => {
-	const io = getIoInstance();
+    const io = getIoInstance();
 
-	users.forEach((value, key) => {
-		if (value === receiver._id.toString()) {
-			const receiverFriends = getOnlineFriends(receiver.friends);
-			io.to(key).emit("friend", receiverFriends);
-		}
+    users.forEach((value, key) => {
+        if (value === receiver._id.toString()) {
+            const receiverFriends = getOnlineFriends(receiver.friends);
+            io.to(key).emit("friend", receiverFriends);
+        }
 
-		if (value === sender._id.toString()) {
-			const senderFriends = getOnlineFriends(sender.friends);
-			io.to(key).emit("friend", senderFriends);
-		}
-	});
+        if (value === sender._id.toString()) {
+            const senderFriends = getOnlineFriends(sender.friends);
+            io.to(key).emit("friend", senderFriends);
+        }
+    });
 };
 
 export const sendGroupNotification = async (
-	userId: string,
-	socketId?: string,
-	groupId?: string
+    userId: string,
+    socketId?: string,
+    groupId?: string
 ) => {
-	const io = getIoInstance();
+    const io = getIoInstance();
 
-	if (!socketId) socketId = getSocketId(userId.toString());
+    if (!socketId) socketId = getSocketId(userId.toString());
 
-	const { groups } = (await User.findById(userId, "groups")
-		.populate({
-			path: "groups",
-			select: "name owner members",
-			populate: { path: "members", select: "username" }
-		})
-		.lean()) as {
-		groups: {
-			_id: string;
-			name: string;
-			owner: string;
-			members: {
-				_id: string;
-				username: string;
-				isOnline: boolean;
-				socketId: string;
-			}[];
-		}[];
-	};
+    const { groups } = (await User.findById(userId, "groups")
+        .populate({
+            path: "groups",
+            select: "name owner members",
+            populate: { path: "members", select: "username" }
+        })
+        .lean()) as {
+        groups: {
+            _id: string;
+            name: string;
+            owner: string;
+            members: {
+                _id: string;
+                username: string;
+                isOnline: boolean;
+                socketId: string;
+            }[];
+        }[];
+    };
 
-	const updateOnlineStatus = () => {
-		groups.forEach((group) => {
-			group.members = getOnlineFriends(
-				group.members as unknown as friends[]
-			) as unknown as {
-				_id: string;
-				username: string;
-				isOnline: boolean;
-				socketId: string;
-			}[];
+    const updateOnlineStatus = () => {
+        groups.forEach((group) => {
+            group.members = getOnlineFriends(
+                group.members as unknown as friends[]
+            ) as unknown as {
+                _id: string;
+                username: string;
+                isOnline: boolean;
+                socketId: string;
+            }[];
 
-			if (groupId && groupId === group._id) {
-				group.members.forEach((member) => {
-					io.to(member.socketId).emit("groupList", group);
-				});
-			}
-		});
+            if (groupId && groupId === group._id) {
+                group.members.forEach((member) => {
+                    io.to(member.socketId).emit("groupList", group);
+                });
+            }
+        });
 
-		io.to(socketId as string).emit("groupList", groups);
-	};
-	updateOnlineStatus();
+        io.to(socketId as string).emit("groupList", groups);
+    };
+    updateOnlineStatus();
 
-	const timeoutIntv = () => {
-		setTimeout(() => {
-			updateOnlineStatus();
-			timeoutIntv();
-		}, 10000);
-	};
-	timeoutIntv();
+    const timeoutIntv = () => {
+        setTimeout(() => {
+            updateOnlineStatus();
+            timeoutIntv();
+        }, 10000);
+    };
+    timeoutIntv();
 };
 
 const getPrivateHistory = async (socket: Socket, friendId: string) => {
-	const conversation = await Conversation.findOne({
-		participents: { $all: [socket.data._id, friendId] }
-	}).populate({
-		path: "messages",
-		populate: { path: "author", select: "username" }
-	});
+    const conversation = await Conversation.findOne({
+        participents: { $all: [socket.data._id, friendId] }
+    }).populate({
+        path: "messages",
+        populate: { path: "author", select: "username" }
+    });
 
-	if (!conversation) return socket.emit("privateHistory", null);
+    if (!conversation) return socket.emit("privateHistory", null);
 
-	return socket.emit("privateHistory", conversation.messages);
+    return socket.emit("privateHistory", conversation.messages);
 };
 
 const getGroupHistory = async (socket: Socket, groupId: string) => {
-	const groupConversation = await GroupConversation.findById(
-		groupId,
-		"messages",
-		{ populate: { path: "messages.author", select: "username" } }
-	);
+    const groupConversation = await GroupConversation.findById(
+        groupId,
+        "messages",
+        { populate: { path: "messages.author", select: "username" } }
+    );
 
-	if (!groupConversation.messages.length)
-		return socket.emit("groupHistory", null);
+    if (!groupConversation.messages.length)
+        return socket.emit("groupHistory", null);
 
-	return socket.emit("groupHistory", groupConversation.messages);
+    return socket.emit("groupHistory", groupConversation.messages);
 };
 
 const handlePrivateMessage = async (
-	socket: Socket,
-	data: { to: string; message: string }
+    socket: Socket,
+    data: { to: string; message: string }
 ) => {
-	const io = getIoInstance();
-	const senderId = socket.data._id;
-	const receiverId = data.to;
+    const io = getIoInstance();
+    const senderId = socket.data._id;
+    const receiverId = data.to;
 
-	const conversation = await Conversation.findOne({
-		participents: { $all: [senderId, receiverId] }
-	});
+    const conversation = await Conversation.findOne({
+        participents: { $all: [senderId, receiverId] }
+    });
 
-	if (conversation) {
-		await Conversation.updateOne(
-			{
-				_id: conversation._id
-			},
-			{
-				$push: {
-					messages: {
-						author: senderId,
-						message: data.message,
-						date: new Date(),
-						type: "private"
-					}
-				}
-			}
-		);
-	} else {
-		Conversation.create({
-			participents: [senderId, receiverId],
-			messages: [
-				{
-					author: senderId,
-					message: data.message,
-					date: new Date(),
-					type: "private"
-				}
-			]
-		});
-	}
+    if (conversation) {
+        await Conversation.updateOne(
+            {
+                _id: conversation._id
+            },
+            {
+                $push: {
+                    messages: {
+                        author: senderId,
+                        message: data.message,
+                        date: new Date(),
+                        type: "private"
+                    }
+                }
+            }
+        );
+    } else {
+        Conversation.create({
+            participents: [senderId, receiverId],
+            messages: [
+                {
+                    author: senderId,
+                    message: data.message,
+                    date: new Date(),
+                    type: "private"
+                }
+            ]
+        });
+    }
 
-	[senderId, receiverId].forEach((id) => {
-		const activeUser = getSocketId(id.toString());
+    [senderId, receiverId].forEach((id) => {
+        const activeUser = getSocketId(id.toString());
 
-		activeUser &&
-			io.to(activeUser).emit("private", {
-				author: { username: socket.data.username },
-				message: data.message,
-				date: new Date(),
-				type: "private"
-			});
-	});
+        activeUser &&
+            io.to(activeUser).emit("private", {
+                author: { username: socket.data.username },
+                message: data.message,
+                date: new Date(),
+                type: "private"
+            });
+    });
 };
 
 const handleGroupMessage = async (
-	socket: Socket,
-	data: { to: string; message: string }
+    socket: Socket,
+    data: { to: string; message: string }
 ) => {
-	const io = getIoInstance();
-	const senderId = socket.data._id;
-	const groupId = data.to;
+    const io = getIoInstance();
+    const senderId = socket.data._id;
+    const groupId = data.to;
 
-	const group = await GroupConversation.findByIdAndUpdate(
-		groupId,
-		{
-			$push: {
-				messages: {
-					author: senderId,
-					message: data.message,
-					date: new Date(),
-					type: "group"
-				}
-			}
-		},
-		{ projection: "members" }
-	);
+    const group = await GroupConversation.findByIdAndUpdate(
+        groupId,
+        {
+            $push: {
+                messages: {
+                    author: senderId,
+                    message: data.message,
+                    date: new Date(),
+                    type: "group"
+                }
+            }
+        },
+        { projection: "members" }
+    );
 
-	group.members.forEach((member: string) => {
-		const activeUser = getSocketId(member.toString());
+    group.members.forEach((member: string) => {
+        const activeUser = getSocketId(member.toString());
 
-		activeUser &&
-			io.to(activeUser).emit("group", {
-				author: { username: socket.data.username },
-				message: data.message,
-				date: new Date(),
-				type: "group"
-			});
-	});
+        activeUser &&
+            io.to(activeUser).emit("group", {
+                author: { username: socket.data.username },
+                message: data.message,
+                date: new Date(),
+                type: "group"
+            });
+    });
 };
 
 export const connectedUsers = async (socket: Socket) => {
-	if (!Array.from(users.values()).includes(socket.data._id.toString()))
-		users.set(socket.id, socket.data._id.toString());
+    if (!Array.from(users.values()).includes(socket.data._id.toString()))
+        users.set(socket.id, socket.data._id.toString());
 
-	const userInfo = await User.findById(
-		socket.data._id,
-		"receivedInvitation friends"
-	)
-		.populate({
-			path: "receivedInvitation",
-			populate: { path: "user", select: "username" }
-		})
-		.populate("friends", "username")
-		.lean();
+    const userInfo = await User.findById(
+        socket.data._id,
+        "receivedInvitation friends"
+    )
+        .populate({
+            path: "receivedInvitation",
+            populate: { path: "user", select: "username" }
+        })
+        .populate("friends", "username")
+        .lean();
 
-	const friends = getOnlineFriends(userInfo.friends);
+    const friends = getOnlineFriends(userInfo.friends);
 
-	if (userInfo.receivedInvitation) {
-		let invArr: {}[] = [];
-		userInfo.receivedInvitation.forEach(
-			(inv: {
-				user: { _id: string; username: string };
-				groupName: string;
-				groupId: string;
-			}) => {
-				invArr.push({
-					_id: inv.user._id,
-					username: inv.user.username,
-					groupName: inv.groupName,
-					groupId: inv.groupId
-				});
-			}
-		);
-		socket.emit("invite", invArr);
-	}
+    if (userInfo.receivedInvitation) {
+        let invArr: {}[] = [];
+        userInfo.receivedInvitation.forEach(
+            (inv: {
+                user: { _id: string; username: string };
+                groupName: string;
+                groupId: string;
+            }) => {
+                invArr.push({
+                    _id: inv.user._id,
+                    username: inv.user.username,
+                    groupName: inv.groupName,
+                    groupId: inv.groupId
+                });
+            }
+        );
+        socket.emit("invite", invArr);
+    }
 
-	socket.emit("friend", friends);
+    socket.emit("friend", friends);
 
-	await updateOnlineFriends(socket.data._id);
+    await updateOnlineFriends(socket.data._id);
 
-	await sendGroupNotification(socket.data._id, socket.id);
+    await sendGroupNotification(socket.data._id, socket.id);
 
-	socket.on("privateHistory", async (friendId: string) => {
-		await getPrivateHistory(socket, friendId);
-	});
+    socket.on("privateHistory", async (friendId: string) => {
+        await getPrivateHistory(socket, friendId);
+    });
 
-	socket.on("groupHistory", async (groupId: string) => {
-		await getGroupHistory(socket, groupId);
-	});
+    socket.on("groupHistory", async (groupId: string) => {
+        await getGroupHistory(socket, groupId);
+    });
 
-	socket.on("private", async (data) => {
-		await handlePrivateMessage(socket, data);
-	});
+    socket.on("private", async (data) => {
+        await handlePrivateMessage(socket, data);
+    });
 
-	socket.on("group", async (data) => {
-		await handleGroupMessage(socket, data);
-	});
+    socket.on("group", async (data) => {
+        await handleGroupMessage(socket, data);
+    });
 
-	socket.on("callInit", async (data) => {
-		const io = getIoInstance();
-		if (data.chatType === "private") {
-			io.to(getSocketId(data.id.toString())).emit(
-				"connPrepare",
-				socket.id
-			);
-		} else {
-			data.activeMembers.forEach(
-				(member: {
-					_id: string;
-					username: string;
-					isOnline: boolean;
-				}) => {
-					io.to(getSocketId(member._id.toString())).emit(
-						"connPrepare",
-						socket.id
-					);
-				}
-			);
-		}
-	});
+    socket.on("callInit", async (data) => {
+        const io = getIoInstance();
+        if (data.chatType === "private") {
+            io.to(getSocketId(data.id.toString())).emit(
+                "connPrepare",
+                socket.id
+            );
+        } else {
+            data.activeMembers.forEach(
+                (member: {
+                    _id: string;
+                    username: string;
+                    isOnline: boolean;
+                }) => {
+                    io.to(getSocketId(member._id.toString())).emit(
+                        "connPrepare",
+                        socket.id
+                    );
+                }
+            );
+        }
+    });
 
-	socket.on("connInit", (id) => {
-		socket.to(id).emit("connInit", socket.id);
-	});
+    socket.on("connInit", (id) => {
+        socket.to(id).emit("connInit", socket.id);
+    });
 
-	socket.on("connSignal", (signalInfo) => {
-		socket.to(signalInfo.id).emit("connSignal", signalInfo);
-	});
+    socket.on("connSignal", (signalInfo) => {
+        socket
+            .to(signalInfo.id)
+            .emit("connSignal", { ...signalInfo, id: socket.id });
+    });
 
-	socket.on("disconnect", async () => {
-		users.delete(socket.id);
-		await updateOnlineFriends(socket.data._id, false);
-	});
+    socket.on("disconnect", async () => {
+        users.delete(socket.id);
+        await updateOnlineFriends(socket.data._id, false);
+    });
 };

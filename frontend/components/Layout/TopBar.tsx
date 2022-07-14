@@ -14,120 +14,124 @@ import { IconButton } from "@mui/material";
 import CallWindow from "../UI/CallWindow";
 
 function TopBar() {
-	const [open, setOpen] = useState(false);
-	const [openCallWindow, setOpenCallWindow] = useState({
-		status: false,
-		type: ""
-	});
+    const [open, setOpen] = useState(false);
+    const [openCallWindow, setOpenCallWindow] = useState({
+        status: false,
+        type: ""
+    });
 
-	const router = useRouter();
-	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
-	const members = useSelector((state: RootState) => state.chat.members);
-	const userId = useSelector((state: RootState) => state.auth._id);
-	const dispatch = useDispatch();
+    const router = useRouter();
+    const activeChat = useSelector((state: RootState) => state.chat.activeChat);
+    const members = useSelector((state: RootState) => state.chat.members);
+    const stream = useSelector(
+        (state: RootState) => state.chat.streamInfo?.stream
+    );
+    const userId = useSelector((state: RootState) => state.auth._id);
+    const dispatch = useDispatch();
 
-	const initCall = () => {
-		const activeMembers = members.filter(
-			(member) => userId !== member._id && member.isOnline
-		);
+    const initCall = () => {
+        const activeMembers = members.filter(
+            (member) => userId !== member._id && member.isOnline
+        );
 
-		socket.emit("callInit", {
-			...activeChat,
-			activeMembers
-		});
-	};
+        stream &&
+            socket.emit("callInit", {
+                ...activeChat,
+                activeMembers
+            });
+    };
 
-	return (
-		<div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
-			<div className="flex gap-5">
-				<span className="ml-5  text-white">{activeChat.name}</span>
-				{activeChat.name && (
-					<>
-						<IconButton
-							className="h-6 w-6"
-							color="warning"
-							onClick={() => {
-								setOpenCallWindow({
-									status: true,
-									type: "audio"
-								});
+    return (
+        <div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
+            <div className="flex gap-5">
+                <span className="ml-5  text-white">{activeChat.name}</span>
+                {activeChat.name && (
+                    <>
+                        <IconButton
+                            className="h-6 w-6"
+                            color="warning"
+                            onClick={() => {
+                                setOpenCallWindow({
+                                    status: true,
+                                    type: "audio"
+                                });
 
-								initCall();
-							}}
-						>
-							<AddIcCall />
-						</IconButton>
-						<IconButton
-							className="h-6 w-6"
-							color="warning"
-							onClick={() => {
-								setOpenCallWindow({
-									status: true,
-									type: "video"
-								});
+                                initCall();
+                            }}
+                        >
+                            <AddIcCall />
+                        </IconButton>
+                        <IconButton
+                            className="h-6 w-6"
+                            color="warning"
+                            onClick={() => {
+                                setOpenCallWindow({
+                                    status: true,
+                                    type: "video"
+                                });
 
-								initCall();
-							}}
-						>
-							<VideoCall />
-						</IconButton>
-					</>
-				)}
-			</div>
-			<Button
-				sx={{ marginRight: "20px" }}
-				color="warning"
-				variant="outlined"
-				onClick={async () => {
-					try {
-						localStorage.removeItem("loginInfo");
+                                initCall();
+                            }}
+                        >
+                            <VideoCall />
+                        </IconButton>
+                    </>
+                )}
+            </div>
+            <Button
+                sx={{ marginRight: "20px" }}
+                color="warning"
+                variant="outlined"
+                onClick={async () => {
+                    try {
+                        localStorage.removeItem("loginInfo");
 
-						await fetch(
-							"http://localhost:5000/api/v1/auth/logout",
-							{
-								method: "GET",
-								credentials: "include"
-							}
-						);
+                        await fetch(
+                            "http://localhost:5000/api/v1/auth/logout",
+                            {
+                                method: "GET",
+                                credentials: "include"
+                            }
+                        );
 
-						dispatch(
-							setLoginInfo({
-								_id: null,
-								email: null,
-								username: null
-							})
-						);
-						dispatch(receivedInvitations([]));
-						dispatch(friends([]));
+                        dispatch(
+                            setLoginInfo({
+                                _id: null,
+                                email: null,
+                                username: null
+                            })
+                        );
+                        dispatch(receivedInvitations([]));
+                        dispatch(friends([]));
 
-						router.replace("/");
-					} catch (err) {
-						setOpen(true);
-					}
-				}}
-			>
-				Logout
-			</Button>
+                        router.replace("/");
+                    } catch (err) {
+                        setOpen(true);
+                    }
+                }}
+            >
+                Logout
+            </Button>
 
-			<Snackbar
-				anchorOrigin={{ vertical: "top", horizontal: "center" }}
-				open={open}
-				autoHideDuration={5000}
-				message="Failed to Logout"
-				TransitionComponent={(props: SlideProps) => {
-					return <Slide {...props} direction="down" />;
-				}}
-				onClose={() => setOpen(false)}
-			></Snackbar>
+            <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={open}
+                autoHideDuration={5000}
+                message="Failed to Logout"
+                TransitionComponent={(props: SlideProps) => {
+                    return <Slide {...props} direction="down" />;
+                }}
+                onClose={() => setOpen(false)}
+            ></Snackbar>
 
-			{openCallWindow.status && (
-				<CallWindow
-					setOpenCallWindow={setOpenCallWindow}
-					CallType={openCallWindow.type}
-				/>
-			)}
-		</div>
-	);
+            {openCallWindow.status && (
+                <CallWindow
+                    setOpenCallWindow={setOpenCallWindow}
+                    CallType={openCallWindow.type}
+                />
+            )}
+        </div>
+    );
 }
 
 export default TopBar;
