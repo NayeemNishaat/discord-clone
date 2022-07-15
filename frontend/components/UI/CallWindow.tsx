@@ -68,7 +68,7 @@ function CallWindow(
 
       setStreamsInfo([modifiedStream, ...storedStreamsInfo]);
     })();
-  }, []);
+  }, [storedStreamsInfo]);
 
   return (
     <div
