@@ -32,17 +32,19 @@ let peers: {
   [x: string]: Instance;
 } = {};
 
-export const initPeerConnection = (id: string, isInitiator: boolean) => {
+export const initPeerConnection = async (id: string, isInitiator: boolean) => {
   if (isInitiator) {
     console.log("Initiator");
   } else {
     console.log("Not Initiator");
   }
-
+  // console.log(store.getState().chat.streamInfo?.stream);
+  const stream = await getStream(true, true);
+  console.log("local", stream);
   peers[id] = new Peer({
     initiator: isInitiator,
     config: getConfig(),
-    stream: store.getState().chat.streamInfo?.stream
+    stream: stream
   });
 
   peers[id].on("signal", (data) => {
@@ -53,6 +55,7 @@ export const initPeerConnection = (id: string, isInitiator: boolean) => {
   });
 
   peers[id].on("stream", (remoteStream) => {
+    console.log("remote", remoteStream);
     // TODO: Add remote stream to video element
     store.dispatch(
       streamsInfo({
