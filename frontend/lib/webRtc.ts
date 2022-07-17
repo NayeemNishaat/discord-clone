@@ -1,7 +1,7 @@
 import Peer, { Instance } from "simple-peer";
 import socket from "./socketServer";
 import store from "../redux/store";
-import { streamsInfo } from "../redux/slices/chatSlice";
+import { streamsInfo, streamInfo } from "../redux/slices/chatSlice";
 
 export const getStream = async (audio: boolean, video: boolean) => {
   return await navigator.mediaDevices.getUserMedia({
@@ -38,9 +38,15 @@ export const initPeerConnection = async (id: string, isInitiator: boolean) => {
   } else {
     console.log("Not Initiator");
   }
-  // console.log(store.getState().chat.streamInfo?.stream);
+
   const stream = await getStream(true, true);
-  console.log("local", stream);
+  store.dispatch(
+    streamInfo({
+      stream: stream,
+      user: store.getState().auth
+    })
+  );
+
   peers[id] = new Peer({
     initiator: isInitiator,
     config: getConfig(),
@@ -50,17 +56,16 @@ export const initPeerConnection = async (id: string, isInitiator: boolean) => {
   peers[id].on("signal", (data) => {
     const signalInfo = { signal: data, id };
 
-    // Remark: Send signalInfo to other users
+    // Part: Send signalInfo to other users
     socket.emit("connSignal", signalInfo);
   });
 
   peers[id].on("stream", (remoteStream) => {
-    console.log("remote", remoteStream);
-    // TODO: Add remote stream to video element
+    // Part: Add remote stream to video element
     store.dispatch(
       streamsInfo({
         stream: remoteStream,
-        user: { _id: id, username: "Remote" }
+        user: { _id: "id", username: "Remote" }
       })
     );
   });

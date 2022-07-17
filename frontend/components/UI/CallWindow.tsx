@@ -28,48 +28,56 @@ function CallWindow(
   const [mute, setMute] = useState(false);
   const [webcam, setWebcam] = useState(false);
   const [screenShare, setScreenShare] = useState(false);
-  const [streamsInfo, setStreamsInfo] = useState<
-    {
-      stream: MediaStream;
-      user: {
-        _id: string | null;
-        username: string | null;
-      };
-    }[]
-  >([]);
+  // const [streamsInfo, setStreamsInfo] = useState<
+  //   {
+  //     stream: MediaStream;
+  //     user: {
+  //       _id: string | null;
+  //       username: string | null;
+  //     };
+  //   }[]
+  // >([]);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const [currentStreamInfo, setCurrentStreamInfo] = useState<{
-    stream: MediaStream;
-    user: {
-      _id: string | null;
-      username: string | null;
-    };
-  } | null>(null);
+  // const [currentStreamInfo, setCurrentStreamInfo] = useState<{
+  //   stream: MediaStream;
+  //   user: {
+  //     _id: string | null;
+  //     username: string | null;
+  //   };
+  // } | null>(null);
 
-  const user = useSelector((state: RootState) => ({
-    _id: state.auth._id,
-    username: state.auth.username
-  }));
+  // const user = useSelector((state: RootState) => ({
+  //   _id: state.auth._id,
+  //   username: state.auth.username
+  // }));
 
   const storedStreamsInfo = useSelector(
     (state: RootState) => state.chat.streamsInfo
   );
 
-  useEffect(() => {
-    (async () => {
-      const stream = await getStream(true, CallType === "video" ? true : false);
+  const currentStreamInfo = useSelector(
+    (state: RootState) => state.chat.streamInfo
+  );
 
-      const modifiedStream = { stream, user };
+  const streamsInfo = currentStreamInfo
+    ? [currentStreamInfo, ...storedStreamsInfo]
+    : storedStreamsInfo;
+  // useEffect(() => {
+  //   (async () => {
+  //     const stream = await getStream(true, CallType === "video" ? true : false);
 
-      setCurrentStreamInfo(modifiedStream);
-      dispatch(streamInfo(modifiedStream));
+  //     const modifiedStream = { stream, user };
 
-      setStreamsInfo([modifiedStream, ...storedStreamsInfo]);
-    })();
-  }, [storedStreamsInfo]);
+  //     setCurrentStreamInfo(modifiedStream);
+  //     dispatch(streamInfo(modifiedStream));
 
+  //     setStreamsInfo([modifiedStream, ...storedStreamsInfo]);
+  //   })();
+  // }, [storedStreamsInfo]);
+  console.log("storedStreamsInfo", storedStreamsInfo);
+  console.log("currentStreamInfo", currentStreamInfo);
   return (
     <div
       className={`fixed ${
@@ -79,7 +87,7 @@ function CallWindow(
       } flex flex-col overflow-hidden rounded bg-black text-white`}
     >
       <div className="flex flex-1">
-        {streamsInfo.length > 0 ? (
+        {storedStreamsInfo.length > 0 ? (
           <MediaList
             streamsInfo={streamsInfo}
             currentStreamInfo={currentStreamInfo}
