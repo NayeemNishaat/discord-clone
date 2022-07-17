@@ -41,7 +41,6 @@ function CallWindow(
     ? [currentStreamInfo, ...storedStreamsInfo]
     : storedStreamsInfo;
 
-  console.log("streamsInfo", streamsInfo);
   return (
     <div
       className={`fixed ${
