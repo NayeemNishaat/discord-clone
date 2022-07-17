@@ -27,16 +27,31 @@ function TopBar() {
   const userId = useSelector((state: RootState) => state.auth._id);
   const dispatch = useDispatch();
 
-  const initCall = () => {
-    const activeMembers = members.filter(
-      (member) => userId !== member._id && member.isOnline
-    );
+  const activeMembers = members.filter(
+    (member) => userId !== member._id && member.isOnline
+  );
 
-    socket.emit("callInit", {
+  const initCall = (callType: string) => {
+    socket.emit("startCall", {
       ...activeChat,
-      activeMembers
+      activeMembers,
+      callType
     });
   };
+
+  socket.on("incomingCall", (callType) => {
+    setOpenCallWindow({
+      status: true,
+      type: callType
+    });
+
+    setTimeout(() => {
+      socket.emit("callInit", {
+        ...activeChat,
+        activeMembers
+      });
+    }, 3000);
+  });
 
   return (
     <div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
@@ -53,7 +68,7 @@ function TopBar() {
                   type: "audio"
                 });
 
-                initCall();
+                initCall("audio");
               }}
             >
               <AddIcCall />
@@ -67,7 +82,7 @@ function TopBar() {
                   type: "video"
                 });
 
-                initCall();
+                initCall("video");
               }}
             >
               <VideoCall />

@@ -28,30 +28,6 @@ function CallWindow(
   const [mute, setMute] = useState(false);
   const [webcam, setWebcam] = useState(false);
   const [screenShare, setScreenShare] = useState(false);
-  // const [streamsInfo, setStreamsInfo] = useState<
-  //   {
-  //     stream: MediaStream;
-  //     user: {
-  //       _id: string | null;
-  //       username: string | null;
-  //     };
-  //   }[]
-  // >([]);
-
-  // const dispatch = useDispatch();
-
-  // const [currentStreamInfo, setCurrentStreamInfo] = useState<{
-  //   stream: MediaStream;
-  //   user: {
-  //     _id: string | null;
-  //     username: string | null;
-  //   };
-  // } | null>(null);
-
-  // const user = useSelector((state: RootState) => ({
-  //   _id: state.auth._id,
-  //   username: state.auth.username
-  // }));
 
   const storedStreamsInfo = useSelector(
     (state: RootState) => state.chat.streamsInfo
@@ -64,20 +40,8 @@ function CallWindow(
   const streamsInfo = currentStreamInfo
     ? [currentStreamInfo, ...storedStreamsInfo]
     : storedStreamsInfo;
-  // useEffect(() => {
-  //   (async () => {
-  //     const stream = await getStream(true, CallType === "video" ? true : false);
 
-  //     const modifiedStream = { stream, user };
-
-  //     setCurrentStreamInfo(modifiedStream);
-  //     dispatch(streamInfo(modifiedStream));
-
-  //     setStreamsInfo([modifiedStream, ...storedStreamsInfo]);
-  //   })();
-  // }, [storedStreamsInfo]);
-  console.log("storedStreamsInfo", storedStreamsInfo);
-  console.log("currentStreamInfo", currentStreamInfo);
+  console.log("streamsInfo", streamsInfo);
   return (
     <div
       className={`fixed ${
