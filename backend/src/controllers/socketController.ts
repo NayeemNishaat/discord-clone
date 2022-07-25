@@ -340,6 +340,8 @@ const handleGroupMessage = async (
   });
 };
 
+const onGoingCalls: string[][] = [];
+
 export const connectedUsers = async (socket: Socket) => {
   if (!Array.from(users.values()).includes(socket.data._id.toString()))
     users.set(socket.id, socket.data._id.toString());
@@ -399,33 +401,30 @@ export const connectedUsers = async (socket: Socket) => {
   });
 
   socket.on("startCall", async (data) => {
-    if (data.chatType === "private") {
-      socket
-        .to(getSocketId(data.id.toString()))
-        .emit("incomingCall", data.callType);
-    } else {
-      data.activeMembers.forEach(
-        (member: { _id: string; username: string; isOnline: boolean }) => {
-          socket
-            .to(getSocketId(member._id.toString()))
-            .emit("incomingCall", data.callType);
-        }
-      );
-    }
+    data.activeMembers.forEach(
+      (member: { _id: string; username: string; isOnline: boolean }) => {
+        socket
+          .to(getSocketId(member._id.toString()))
+          .emit("incomingCall", data.callType);
+      }
+    );
   });
 
   socket.on("callInit", async (data) => {
-    if (data.chatType === "private") {
-      socket.to(getSocketId(data.id.toString())).emit("connPrepare", socket.id);
-    } else {
-      data.activeMembers.forEach(
-        (member: { _id: string; username: string; isOnline: boolean }) => {
-          socket
-            .to(getSocketId(member._id.toString()))
-            .emit("connPrepare", socket.id);
-        }
-      );
-    }
+    const activeMemberIds = data.activeMembers.map(
+      (member: { _id: string; username: string; isOnline: boolean }) =>
+        member._id
+    );
+    activeMemberIds.push(socket.data._id.toString());
+    onGoingCalls.push(activeMemberIds);
+
+    data.activeMembers.forEach(
+      (member: { _id: string; username: string; isOnline: boolean }) => {
+        socket
+          .to(getSocketId(member._id.toString()))
+          .emit("connPrepare", socket.id);
+      }
+    );
   });
 
   socket.on("connInit", (id) => {
@@ -439,6 +438,19 @@ export const connectedUsers = async (socket: Socket) => {
   });
 
   socket.on("disconnect", async () => {
+    onGoingCalls.forEach((call) => {
+      if (call.includes(socket.data._id.toString())) {
+        call.forEach((id) => {
+          socket.to(getSocketId(id)).emit("calleeLeft", socket.id);
+        });
+
+        call.splice(call.indexOf(socket.data._id.toString()), 1);
+        if (call.length === 1) {
+          onGoingCalls.splice(onGoingCalls.indexOf(call), 1);
+        }
+      }
+    });
+
     users.delete(socket.id);
     await updateOnlineFriends(socket.data._id, false);
   });

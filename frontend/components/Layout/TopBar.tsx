@@ -33,7 +33,6 @@ function TopBar() {
 
   const initCall = (callType: string) => {
     socket.emit("startCall", {
-      ...activeChat,
       activeMembers,
       callType
     });
@@ -46,8 +45,8 @@ function TopBar() {
     });
 
     setTimeout(() => {
+      if (activeMembers.length === 0) return;
       socket.emit("callInit", {
-        ...activeChat,
         activeMembers
       });
     }, 3000);

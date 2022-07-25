@@ -103,6 +103,10 @@ function dashboard() {
       handleConnectionInfo(connectionInfo);
     });
 
+    socket.on("calleeLeft", (id) => {
+      console.log(id);
+    });
+
     return () => {
       socket.close();
     };

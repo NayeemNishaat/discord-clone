@@ -79,3 +79,11 @@ export const handleConnectionInfo = (connectionInfo: {
     peers[connectionInfo.id].signal(connectionInfo.signal);
   }
 };
+
+export const closePeerConnection = () => {
+  Object.entries(peers).forEach(([id, _peer]) => {
+    if (!id) return;
+    peers[id].destroy();
+    delete peers[id];
+  });
+};

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   VideocamOff,
   OpenInFull,
@@ -14,8 +14,8 @@ import { IconButton } from "@mui/material";
 import MediaList from "../Media/MediaList";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
-import { streamInfo } from "../../redux/slices/chatSlice";
-import { getStream } from "../../lib/webRtc";
+import { streamsInfo as reduxStreamsInfo } from "../../redux/slices/chatSlice";
+import { closePeerConnection } from "../../lib/webRtc";
 
 function CallWindow(
   this: any,
@@ -28,6 +28,8 @@ function CallWindow(
   const [mute, setMute] = useState(false);
   const [webcam, setWebcam] = useState(false);
   const [screenShare, setScreenShare] = useState(false);
+
+  const dispatch = useDispatch();
 
   const storedStreamsInfo = useSelector(
     (state: RootState) => state.chat.streamsInfo
@@ -90,6 +92,9 @@ function CallWindow(
             currentStreamInfo?.stream.getTracks().forEach((track) => {
               track.stop();
             });
+
+            dispatch(reduxStreamsInfo(null));
+            closePeerConnection();
           }}
         >
           <Close />
