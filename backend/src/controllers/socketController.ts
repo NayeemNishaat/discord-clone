@@ -422,13 +422,13 @@ export const connectedUsers = async (socket: Socket) => {
       (member: { _id: string; username: string; isOnline: boolean }) => {
         socket
           .to(getSocketId(member._id.toString()))
-          .emit("connPrepare", socket.id);
+          .emit("connPrepare", { id: socket.id, user: socket.data });
       }
     );
   });
 
   socket.on("connInit", (id) => {
-    socket.to(id).emit("connInit", socket.id);
+    socket.to(id).emit("connInit", { id: socket.id, user: socket.data });
   });
 
   socket.on("connSignal", (signalInfo) => {
@@ -441,7 +441,9 @@ export const connectedUsers = async (socket: Socket) => {
     onGoingCalls.forEach((call) => {
       if (call.includes(socket.data._id.toString())) {
         call.forEach((id) => {
-          socket.to(getSocketId(id)).emit("calleeLeft", socket.id);
+          socket
+            .to(getSocketId(id))
+            .emit("calleeLeft", { id: socket.id, user: socket.data });
         });
 
         call.splice(call.indexOf(socket.data._id.toString()), 1);

@@ -16,7 +16,11 @@ import {
   groups
 } from "../redux/slices/userSlice";
 import { setMembers } from "../redux/slices/chatSlice";
-import { initPeerConnection, handleConnectionInfo } from "../lib/webRtc";
+import {
+  initPeerConnection,
+  handleConnectionInfo,
+  handleCalleeLeft
+} from "../lib/webRtc";
 
 function dashboard() {
   const [component, setComponent] = useState(
@@ -90,21 +94,22 @@ function dashboard() {
       dispatch(groups(groupsData));
     });
 
-    socket.on("connPrepare", (id) => {
-      initPeerConnection(id, false);
-      socket.emit("connInit", id);
+    socket.on("connPrepare", (data) => {
+      initPeerConnection(data, false);
+      socket.emit("connInit", data.id);
     });
 
-    socket.on("connInit", (id) => {
-      initPeerConnection(id, true);
+    socket.on("connInit", (data) => {
+      initPeerConnection(data, true);
     });
 
     socket.on("connSignal", (connectionInfo) => {
       handleConnectionInfo(connectionInfo);
     });
 
-    socket.on("calleeLeft", (id) => {
-      console.log(id);
+    socket.on("calleeLeft", (data) => {
+      console.log("left");
+      handleCalleeLeft(data);
     });
 
     return () => {

@@ -1,7 +1,11 @@
 import Peer, { Instance } from "simple-peer";
 import socket from "./socketServer";
 import store from "../redux/store";
-import { streamsInfo, streamInfo } from "../redux/slices/chatSlice";
+import {
+  streamsInfo,
+  streamInfo,
+  removeStreamInfo
+} from "../redux/slices/chatSlice";
 
 export const getStream = async (audio: boolean, video: boolean) => {
   return await navigator.mediaDevices.getUserMedia({
@@ -32,7 +36,10 @@ let peers: {
   [x: string]: Instance;
 } = {};
 
-export const initPeerConnection = async (id: string, isInitiator: boolean) => {
+export const initPeerConnection = async (
+  data: { id: string; user: { _id: string; username: string } },
+  isInitiator: boolean
+) => {
   if (isInitiator) {
     console.log("Initiator");
   } else {
@@ -47,25 +54,25 @@ export const initPeerConnection = async (id: string, isInitiator: boolean) => {
     })
   );
 
-  peers[id] = new Peer({
+  peers[data.id] = new Peer({
     initiator: isInitiator,
     config: getConfig(),
     stream: stream
   });
 
-  peers[id].on("signal", (data) => {
-    const signalInfo = { signal: data, id };
+  peers[data.id].on("signal", (signalData) => {
+    const signalInfo = { signal: signalData, id: data.id };
 
     // Part: Send signalInfo to other users
     socket.emit("connSignal", signalInfo);
   });
 
-  peers[id].on("stream", (remoteStream) => {
+  peers[data.id].on("stream", (remoteStream) => {
     // Part: Add remote stream to video element
     store.dispatch(
       streamsInfo({
         stream: remoteStream,
-        user: { _id: "id", username: "Remote" }
+        user: { _id: data.user._id, username: data.user.username }
       })
     );
   });
@@ -86,4 +93,15 @@ export const closePeerConnection = () => {
     peers[id].destroy();
     delete peers[id];
   });
+};
+
+export const handleCalleeLeft = (data: {
+  id: string;
+  user: { _id: string; username: string };
+}) => {
+  if (!peers[data.id]) return;
+  peers[data.id].destroy();
+  delete peers[data.id];
+
+  store.dispatch(removeStreamInfo({ _id: data.user._id }));
 };

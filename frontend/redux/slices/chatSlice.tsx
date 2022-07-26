@@ -105,6 +105,14 @@ const chatSlice = createSlice({
       action: PayloadAction<chatState["streamInfo"]>
     ) => {
       action.payload && state.streamsInfo.push(action.payload);
+    },
+    removeStreamInfo: (
+      state: chatState,
+      action: PayloadAction<{ _id: string }>
+    ) => {
+      state.streamsInfo = state.streamsInfo.filter(
+        (stream) => action.payload && stream.user._id !== action.payload._id
+      );
     }
   }
 });
@@ -115,6 +123,7 @@ export const {
   pushMessage,
   setMembers,
   streamInfo,
-  streamsInfo
+  streamsInfo,
+  removeStreamInfo
 } = chatSlice.actions;
 export default chatSlice.reducer;
