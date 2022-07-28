@@ -107,8 +107,5 @@ export const handleCalleeLeft = (data: {
     .getState()
     .chat.streamsInfo.filter((stream) => stream.user._id !== data.user._id);
 
-  const currentStream = store.getState().chat.streamInfo;
-  currentStream && filteredStreamsInfo.unshift(currentStream);
-
   store.dispatch(setStreamsInfo(filteredStreamsInfo));
 };

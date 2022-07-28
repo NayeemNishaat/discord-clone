@@ -53,7 +53,7 @@ function CallWindow(
       } flex flex-col overflow-hidden rounded bg-black text-white`}
     >
       <div className="flex flex-1">
-        {storedStreamsInfo.length > 0 ? (
+        {streamsInfo.length > 0 ? (
           <MediaList
             streamsInfo={streamsInfo}
             currentStreamInfo={currentStreamInfo}
