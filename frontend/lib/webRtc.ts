@@ -4,7 +4,7 @@ import store from "../redux/store";
 import {
   streamsInfo,
   streamInfo,
-  removeStreamInfo
+  setStreamsInfo
 } from "../redux/slices/chatSlice";
 
 export const getStream = async (audio: boolean, video: boolean) => {
@@ -103,5 +103,12 @@ export const handleCalleeLeft = (data: {
   peers[data.id].destroy();
   delete peers[data.id];
 
-  store.dispatch(removeStreamInfo({ _id: data.user._id }));
+  const filteredStreamsInfo = store
+    .getState()
+    .chat.streamsInfo.filter((stream) => stream.user._id !== data.user._id);
+
+  const currentStream = store.getState().chat.streamInfo;
+  currentStream && filteredStreamsInfo.unshift(currentStream);
+
+  store.dispatch(setStreamsInfo(filteredStreamsInfo));
 };

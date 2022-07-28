@@ -437,6 +437,23 @@ export const connectedUsers = async (socket: Socket) => {
       .emit("connSignal", { ...signalInfo, id: socket.id });
   });
 
+  socket.on("calleeLeft", () => {
+    onGoingCalls.forEach((call) => {
+      if (call.includes(socket.data._id.toString())) {
+        call.forEach((id) => {
+          socket
+            .to(getSocketId(id))
+            .emit("calleeLeft", { id: socket.id, user: socket.data });
+        });
+
+        call.splice(call.indexOf(socket.data._id.toString()), 1);
+        if (call.length === 1) {
+          onGoingCalls.splice(onGoingCalls.indexOf(call), 1);
+        }
+      }
+    });
+  });
+
   socket.on("disconnect", async () => {
     onGoingCalls.forEach((call) => {
       if (call.includes(socket.data._id.toString())) {

@@ -14,8 +14,9 @@ import { IconButton } from "@mui/material";
 import MediaList from "../Media/MediaList";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
-import { streamsInfo as reduxStreamsInfo } from "../../redux/slices/chatSlice";
+import { setStreamsInfo } from "../../redux/slices/chatSlice";
 import { closePeerConnection } from "../../lib/webRtc";
+import socket from "../../lib/socketServer";
 
 function CallWindow(
   this: any,
@@ -93,8 +94,10 @@ function CallWindow(
               track.stop();
             });
 
-            dispatch(reduxStreamsInfo(null));
+            dispatch(setStreamsInfo([]));
             closePeerConnection();
+
+            socket.emit("calleeLeft");
           }}
         >
           <Close />
