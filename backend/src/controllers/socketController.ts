@@ -401,15 +401,9 @@ export const connectedUsers = async (socket: Socket) => {
   });
 
   socket.on("startCall", async (data) => {
-    // console.log(data);
     data.activeMembers.forEach(
-      (member: {
-        _id: string;
-        username: string;
-        isOnline: boolean;
-        socketId: string;
-      }) => {
-        socket.to(member.socketId).emit("incomingCall", {
+      (member: { _id: string; username: string; isOnline: boolean }) => {
+        socket.to(getSocketId(member._id)).emit("incomingCall", {
           user: socket.data,
           callType: data.callType
         });

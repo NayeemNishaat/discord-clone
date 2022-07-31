@@ -28,7 +28,6 @@ function TopBar() {
 
   useEffect(() => {
     socket.on("incomingCall", (data) => {
-      // console.log("incomingCall", data);
       setOpenCallWindow({
         status: true,
         type: data.callType
@@ -36,7 +35,6 @@ function TopBar() {
 
       socket.emit("callInit", data.user);
     });
-    // console.log(563);
   }, [socket]);
   const activeMembers = members.filter(
     (member) => userInfo._id !== member._id && member.isOnline
