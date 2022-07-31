@@ -5,7 +5,6 @@ import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import socket from "../../lib/socketServer";
-import { color } from "@mui/system";
 
 type messages = {
 	_id: string;
@@ -66,6 +65,7 @@ function Body({ name }: { name: string | null }) {
 	const messages = processMessage(
 		useSelector((state: RootState) => state.chat.messages)
 	);
+	const username = useSelector((state: RootState) => state.auth.username);
 
 	const dispatch = useDispatch();
 
@@ -76,7 +76,17 @@ function Body({ name }: { name: string | null }) {
 			dispatch(pushMessage(message));
 		});
 
+		socket.on("group", (message: message) => {
+			dispatch(pushMessage(message));
+		});
+
 		socket.on("privateHistory", (messages: messages) => {
+			if (!messages) return dispatch(setMessages([]));
+
+			dispatch(setMessages(messages));
+		});
+
+		socket.on("groupHistory", (messages: messages) => {
 			if (!messages) return dispatch(setMessages([]));
 
 			dispatch(setMessages(messages));
@@ -95,23 +105,47 @@ function Body({ name }: { name: string | null }) {
 		if (!(e.target as HTMLInputElement).value) return;
 
 		if (e.key === "Enter" && e.ctrlKey) {
-			socket.emit("private", {
-				to: activeChat.id,
-				message: (e.target as HTMLInputElement).value
-			});
+			if (activeChat.chatType === "private") {
+				socket.emit("private", {
+					to: activeChat.id,
+					message: (e.target as HTMLInputElement).value
+				});
+			} else {
+				socket.emit("group", {
+					to: activeChat.id,
+					message: (e.target as HTMLInputElement).value
+				});
+			}
+
 			(e.target as HTMLInputElement).value = "";
 		}
 	};
 
 	return (
 		<div className="mt-[4.5rem] flex flex-1 flex-col items-center bg-[#36393f] text-white">
-			<h2 className="mt-3 flex gap-2 text-2xl leading-none">
-				<span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2196f3]">
-					{activeChat.name.slice(0, 1)}
+			<h2 className="mt-3 flex items-center gap-2 text-2xl leading-none">
+				<span
+					className={`flex h-8 w-8 items-center justify-center rounded-full ${
+						activeChat.chatType === "private"
+							? "bg-[#2196f3]"
+							: "bg-[#ed6c02]"
+					}`}
+				>
+					{activeChat.chatType === "private"
+						? activeChat.name.slice(0, 1)
+						: activeChat.name.slice(0, 2)}
 				</span>
 				<span>{activeChat.name}</span>
 			</h2>
-			<p>Start a conversation with {activeChat.name}</p>
+			<p>
+				{activeChat.chatType === "private"
+					? `Start a conversation with ${
+							activeChat.name === username
+								? "yourself"
+								: activeChat.name
+					  }`
+					: `Start a group conversation in ${activeChat.name}`}
+			</p>
 			{!messages.length ? (
 				<p className="flex-1 text-xl font-bold text-[#ed6c02]">
 					No conversation yet!

@@ -5,8 +5,6 @@ import app from "./app";
 import socketServer from "./socketServer";
 import { createServer } from "http";
 
-const httpServer = createServer(app);
-
 // Chapter: DB and Server Connection
 declare const process: {
 	env: {
@@ -25,6 +23,8 @@ try {
 } catch (err) {
 	console.log(err);
 }
+
+const httpServer = createServer(app);
 
 socketServer(httpServer);
 

@@ -8,7 +8,12 @@ import Alert from "../../components/UI/Alert";
 function InviteList({
 	invitations
 }: {
-	invitations: { _id: string; username: string }[];
+	invitations: {
+		_id: string;
+		username: string;
+		groupId: string;
+		groupName: string;
+	}[];
 }) {
 	const dispatch = useDispatch();
 	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
@@ -28,7 +33,11 @@ function InviteList({
 		};
 	}, [timerRef]);
 
-	const fetchResponse = async (id: string, status: string) => {
+	const fetchResponse = async (
+		id: string,
+		status: string,
+		groupId?: string
+	) => {
 		clearTimeout(timerRef.current as NodeJS.Timeout);
 
 		try {
@@ -40,7 +49,7 @@ function InviteList({
 					headers: {
 						"Content-Type": "application/json"
 					},
-					body: JSON.stringify({ id })
+					body: JSON.stringify({ id, groupId })
 				}
 			);
 			const data = await res.json();
@@ -81,8 +90,8 @@ function InviteList({
 		}
 	};
 
-	const acceptInvitation = async (id: string) => {
-		const err = await fetchResponse(id, "accept");
+	const acceptInvitation = async (id: string, groupId: string) => {
+		const err = await fetchResponse(id, "accept", groupId);
 		if (err) return;
 
 		const filteredInvitations = invitations.filter((inv) => inv._id !== id);
@@ -113,6 +122,8 @@ function InviteList({
 						key={i}
 						id={invitation._id}
 						username={invitation.username}
+						groupId={invitation.groupId}
+						groupName={invitation.groupName}
 						acceptInvitation={acceptInvitation}
 						rejectInvitation={rejectInvitation}
 					/>

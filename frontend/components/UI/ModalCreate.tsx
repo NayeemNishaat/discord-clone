@@ -37,14 +37,8 @@ export default function ModalCreate({
 		if (nameTouched && validName) setValid(true);
 		else setValid(false);
 
-		setAlertInfo({
-			show: false,
-			type: "success",
-			message: ""
-		});
-
 		return () => {
-			clearTimeout(timerRef.current as NodeJS.Timeout);
+			// clearTimeout(timerRef.current as NodeJS.Timeout); // Note: Not required because we are not unmounting this conponent. We want the snackbar to close when timer runs out.
 		};
 	}, [nameTouched, name, validName]);
 
@@ -76,8 +70,6 @@ export default function ModalCreate({
 				message: "Group Created!"
 			});
 
-			handleClose();
-
 			timerRef.current = setTimeout(() => {
 				setAlertInfo({
 					show: false,
@@ -85,6 +77,8 @@ export default function ModalCreate({
 					message: ""
 				});
 			}, 2000);
+
+			handleClose();
 		} catch (err: any) {
 			setAlertInfo({
 				show: true,

@@ -4,14 +4,16 @@ import { useDispatch } from "react-redux";
 import socket from "../../lib/socketServer";
 import { setActiveChat } from "../../redux/slices/chatSlice";
 
-function FriendItem({
+function MemberItem({
 	children,
 	isOnline,
-	id
+	id,
+	disabled
 }: {
 	children: string;
 	isOnline: boolean;
 	id: string;
+	disabled: boolean;
 }) {
 	const dispatch = useDispatch();
 
@@ -29,6 +31,7 @@ function FriendItem({
 
 	return (
 		<Button
+			disabled={disabled}
 			onClick={clickHandler}
 			className="flex w-full items-center !justify-between px-0 py-1.5 capitalize"
 		>
@@ -43,4 +46,4 @@ function FriendItem({
 	);
 }
 
-export default FriendItem;
+export default MemberItem;

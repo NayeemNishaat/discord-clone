@@ -3,6 +3,8 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Input from "./Input";
 import { useState, useEffect, SyntheticEvent, useRef } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 import { Button } from "@mui/material";
 import { AlertColor } from "@mui/material/Alert";
 import Alert from "./Alert";
@@ -28,7 +30,7 @@ export default function ModalInvite({
 		message: ""
 	});
 
-	const timerRef: { current: NodeJS.Timeout | null } = useRef(null);
+	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 
 	useEffect(() => {
 		if (
@@ -43,16 +45,6 @@ export default function ModalInvite({
 
 		if (emailTouched && validEmail) setValid(true);
 		else setValid(false);
-
-		setAlertInfo({
-			show: false,
-			type: "success",
-			message: ""
-		});
-
-		return () => {
-			clearTimeout(timerRef.current as NodeJS.Timeout);
-		};
 	}, [emailTouched, email, validEmail]);
 
 	const clickHandler = async () => {
@@ -65,7 +57,17 @@ export default function ModalInvite({
 						"Content-Type": "application/json"
 					},
 					credentials: "include",
-					body: JSON.stringify({ invitee: email })
+					body: JSON.stringify({
+						invitee: email,
+						groupId:
+							activeChat.chatType === "group"
+								? activeChat.id
+								: null,
+						groupName:
+							activeChat.chatType === "group"
+								? activeChat.name
+								: null
+					})
 				}
 			);
 
@@ -83,7 +85,7 @@ export default function ModalInvite({
 				message: "Invitation Sent!"
 			});
 
-			timerRef.current = setTimeout(() => {
+			setTimeout(() => {
 				setAlertInfo({
 					show: false,
 					type: "success",
@@ -97,7 +99,7 @@ export default function ModalInvite({
 				message: err.message
 			});
 
-			timerRef.current = setTimeout(() => {
+			setTimeout(() => {
 				setAlertInfo({
 					show: false,
 					type: "success",
@@ -138,7 +140,7 @@ export default function ModalInvite({
 				<Fade in={open}>
 					<div className="absolute top-1/2 left-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 rounded bg-[#d3d3d3] p-5 text-center">
 						<h4 className="font-bold">Invite</h4>
-						<p>Insert your friend's email to invite</p>
+						<p>Insert email to invite</p>
 						<Input
 							label="Email"
 							placeholder="Enter Email"

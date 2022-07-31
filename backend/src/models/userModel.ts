@@ -46,16 +46,31 @@ const userSchema: Schema = new mongoose.Schema({
 		}
 	},
 	friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
-	receivedInvitation: [
+	groups: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: "User"
+			ref: "GroupConversation"
+		}
+	],
+	receivedInvitation: [
+		{
+			user: {
+				type: Schema.Types.ObjectId,
+				ref: "User"
+			},
+			groupId: Schema.Types.ObjectId,
+			groupName: {
+				type: String
+			}
 		}
 	],
 	sentInvitation: [
 		{
-			type: Schema.Types.ObjectId,
-			ref: "User"
+			user: {
+				type: Schema.Types.ObjectId,
+				ref: "User"
+			},
+			groupId: Schema.Types.ObjectId
 		}
 	]
 });
