@@ -94,13 +94,13 @@ function dashboard() {
       dispatch(groups(groupsData));
     });
 
-    socket.on("connPrepare", (data) => {
-      initPeerConnection(data, false);
+    socket.on("connPrepare", async (data) => {
+      await initPeerConnection(data, false);
       socket.emit("connInit", data.id);
     });
 
-    socket.on("connInit", (data) => {
-      initPeerConnection(data, true);
+    socket.on("connInit", async (data) => {
+      await initPeerConnection(data, true);
     });
 
     socket.on("connSignal", (connectionInfo) => {
