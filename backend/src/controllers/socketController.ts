@@ -401,6 +401,7 @@ export const connectedUsers = async (socket: Socket) => {
   });
 
   socket.on("startCall", async (data) => {
+    // console.log(data);
     data.activeMembers.forEach(
       (member: {
         _id: string;
@@ -408,19 +409,27 @@ export const connectedUsers = async (socket: Socket) => {
         isOnline: boolean;
         socketId: string;
       }) => {
-        socket.to(member.socketId).emit("incomingCall", data.callType);
+        socket.to(member.socketId).emit("incomingCall", {
+          user: socket.data,
+          callType: data.callType
+        });
       }
     );
   });
 
   socket.on(
     "callInit",
-    async (userInfo: { _id: string; name: string; email: string }) => {
+    async (userInfo: {
+      _id: string;
+      username: string;
+      isOnline: boolean;
+      socketId: string;
+    }) => {
       let activeMemberIds: string[] = [];
       activeMemberIds.push(userInfo._id);
       activeMemberIds.push(socket.data._id.toString());
       onGoingCalls.push(activeMemberIds);
-      console.log(4678, userInfo);
+
       socket
         .to(getSocketId(userInfo._id))
         .emit("connPrepare", { id: socket.id, user: socket.data });
