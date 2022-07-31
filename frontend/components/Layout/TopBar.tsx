@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import socket from "../../lib/socketServer";
 import Snackbar from "@mui/material/Snackbar";
 import Slide, { SlideProps } from "@mui/material/Slide";
@@ -23,34 +23,35 @@ function TopBar() {
   const router = useRouter();
   const activeChat = useSelector((state: RootState) => state.chat.activeChat);
   const members = useSelector((state: RootState) => state.chat.members);
-
-  const userId = useSelector((state: RootState) => state.auth._id);
+  const userInfo = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    socket.on("incomingCall", (callType) => {
+      setOpenCallWindow({
+        status: true,
+        type: callType
+      });
+
+      socket.emit("callInit", {
+        userInfo
+      });
+    });
+  }, []);
+
   const activeMembers = members.filter(
-    (member) => userId !== member._id && member.isOnline
+    (member) => userInfo._id !== member._id && member.isOnline
   );
 
   const initCall = (callType: string) => {
     socket.emit("startCall", {
-      activeMembers,
+      activeMembers:
+        callType === "group"
+          ? activeMembers
+          : activeMembers.filter((member) => member._id === activeChat.id),
       callType
     });
   };
-
-  socket.on("incomingCall", (callType) => {
-    setOpenCallWindow({
-      status: true,
-      type: callType
-    });
-
-    setTimeout(() => {
-      if (activeMembers.length === 0) return;
-      socket.emit("callInit", {
-        activeMembers
-      });
-    }, 3000);
-  });
 
   return (
     <div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
