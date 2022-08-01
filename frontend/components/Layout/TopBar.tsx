@@ -23,7 +23,6 @@ function TopBar() {
   const router = useRouter();
   const activeChat = useSelector((state: RootState) => state.chat.activeChat);
   const members = useSelector((state: RootState) => state.chat.members);
-  const userInfo = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,14 +35,12 @@ function TopBar() {
       socket.emit("callInit", data.user);
     });
   }, [socket]);
-  const activeMembers = members.filter(
-    (member) => userInfo._id !== member._id && member.isOnline
-  );
+  const activeMembers = members.filter((member) => member.isOnline);
 
   const initCall = (callType: string) => {
     socket.emit("startCall", {
       activeMembers:
-        callType === "group"
+        activeChat.chatType === "group"
           ? activeMembers
           : activeMembers.filter((member) => member._id === activeChat.id),
       callType
