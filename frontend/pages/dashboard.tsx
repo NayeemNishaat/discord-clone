@@ -108,7 +108,6 @@ function dashboard() {
     });
 
     socket.on("calleeLeft", (data) => {
-      console.log("left");
       handleCalleeLeft(data);
     });
 

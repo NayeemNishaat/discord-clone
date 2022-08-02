@@ -46,6 +46,15 @@ export const initPeerConnection = async (
     console.log("Not Initiator");
   }
 
+  if (store.getState().chat.streamInfo?.stream.active) {
+    store
+      .getState()
+      .chat.streamInfo?.stream.getTracks()
+      .forEach((track) => {
+        track.stop();
+      });
+  }
+
   const stream = await getStream(true, true);
   store.dispatch(
     streamInfo({
