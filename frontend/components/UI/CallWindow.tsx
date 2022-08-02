@@ -29,6 +29,13 @@ function CallWindow(
   const [mute, setMute] = useState(false);
   const [webcam, setWebcam] = useState(false);
   const [screenShare, setScreenShare] = useState(false);
+  const [screenStreamInfo, setScreenStreamInfo] = useState<null | {
+    stream: MediaStream;
+    user: {
+      _id: string | null;
+      username: string | null;
+    };
+  }>(null);
 
   const dispatch = useDispatch();
 
@@ -41,7 +48,9 @@ function CallWindow(
   );
 
   const streamsInfo = currentStreamInfo
-    ? [currentStreamInfo, ...storedStreamsInfo]
+    ? screenStreamInfo
+      ? [screenStreamInfo, ...storedStreamsInfo]
+      : [currentStreamInfo, ...storedStreamsInfo]
     : storedStreamsInfo;
 
   return (
@@ -66,12 +75,37 @@ function CallWindow(
           <IconButton
             className="h-6 w-6"
             color="inherit"
-            onClick={() => {
-              //
-              setScreenShare((prevScreenShare) => !prevScreenShare);
+            onClick={async () => {
+              if (!screenShare) {
+                try {
+                  const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: false
+                  });
+                  setScreenStreamInfo({
+                    stream,
+                    user: {
+                      _id: currentStreamInfo?.user._id || null,
+                      username: currentStreamInfo?.user.username || null
+                    }
+                  });
+
+                  setScreenShare((prevScreenShare) => !prevScreenShare);
+                } catch (err) {
+                  console.log(err);
+                }
+              } else {
+                screenStreamInfo &&
+                  screenStreamInfo?.stream
+                    .getTracks()
+                    .forEach((track) => track.stop());
+
+                setScreenStreamInfo(null);
+                setScreenShare((prevScreenShare) => !prevScreenShare);
+              }
             }}
           >
-            {screenShare ? <StopScreenShare /> : <ScreenShare />}
+            {screenShare ? <ScreenShare /> : <StopScreenShare />}
           </IconButton>
         )}
         <IconButton
