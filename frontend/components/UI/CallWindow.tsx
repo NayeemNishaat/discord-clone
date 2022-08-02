@@ -67,6 +67,7 @@ function CallWindow(
             className="h-6 w-6"
             color="inherit"
             onClick={() => {
+              //
               setScreenShare((prevScreenShare) => !prevScreenShare);
             }}
           >
