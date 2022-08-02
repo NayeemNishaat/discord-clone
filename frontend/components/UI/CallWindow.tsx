@@ -77,6 +77,8 @@ function CallWindow(
           className="h-6 w-6"
           color="inherit"
           onClick={() => {
+            currentStreamInfo &&
+              (currentStreamInfo.stream.getAudioTracks()[0].enabled = mute);
             setMute((prevMute) => !prevMute);
           }}
         >
@@ -107,6 +109,8 @@ function CallWindow(
             className="h-6 w-6"
             color="inherit"
             onClick={() => {
+              currentStreamInfo &&
+                (currentStreamInfo.stream.getVideoTracks()[0].enabled = webcam);
               setWebcam((prevWebcam) => !prevWebcam);
             }}
           >
