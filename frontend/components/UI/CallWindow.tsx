@@ -47,6 +47,11 @@ function CallWindow(
     (state: RootState) => state.chat.streamInfo
   );
 
+  screenStreamInfo?.stream.getVideoTracks()[0].addEventListener("ended", () => {
+    setScreenStreamInfo(null);
+    switchTracks(currentStreamInfo.stream);
+  });
+
   const streamsInfo = currentStreamInfo
     ? screenStreamInfo
       ? [screenStreamInfo, ...storedStreamsInfo]
@@ -134,6 +139,11 @@ function CallWindow(
             currentStreamInfo?.stream.getTracks().forEach((track) => {
               track.stop();
             });
+
+            screenStreamInfo &&
+              screenStreamInfo?.stream
+                .getTracks()
+                .forEach((track) => track.stop());
 
             dispatch(setStreamsInfo([]));
             closePeerConnection();
