@@ -118,3 +118,24 @@ export const handleCalleeLeft = (data: {
 
   store.dispatch(setStreamsInfo(filteredStreamsInfo));
 };
+
+export const switchTracks = (stream: MediaStream) => {
+  // Part: Switch tracks
+  for (let socketId in peers) {
+    for (let i1 in peers[socketId].streams[0].getTracks()) {
+      for (let i2 in stream.getTracks()) {
+        if (
+          peers[socketId].streams[0].getTracks()[i1].kind ===
+          stream.getTracks()[i2].kind
+        ) {
+          peers[socketId].replaceTrack(
+            peers[socketId].streams[0].getTracks()[i1],
+            stream.getTracks()[i2],
+            peers[socketId].streams[0]
+          );
+          break;
+        }
+      }
+    }
+  }
+};

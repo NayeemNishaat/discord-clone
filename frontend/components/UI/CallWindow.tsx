@@ -15,7 +15,7 @@ import MediaList from "../Media/MediaList";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { setStreamsInfo } from "../../redux/slices/chatSlice";
-import { closePeerConnection } from "../../lib/webRtc";
+import { closePeerConnection, switchTracks } from "../../lib/webRtc";
 import socket from "../../lib/socketServer";
 
 function CallWindow(
@@ -91,6 +91,8 @@ function CallWindow(
                   });
 
                   setScreenShare((prevScreenShare) => !prevScreenShare);
+
+                  switchTracks(stream);
                 } catch (err) {
                   console.log(err);
                 }
@@ -102,6 +104,8 @@ function CallWindow(
 
                 setScreenStreamInfo(null);
                 setScreenShare((prevScreenShare) => !prevScreenShare);
+
+                currentStreamInfo && switchTracks(currentStreamInfo.stream);
               }
             }}
           >
