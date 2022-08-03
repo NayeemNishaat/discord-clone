@@ -18,7 +18,7 @@ const getConfig = () => {
   const TURNServer = null;
 
   if (TURNServer) {
-    // TODO: Configure TURN server
+    // TODO: Configure TURN server in production
   } else {
     console.warn("Using STUN server only!");
 
@@ -40,12 +40,6 @@ export const initPeerConnection = async (
   data: { id: string; user: { _id: string; username: string } },
   isInitiator: boolean
 ) => {
-  if (isInitiator) {
-    console.log("Initiator");
-  } else {
-    console.log("Not Initiator");
-  }
-
   if (store.getState().chat.streamInfo?.stream.active) {
     store
       .getState()

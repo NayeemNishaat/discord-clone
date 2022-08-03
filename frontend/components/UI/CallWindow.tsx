@@ -49,7 +49,7 @@ function CallWindow(
 
   screenStreamInfo?.stream.getVideoTracks()[0].addEventListener("ended", () => {
     setScreenStreamInfo(null);
-    switchTracks(currentStreamInfo.stream);
+    currentStreamInfo && switchTracks(currentStreamInfo.stream);
   });
 
   const streamsInfo = currentStreamInfo
