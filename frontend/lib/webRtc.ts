@@ -18,7 +18,7 @@ const getConfig = () => {
   const TURNServer = null;
 
   if (TURNServer) {
-    // TODO: Configure TURN server
+    // TODO: Configure TURN server in production
   } else {
     console.warn("Using STUN server only!");
 
@@ -40,10 +40,13 @@ export const initPeerConnection = async (
   data: { id: string; user: { _id: string; username: string } },
   isInitiator: boolean
 ) => {
-  if (isInitiator) {
-    console.log("Initiator");
-  } else {
-    console.log("Not Initiator");
+  if (store.getState().chat.streamInfo?.stream.active) {
+    store
+      .getState()
+      .chat.streamInfo?.stream.getTracks()
+      .forEach((track) => {
+        track.stop();
+      });
   }
 
   const stream = await getStream(true, true);
@@ -108,4 +111,25 @@ export const handleCalleeLeft = (data: {
     .chat.streamsInfo.filter((stream) => stream.user._id !== data.user._id);
 
   store.dispatch(setStreamsInfo(filteredStreamsInfo));
+};
+
+export const switchTracks = (stream: MediaStream) => {
+  // Part: Switch tracks
+  for (let socketId in peers) {
+    for (let i1 in peers[socketId].streams[0].getTracks()) {
+      for (let i2 in stream.getTracks()) {
+        if (
+          peers[socketId].streams[0].getTracks()[i1].kind ===
+          stream.getTracks()[i2].kind
+        ) {
+          peers[socketId].replaceTrack(
+            peers[socketId].streams[0].getTracks()[i1],
+            stream.getTracks()[i2],
+            peers[socketId].streams[0]
+          );
+          break;
+        }
+      }
+    }
+  }
 };

@@ -15,7 +15,7 @@ import MediaList from "../Media/MediaList";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { setStreamsInfo } from "../../redux/slices/chatSlice";
-import { closePeerConnection } from "../../lib/webRtc";
+import { closePeerConnection, switchTracks } from "../../lib/webRtc";
 import socket from "../../lib/socketServer";
 
 function CallWindow(
@@ -29,6 +29,13 @@ function CallWindow(
   const [mute, setMute] = useState(false);
   const [webcam, setWebcam] = useState(false);
   const [screenShare, setScreenShare] = useState(false);
+  const [screenStreamInfo, setScreenStreamInfo] = useState<null | {
+    stream: MediaStream;
+    user: {
+      _id: string | null;
+      username: string | null;
+    };
+  }>(null);
 
   const dispatch = useDispatch();
 
@@ -40,8 +47,15 @@ function CallWindow(
     (state: RootState) => state.chat.streamInfo
   );
 
+  screenStreamInfo?.stream.getVideoTracks()[0].addEventListener("ended", () => {
+    setScreenStreamInfo(null);
+    currentStreamInfo && switchTracks(currentStreamInfo.stream);
+  });
+
   const streamsInfo = currentStreamInfo
-    ? [currentStreamInfo, ...storedStreamsInfo]
+    ? screenStreamInfo
+      ? [screenStreamInfo, ...storedStreamsInfo]
+      : [currentStreamInfo, ...storedStreamsInfo]
     : storedStreamsInfo;
 
   return (
@@ -66,17 +80,49 @@ function CallWindow(
           <IconButton
             className="h-6 w-6"
             color="inherit"
-            onClick={() => {
-              setScreenShare((prevScreenShare) => !prevScreenShare);
+            onClick={async () => {
+              if (!screenShare) {
+                try {
+                  const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: false
+                  });
+                  setScreenStreamInfo({
+                    stream,
+                    user: {
+                      _id: currentStreamInfo?.user._id || null,
+                      username: currentStreamInfo?.user.username || null
+                    }
+                  });
+
+                  setScreenShare((prevScreenShare) => !prevScreenShare);
+
+                  switchTracks(stream);
+                } catch (err) {
+                  console.log(err);
+                }
+              } else {
+                screenStreamInfo &&
+                  screenStreamInfo?.stream
+                    .getTracks()
+                    .forEach((track) => track.stop());
+
+                setScreenStreamInfo(null);
+                setScreenShare((prevScreenShare) => !prevScreenShare);
+
+                currentStreamInfo && switchTracks(currentStreamInfo.stream);
+              }
             }}
           >
-            {screenShare ? <StopScreenShare /> : <ScreenShare />}
+            {screenShare ? <ScreenShare /> : <StopScreenShare />}
           </IconButton>
         )}
         <IconButton
           className="h-6 w-6"
           color="inherit"
           onClick={() => {
+            currentStreamInfo &&
+              (currentStreamInfo.stream.getAudioTracks()[0].enabled = mute);
             setMute((prevMute) => !prevMute);
           }}
         >
@@ -94,6 +140,11 @@ function CallWindow(
               track.stop();
             });
 
+            screenStreamInfo &&
+              screenStreamInfo?.stream
+                .getTracks()
+                .forEach((track) => track.stop());
+
             dispatch(setStreamsInfo([]));
             closePeerConnection();
 
@@ -107,6 +158,8 @@ function CallWindow(
             className="h-6 w-6"
             color="inherit"
             onClick={() => {
+              currentStreamInfo &&
+                (currentStreamInfo.stream.getVideoTracks()[0].enabled = webcam);
               setWebcam((prevWebcam) => !prevWebcam);
             }}
           >
