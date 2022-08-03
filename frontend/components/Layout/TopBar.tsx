@@ -56,6 +56,7 @@ function TopBar() {
             <IconButton
               className="h-6 w-6"
               color="warning"
+              disabled={openCallWindow.status}
               onClick={() => {
                 setOpenCallWindow({
                   status: true,
@@ -70,6 +71,7 @@ function TopBar() {
             <IconButton
               className="h-6 w-6"
               color="warning"
+              disabled={openCallWindow.status}
               onClick={() => {
                 setOpenCallWindow({
                   status: true,
