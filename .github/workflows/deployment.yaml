@@ -39,7 +39,8 @@
   #       with:
   #         destination_branch: "test"
   #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  
+
+# Note: With Advance Feature
 # on:
 #   push:
 #     branches:
