@@ -1,31 +1,31 @@
-name: Certificate Distribution System
+# name: Certificate Distribution System
 
-on:
-  push:
-    branches: [feature/laby/ci]
-  pull_request:
-    branches: [test]
+# on:
+#   push:
+#     branches: [feature/laby/ci]
+#   pull_request:
+#     branches: [test]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./
 
-    strategy:
-      matrix:
-        node-version: [18.x]
+#     strategy:
+#       matrix:
+#         node-version: [18.x]
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test --if-present
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Use Node ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - run: npm ci
+#       - run: npm run build --if-present
+#       - run: npm test --if-present
       # - run: npm run start:prod --if-present
 
   # pull-request:
