@@ -32,8 +32,12 @@ const getConfig = () => {
   }
 };
 
+interface iInstance extends Instance {
+  readonly streams: MediaStream[];
+}
+
 let peers: {
-  [x: string]: Instance;
+  [x: string]: iInstance;
 } = {};
 
 export const initPeerConnection = async (
@@ -61,7 +65,7 @@ export const initPeerConnection = async (
     initiator: isInitiator,
     config: getConfig(),
     stream: stream
-  });
+  }) as iInstance;
 
   peers[data.id].on("signal", (signalData) => {
     const signalInfo = { signal: signalData, id: data.id };
