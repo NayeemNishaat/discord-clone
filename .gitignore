@@ -13,10 +13,7 @@ backend/build
 backend/dist
 
 # local env files
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+frontend/.env*
 backend/.env*
 
 # vercel

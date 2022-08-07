@@ -8,11 +8,11 @@ import { errorHandler } from "./controllers/errorController";
 const app: Express = express();
 app.use(express.json());
 app.use(
-	cors({
-		// Important: Both frontend and backend requires "credentials: true" for sending and storing credentials. And origin shouldn't be wildcard!
-		credentials: true,
-		origin: "http://localhost:3000"
-	})
+  cors({
+    // Important: Both frontend and backend requires "credentials: true" for sending and storing credentials. And origin shouldn't be wildcard!
+    credentials: true,
+    origin: `${process.env.CLIENT}`
+  })
 );
 // app.options("*", cors());
 
@@ -22,9 +22,7 @@ app.use("/api/v1/user", userRoutes);
 
 // Chapter: Handeling Unwanted Routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
-	next(
-		new AppError(`This (${req.originalUrl}) route is not available!`, 404)
-	);
+  next(new AppError(`This (${req.originalUrl}) route is not available!`, 404));
 });
 
 // Chapter: Handeling Error
