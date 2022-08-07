@@ -86,9 +86,14 @@ const getOnlineFriends = (friends: friends[]) => {
 const updateOnlineFriends = async (userId: string, active: boolean = true) => {
   const io = getIoInstance();
 
-  const user = await User.findById(userId, "friends")
+  const user = (await User.findById(userId, "friends")
     .populate("friends", "username")
-    .lean();
+    .lean()) as {
+    _id: string;
+    username: string;
+    email: string;
+    friends: friends[];
+  };
 
   const friendsStat = getOnlineFriends(user.friends);
 
@@ -237,11 +242,11 @@ const getPrivateHistory = async (socket: Socket, friendId: string) => {
 };
 
 const getGroupHistory = async (socket: Socket, groupId: string) => {
-  const groupConversation = await GroupConversation.findById(
+  const groupConversation = (await GroupConversation.findById(
     groupId,
     "messages",
     { populate: { path: "messages.author", select: "username" } }
-  );
+  )) as { messages: { author: { username: string }; content: string }[] };
 
   if (!groupConversation.messages.length)
     return socket.emit("groupHistory", null);
@@ -312,7 +317,7 @@ const handleGroupMessage = async (
   const senderId = socket.data._id;
   const groupId = data.to;
 
-  const group = await GroupConversation.findByIdAndUpdate(
+  const group = (await GroupConversation.findByIdAndUpdate(
     groupId,
     {
       $push: {
@@ -325,7 +330,7 @@ const handleGroupMessage = async (
       }
     },
     { projection: "members" }
-  );
+  )) as { members: string[]; messages: { author: string; message: string }[] };
 
   group.members.forEach((member: string) => {
     const activeUser = getSocketId(member.toString());
@@ -346,7 +351,7 @@ export const connectedUsers = async (socket: Socket) => {
   if (!Array.from(users.values()).includes(socket.data._id.toString()))
     users.set(socket.id, socket.data._id.toString());
 
-  const userInfo = await User.findById(
+  const userInfo = (await User.findById(
     socket.data._id,
     "receivedInvitation friends"
   )
@@ -355,7 +360,14 @@ export const connectedUsers = async (socket: Socket) => {
       populate: { path: "user", select: "username" }
     })
     .populate("friends", "username")
-    .lean();
+    .lean()) as {
+    friends: friends[];
+    receivedInvitation: {
+      user: { _id: string; username: string };
+      groupName: string;
+      groupId: string;
+    }[];
+  };
 
   const friends = getOnlineFriends(userInfo.friends);
 
