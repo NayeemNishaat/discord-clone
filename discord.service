@@ -2,18 +2,18 @@
 Description=Discord Daemon
 
 [Service]
-ExecStart=/home/azureuser/discord/backend/dist/server.js
+ExecStart=/home/azureuser/discord/backend/dist/server.js # Absolute path for the executable file.
 
 Restart=always
 User=nobody
 
-Group=nogroup
+Group=nogroup # 'nobody' -> for fedora.
 
-Environment=PATH=/usr/bin:/usr/local/bin
+Environment=PATH=/usr/bin:/usr/local/bin # Note: Path for nodejs.
 
-Environment=NODE_ENV=production
+Environment=NODE_ENV=production # Remark: Setting env directly.
 
-WorkingDirectory=/home/azureuser/discord/backend/dist/
+WorkingDirectory=/home/azureuser/discord/backend/dist/ # Note: Absolute path for application directory.
 
 [Install]
 WantedBy=multi-user.target
