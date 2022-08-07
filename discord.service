@@ -29,3 +29,6 @@ WantedBy=multi-user.target
 # sudo systemctl start discord
 # journalctl -u discord # Show logs of discord service.
 # systemctl enable discord # Run discord service on startup
+# journalctl -u discord -n1 -o json-pretty
+# journalctl -u discord -fn10
+# journalctl -u discord -rn10
