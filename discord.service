@@ -1,0 +1,19 @@
+[Unit]
+Description=Discord Daemon
+
+[Service]
+ExecStart=/home/azureuser/discord/backend/dist/server.js
+
+Restart=always
+User=nobody
+
+Group=nogroup
+
+Environment=PATH=/usr/bin:/usr/local/bin
+
+Environment=NODE_ENV=production
+
+WorkingDirectory=/home/azureuser/discord/backend/dist/
+
+[Install]
+WantedBy=multi-user.target
