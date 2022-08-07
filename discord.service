@@ -1,3 +1,5 @@
+# Create this file in this /etc/systemd/system directory.
+
 [Unit]
 Description=Discord Daemon
 
@@ -22,3 +24,8 @@ WantedBy=multi-user.target
 #!/usr/bin/env node
 
 # After that make this /home/azureuser/discord/backend/dist/server.js file executable.
+
+# sudo systemctl daemon-reload
+# sudo systemctl start discord
+# journalctl -u discord # Show logs of discord service.
+# systemctl enable discord # Run discord service on startup
