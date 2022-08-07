@@ -1,0 +1,68 @@
+# name: Certificate Distribution System
+
+# on:
+#   push:
+#     branches: [feature/laby/ci]
+#   pull_request:
+#     branches: [test]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./
+
+#     strategy:
+#       matrix:
+#         node-version: [18.x]
+
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Use Node ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - run: npm ci
+#       - run: npm run build --if-present
+#       - run: npm test --if-present
+      # - run: npm run start:prod --if-present
+
+  # pull-request:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: pull-request
+  #       uses: repo-sync/pull-request@v2
+  #       with:
+  #         destination_branch: "test"
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+
+# Note: With Advance Feature
+# on:
+#   push:
+#     branches:
+#     - "feature/*"  # Support wildcard matching
+
+# jobs:
+#   pull-request:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: pull-request
+#       uses: repo-sync/pull-request@v2
+#       with:
+#         source_branch: ""                                 # If blank, default: triggered branch
+#         destination_branch: "master"                      # If blank, default: master
+#         pr_title: "Pulling ${{ github.ref }} into master" # Title of pull request
+#         pr_body: ":crown: *An automated PR*"              # Full markdown support, requires pr_title to be set
+#         pr_template: ".github/PULL_REQUEST_TEMPLATE.md"   # Path to pull request template, requires pr_title to be set, excludes pr_body
+#         pr_reviewer: "wei,worker"                         # Comma-separated list (no spaces)
+#         pr_assignee: "wei,worker"                         # Comma-separated list (no spaces)
+#         pr_label: "auto-pr"                               # Comma-separated list (no spaces)
+#         pr_milestone: "Milestone 1"                       # Milestone name
+#         pr_draft: true                                    # Creates pull request as draft
+#         pr_allow_empty: true                              # Creates pull request even if there are no changes
+#         github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,34 @@
+# Create this file in this /etc/systemd/system directory.
+
+[Unit]
+Description=Discord Daemon
+
+[Service]
+ExecStart=/home/azureuser/discord/backend/dist/server.js # Absolute path for the executable file.
+
+Restart=always
+User=nobody
+
+Group=nogroup # 'nobody' -> for fedora.
+
+Environment=PATH=/usr/bin:/usr/local/bin # Note: Path for nodejs.
+
+Environment=NODE_ENV=production # Remark: Setting env directly.
+
+WorkingDirectory=/home/azureuser/discord/backend/dist/ # Note: Absolute path for application directory.
+
+[Install]
+WantedBy=multi-user.target
+
+# Remark: Add this at the top of this /home/azureuser/discord/backend/dist/server.js file.
+#!/usr/bin/env node
+
+# After that make this /home/azureuser/discord/backend/dist/server.js file executable.
+
+# sudo systemctl daemon-reload
+# sudo systemctl start discord
+# journalctl -u discord # Show logs of discord service.
+# systemctl enable discord # Run discord service on startup
+# journalctl -u discord -n1 -o json-pretty
+# journalctl -u discord -fn10
+# journalctl -u discord -rn10
