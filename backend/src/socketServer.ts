@@ -3,15 +3,15 @@ import { Server as httpServer } from "http";
 import { setIoInstance } from "./socketEvents";
 
 const configureSocketServer = (httpServer: httpServer) => {
-	const io = new socketServer(httpServer, {
-		cors: {
-			origin: "http://localhost:3000",
-			allowedHeaders: ["GET", "POST"],
-			credentials: true
-		}
-	});
+  const io = new socketServer(httpServer, {
+    cors: {
+      origin: `${process.env.CLIENT}`,
+      allowedHeaders: ["GET", "POST"],
+      credentials: true
+    }
+  });
 
-	setIoInstance(io);
+  setIoInstance(io);
 };
 
 export default configureSocketServer;

@@ -94,7 +94,7 @@ function TopBar() {
           try {
             localStorage.removeItem("loginInfo");
 
-            await fetch("http://localhost:5000/api/v1/auth/logout", {
+            await fetch(`${process.env.NEXT_PUBLIC_HOST}/auth/logout`, {
               method: "GET",
               credentials: "include"
             });

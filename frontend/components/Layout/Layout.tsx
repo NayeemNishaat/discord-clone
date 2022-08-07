@@ -3,41 +3,39 @@ import { useDispatch } from "react-redux";
 import { setLoginInfo } from "../../redux/slices/authSlice";
 
 function Layout(props: { children: React.ReactNode }) {
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const res = await fetch(
-					"http://localhost:5000/api/v1/auth/check-login",
-					{
-						method: "POST",
-						credentials: "include"
-					}
-				);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/auth/check-login`,
+          {
+            method: "POST",
+            credentials: "include"
+          }
+        );
 
-				const data = await res.json();
-				if (data.status !== "success") {
-					localStorage.removeItem("loginInfo");
-					dispatch(
-						setLoginInfo({ _id: null, email: null, username: null })
-					);
-					return;
-				}
+        const data = await res.json();
+        if (data.status !== "success") {
+          localStorage.removeItem("loginInfo");
+          dispatch(setLoginInfo({ _id: null, email: null, username: null }));
+          return;
+        }
 
-				const storedLoginInfo: {
-					_id: string;
-					email: string;
-					username: string;
-				} = JSON.parse(localStorage.getItem("loginInfo") || "null");
+        const storedLoginInfo: {
+          _id: string;
+          email: string;
+          username: string;
+        } = JSON.parse(localStorage.getItem("loginInfo") || "null");
 
-				if (!storedLoginInfo) return;
-				dispatch(setLoginInfo(storedLoginInfo));
-			} catch (err) {}
-		})();
-	}, []);
+        if (!storedLoginInfo) return;
+        dispatch(setLoginInfo(storedLoginInfo));
+      } catch (err) {}
+    })();
+  }, []);
 
-	return <>{props.children}</>;
+  return <>{props.children}</>;
 }
 
 export default Layout;
