@@ -17,3 +17,8 @@ WorkingDirectory=/home/azureuser/discord/backend/dist/
 
 [Install]
 WantedBy=multi-user.target
+
+# Remark: Add this at the top of this /home/azureuser/discord/backend/dist/server.js file.
+#!/usr/bin/env node
+
+# After that make this /home/azureuser/discord/backend/dist/server.js file executable.
