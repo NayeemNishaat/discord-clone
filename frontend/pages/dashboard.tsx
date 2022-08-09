@@ -12,13 +12,14 @@ import { useDispatch } from "react-redux";
 import {
   receivedInvitations,
   friends,
-  addActiveFriend,
+  updateFriend,
   groups
 } from "../redux/slices/userSlice";
 import {
   setMembers,
   pushMessage,
-  setMessages
+  setMessages,
+  updateMember
 } from "../redux/slices/chatSlice";
 import {
   initPeerConnection,
@@ -106,7 +107,8 @@ function dashboard() {
     socket.on(
       "friendOnline",
       (onlineFriend: { _id: string; username: string; isOnline: boolean }) => {
-        dispatch(addActiveFriend(onlineFriend));
+        dispatch(updateFriend(onlineFriend));
+        dispatch(updateMember(onlineFriend));
       }
     );
 
@@ -150,10 +152,6 @@ function dashboard() {
     socket.on("calleeLeft", (data) => {
       handleCalleeLeft(data);
     });
-
-    // return () => {
-    //   socket.close();
-    // };
   }, [loginInfo._id]);
 
   return <section className="relative flex bg-[#5866f2]">{component}</section>;
