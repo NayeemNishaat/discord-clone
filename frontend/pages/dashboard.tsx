@@ -7,20 +7,41 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CircularProgress } from "@mui/material";
-import socket from "../lib/socketServer";
+import { initSocket } from "../lib/socketServer";
 import { useDispatch } from "react-redux";
 import {
   receivedInvitations,
   friends,
-  addActiveFriend,
+  updateFriend,
   groups
 } from "../redux/slices/userSlice";
-import { setMembers } from "../redux/slices/chatSlice";
+import {
+  setMembers,
+  pushMessage,
+  setMessages,
+  updateMember
+} from "../redux/slices/chatSlice";
 import {
   initPeerConnection,
   handleConnectionInfo,
   handleCalleeLeft
 } from "../lib/webRtc";
+
+type message = {
+  _id: string;
+  author: { username: string };
+  message: string;
+  type: string;
+  date: string;
+};
+
+type messages = {
+  _id: string;
+  author: { username: string };
+  message: string;
+  type: string;
+  date: string;
+}[];
 
 function dashboard() {
   const [component, setComponent] = useState(
@@ -48,7 +69,7 @@ function dashboard() {
       </>
     );
 
-    socket.open();
+    const socket = initSocket();
 
     socket.on("error", (_msg) => {
       localStorage.removeItem("loginInfo");
@@ -86,12 +107,33 @@ function dashboard() {
     socket.on(
       "friendOnline",
       (onlineFriend: { _id: string; username: string; isOnline: boolean }) => {
-        dispatch(addActiveFriend(onlineFriend));
+        dispatch(updateFriend(onlineFriend));
+        dispatch(updateMember(onlineFriend));
       }
     );
 
     socket.on("groupList", (groupsData) => {
       dispatch(groups(groupsData));
+    });
+
+    socket.on("private", (message: message) => {
+      dispatch(pushMessage(message));
+    });
+
+    socket.on("group", (message: message) => {
+      dispatch(pushMessage(message));
+    });
+
+    socket.on("privateHistory", (messages: messages) => {
+      if (!messages) return dispatch(setMessages([]));
+
+      dispatch(setMessages(messages));
+    });
+
+    socket.on("groupHistory", (messages: messages) => {
+      if (!messages) return dispatch(setMessages([]));
+
+      dispatch(setMessages(messages));
     });
 
     socket.on("connPrepare", async (data) => {
@@ -110,10 +152,6 @@ function dashboard() {
     socket.on("calleeLeft", (data) => {
       handleCalleeLeft(data);
     });
-
-    return () => {
-      socket.close();
-    };
   }, [loginInfo._id]);
 
   return <section className="relative flex bg-[#5866f2]">{component}</section>;

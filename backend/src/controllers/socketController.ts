@@ -86,12 +86,11 @@ const getOnlineFriends = (friends: friends[]) => {
 const updateOnlineFriends = async (userId: string, active: boolean = true) => {
   const io = getIoInstance();
 
-  const user = (await User.findById(userId, "friends")
+  const user = (await User.findById(userId, "username friends")
     .populate("friends", "username")
     .lean()) as {
     _id: string;
     username: string;
-    email: string;
     friends: friends[];
   };
 
@@ -487,5 +486,6 @@ export const connectedUsers = async (socket: Socket) => {
 
     users.delete(socket.id);
     await updateOnlineFriends(socket.data._id, false);
+    // console.log(`${socket.data.username} disconnected`);
   });
 };

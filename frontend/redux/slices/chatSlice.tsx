@@ -94,6 +94,20 @@ const chatSlice = createSlice({
     ) => {
       state.members = action.payload;
     },
+    updateMember: (
+      state: chatState,
+      action: PayloadAction<{
+        _id: string;
+        username: string;
+        isOnline: boolean;
+      }>
+    ) => {
+      state.members.forEach((member) => {
+        if (member._id === action.payload._id) {
+          member.isOnline = action.payload.isOnline;
+        }
+      });
+    },
     streamInfo: (
       state: chatState,
       action: PayloadAction<chatState["streamInfo"]>
@@ -120,6 +134,7 @@ export const {
   setMessages,
   pushMessage,
   setMembers,
+  updateMember,
   streamInfo,
   streamsInfo,
   setStreamsInfo

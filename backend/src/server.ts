@@ -7,21 +7,20 @@ import { createServer } from "http";
 
 // Chapter: DB and Server Connection
 declare const process: {
-	env: {
-		MONGO_URI: string;
-		API_PORT: string;
-		PORT: string;
-	};
+  env: {
+    MONGO_URI: string;
+    API_PORT: string;
+    PORT: string;
+  };
 };
 
 try {
-	(async () => {
-		const connection = await mongoose.connect(process.env.MONGO_URI);
-		if (!connection)
-			throw new Error("Failed to connect with DB and Server!");
-	})();
+  (async () => {
+    const connection = await mongoose.connect(process.env.MONGO_URI);
+    if (!connection) throw new Error("Failed to connect with DB and Server!");
+  })();
 } catch (err) {
-	console.log(err);
+  console.log(err);
 }
 
 const httpServer = createServer(app);

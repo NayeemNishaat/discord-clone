@@ -1,0 +1,19 @@
+[Unit]
+Description=NextJs Daemon
+
+[Service]
+Restart=always
+User=root
+Group=root
+# Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/home/azureuser/discord/frontend/
+ExecStart=/bin/npm start 
+
+[Install]
+WantedBy=multi-user.target
+
+# Important: Provide appropriate (user/group) permissions to npm for executing commands.
+# sudo chmod -R 777 /usr/local/bin/npm
+# azureuser@laby:/usr/bin$ ll npm
+# lrwxrwxrwx 1 azureuser root 38 Aug  5 17:45 npm -> ../lib/node_modules/npm/bin/npm-cli.js*

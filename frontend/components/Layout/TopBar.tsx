@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import socket from "../../lib/socketServer";
+import { getSockt } from "../../lib/socketServer";
 import Snackbar from "@mui/material/Snackbar";
 import Slide, { SlideProps } from "@mui/material/Slide";
 import { Button } from "@mui/material";
@@ -24,8 +24,11 @@ function TopBar() {
   const activeChat = useSelector((state: RootState) => state.chat.activeChat);
   const members = useSelector((state: RootState) => state.chat.members);
   const dispatch = useDispatch();
+  const socket = getSockt();
 
   useEffect(() => {
+    if (!socket) return;
+
     socket.on("incomingCall", (data) => {
       setOpenCallWindow({
         status: true,
@@ -38,6 +41,8 @@ function TopBar() {
   const activeMembers = members.filter((member) => member.isOnline);
 
   const initCall = (callType: string) => {
+    if (!socket) return;
+
     socket.emit("startCall", {
       activeMembers:
         activeChat.chatType === "group"

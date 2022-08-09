@@ -6,7 +6,7 @@ const configureSocketServer = (httpServer: httpServer) => {
   const io = new socketServer(httpServer, {
     cors: {
       origin: `${process.env.CLIENT}`,
-      allowedHeaders: ["GET", "POST"],
+      // allowedHeaders: ["GET", "POST"],
       credentials: true
     }
   });
