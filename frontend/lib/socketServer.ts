@@ -9,7 +9,7 @@ export const initSocket = () => {
   });
 
   socket.on("connect", () => {
-    console.log(`${socket?.id} Connected!`);
+    // console.log(`${socket?.id} Connected!`);
   });
 
   return socket;

@@ -486,6 +486,6 @@ export const connectedUsers = async (socket: Socket) => {
 
     users.delete(socket.id);
     await updateOnlineFriends(socket.data._id, false);
-    console.log(`${socket.data.username} disconnected`);
+    // console.log(`${socket.data.username} disconnected`);
   });
 };
