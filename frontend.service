@@ -14,3 +14,5 @@ ExecStart=/bin/npm start
 WantedBy=multi-user.target
 
 # sudo chmod -R 777 /usr/local/bin/npm
+# azureuser@laby:/usr/bin$ ll npm
+# lrwxrwxrwx 1 azureuser root 38 Aug  5 17:45 npm -> ../lib/node_modules/npm/bin/npm-cli.js*
