@@ -1,5 +1,5 @@
 import Peer, { Instance } from "simple-peer";
-import socket from "./socketServer";
+import { getSockt } from "./socketServer";
 import store from "../redux/store";
 import {
   streamsInfo,
@@ -71,7 +71,8 @@ export const initPeerConnection = async (
     const signalInfo = { signal: signalData, id: data.id };
 
     // Part: Send signalInfo to other users
-    socket.emit("connSignal", signalInfo);
+    const socket = getSockt();
+    socket && socket.emit("connSignal", signalInfo);
   });
 
   peers[data.id].on("stream", (remoteStream) => {

@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { setStreamsInfo } from "../../redux/slices/chatSlice";
 import { closePeerConnection, switchTracks } from "../../lib/webRtc";
-import socket from "../../lib/socketServer";
+import { getSockt } from "../../lib/socketServer";
 
 function CallWindow(
   this: any,
@@ -148,7 +148,8 @@ function CallWindow(
             dispatch(setStreamsInfo([]));
             closePeerConnection();
 
-            socket.emit("calleeLeft");
+            const socket = getSockt();
+            socket && socket.emit("calleeLeft");
           }}
         >
           <Close />
