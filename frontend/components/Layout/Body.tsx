@@ -120,7 +120,7 @@ function Body({ name }: { name: string | null }) {
       ) : (
         <MessageList messages={messages} />
       )}
-      <div className="flex w-full items-center gap-5 px-5 pb-4">
+      <div className="flex w-full items-center gap-7 px-5 pb-4">
         <TextField
           InputProps={{
             style: { color: "#fff", padding: "0.8rem" }
@@ -146,8 +146,9 @@ function Body({ name }: { name: string | null }) {
           variant="outlined"
           endIcon={<SendIcon />}
           sx={{
-            padding: "0.6rem 1rem",
-            width: "20%"
+            height: "80%",
+            width: "16%",
+            fontWeight: "bold"
           }}
         >
           Send
