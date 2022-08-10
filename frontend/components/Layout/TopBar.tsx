@@ -53,7 +53,7 @@ function TopBar() {
   };
 
   return (
-    <div className="absolute right-0 flex h-[4.5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
+    <div className="absolute right-0 flex h-[5rem] w-[calc(100%-21rem)] items-center justify-between bg-[#202124]">
       <div className="flex gap-5">
         <span className="ml-5  text-white">{activeChat.name}</span>
         {activeChat.name && (

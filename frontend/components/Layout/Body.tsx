@@ -3,6 +3,9 @@ import TextField from "@mui/material/TextField";
 import { RootState } from "../../redux/store";
 import MessageList from "../Message/MessageList";
 import { getSockt } from "../../lib/socketServer";
+import { useState } from "react";
+import Button from "@mui/material/Button";
+import SendIcon from "@mui/icons-material/Send";
 
 type messages = {
   _id: string;
@@ -51,6 +54,8 @@ const processMessage = (processedMessages: messages) => {
 };
 
 function Body({ name }: { name: string | null }) {
+  const [value, setValue] = useState("");
+
   const activeChat = useSelector((state: RootState) => state.chat.activeChat);
   const messages = processMessage(
     useSelector((state: RootState) => state.chat.messages)
@@ -66,31 +71,29 @@ function Body({ name }: { name: string | null }) {
       </div>
     );
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!(e.target as HTMLInputElement).value) return;
+  const sendMessage = () => {
+    if (!value) return;
 
-    if (e.key === "Enter" && e.ctrlKey) {
-      const socket = getSockt();
-      if (!socket) return;
+    const socket = getSockt();
+    if (!socket) return;
 
-      if (activeChat.chatType === "private") {
-        socket.emit("private", {
-          to: activeChat.id,
-          message: (e.target as HTMLInputElement).value
-        });
-      } else {
-        socket.emit("group", {
-          to: activeChat.id,
-          message: (e.target as HTMLInputElement).value
-        });
-      }
-
-      (e.target as HTMLInputElement).value = "";
+    if (activeChat.chatType === "private") {
+      socket.emit("private", {
+        to: activeChat.id,
+        message: value
+      });
+    } else {
+      socket.emit("group", {
+        to: activeChat.id,
+        message: value
+      });
     }
+
+    setValue("");
   };
 
   return (
-    <div className="mt-[4.5rem] flex flex-1 flex-col items-center bg-[#36393f] text-white">
+    <div className="mt-[5rem] flex flex-1 flex-col items-center bg-[#36393f] text-white">
       <h2 className="mt-3 flex items-center gap-2 text-2xl leading-none">
         <span
           className={`flex h-8 w-8 items-center justify-center rounded-full ${
@@ -117,22 +120,39 @@ function Body({ name }: { name: string | null }) {
       ) : (
         <MessageList messages={messages} />
       )}
-      <TextField
-        InputProps={{
-          style: { color: "#fff" }
-        }}
-        id="filled-textarea"
-        rows={2}
-        placeholder="Enter your message."
-        multiline
-        variant="outlined"
-        onKeyDown={handleKeyDown}
-        sx={{
-          marginTop: "auto",
-          padding: "0 20px 20px 20px",
-          width: "100%"
-        }}
-      />
+      <div className="flex w-full items-center gap-5 px-5 pb-4">
+        <TextField
+          InputProps={{
+            style: { color: "#fff", padding: "0.8rem" }
+          }}
+          id="filled-textarea"
+          rows={2}
+          placeholder="Enter your message."
+          multiline
+          variant="outlined"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && e.ctrlKey) sendMessage();
+          }}
+          sx={{
+            marginTop: "auto",
+            flex: "1"
+          }}
+        />
+
+        <Button
+          onClick={sendMessage}
+          variant="outlined"
+          endIcon={<SendIcon />}
+          sx={{
+            padding: "0.6rem 1rem",
+            width: "20%"
+          }}
+        >
+          Send
+        </Button>
+      </div>
     </div>
   );
 }
