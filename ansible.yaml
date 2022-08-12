@@ -1,0 +1,143 @@
+# Once you have installed Ansible and have setup your Ubuntu server, add the IP address along with the following hostnames to your local hosts file (/etc/ansible/hosts).
+
+# 10.1.1.21     ubuntu
+# 10.1.1.21     helloworld.com
+
+# Create a file called inventory.yml then add the following:
+
+# web:
+#   hosts:
+#     ubuntu
+#   vars:
+#     domain: helloworld.com
+#     ansible_user: ubuntu
+#     ansible_ssh_private_key_file: ~/.ssh/id_rsa
+#     ansible_sudo_pass: qwerty
+
+# - hosts: web
+#   become: yes
+#   tasks:
+#     - name: "apt-get update"
+#       apt:
+#         update_cache: yes
+#         cache_valid_time: 3600
+
+#     - name: "install nginx"
+#       apt:
+#         name: ["nginx"]
+#         state: latest
+
+#     - name: "create www directory"
+#       file:
+#         path: /var/www/{{ domain }}
+#         state: directory
+#         mode: "0775"
+#         owner: "{{ ansible_user }}"
+#         group: "{{ ansible_user }}"
+
+#     - name: delete default nginx site
+#       file:
+#         path: /etc/nginx/sites-enabled/default
+#         state: absent
+#       notify: restart nginx
+
+#     - name: copy nginx site.conf
+#       template:
+#         src: site.conf.j2
+#         dest: /etc/nginx/sites-enabled/{{ domain }}
+#         owner: root
+#         group: root
+#         mode: "0644"
+#       notify: restart nginx
+
+#   handlers:
+#     - name: restart nginx
+#       service:
+#         name: nginx
+#         state: restarted
+
+# mkdir site
+
+# Add a html file called index.html to the folder:
+# <!DOCTYPE html>
+# <html lang="en">
+#   <title> </title>
+#   <meta name="viewport" content="width=device-width, initial-scale=1">
+#   <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
+#   <body>
+#     <article class="vh-100 dt w-100 bg-dark-pink">
+#       <div class="dtc v-mid tc white ph3 ph4-l">
+#         <h1 class="f6 f2-m f-subheadline-l fw6 tc">Hello World!</h1>
+#       </div>
+#     </article>
+#   </body>
+# </html>
+
+# Create a playbook called sync.yml and add the following:
+#   - hosts: web
+#     tasks:
+#       - name: "sync website"
+#         synchronize:
+#           src: site/
+#           dest: /var/www/{{ domain }}
+#           archive: no
+#           checksum: yes
+#           recursive: yes
+#           delete: yes
+#         become: no
+
+# Run the playbook to install and configure NGINX:
+# ansible-playbook -i inventory.yml nginx.yml
+# ansible-playbook -i inventory.yml sync.yml
+# Open a web browser and test the website works by browsing to http://helloworld.com.
+
+# Chapter: Ansible playbook for installing nodejs
+# - name: update nodejs
+#   remote_user: root
+
+# - name: nodejs installa
+#   hosts: localhost # all
+#   gather_facts: yes
+#   become: yes
+#   vars:
+#     NODEJS_VERSION: "18"
+#     ansible_distribution_release: "xenial" #trusty
+#   tasks:
+#     - name: Install the gpg key for nodejs LTS
+#       apt_key:
+#         url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+#         state: present
+
+#     - name: Install the nodejs LTS repos
+#       apt_repository:
+#         repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+#         state: present
+#         update_cache: yes
+
+#     - name: Install the nodejs
+#       apt:
+#         name: nodejs
+#         state: present
+
+- name: package installations
+  hosts: localhost
+  tasks:
+    - name: install packages
+      become: true
+      become_user: root
+      apt:
+        state: present
+        name:
+          - nginx
+# --ask-become-pass
+
+# ---
+# - hosts: all
+#   tasks:
+#     - name: install packages
+#       become: true
+#       become_user: root
+#       dnf:
+#         state: present
+#         name:
+#           - nginx
