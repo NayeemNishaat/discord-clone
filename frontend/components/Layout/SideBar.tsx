@@ -10,55 +10,52 @@ import MemberList from "../Member/MemberList";
 import InviteList from "../Invite/InviteList";
 
 function SideBar() {
-	const [open, setOpen] = useState(false);
-	const invitations = useSelector(
-		(state: RootState) => state.user.receivedInvitations
-	);
-	const members = useSelector((state: RootState) => state.chat.members);
-	const activeChat = useSelector((state: RootState) => state.chat.activeChat);
+  const [open, setOpen] = useState(false);
+  const invitations = useSelector(
+    (state: RootState) => state.user.receivedInvitations
+  );
 
-	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+  const members = useSelector((state: RootState) => state.chat.members);
+  const activeChat = useSelector((state: RootState) => state.chat.activeChat);
 
-	return (
-		<div className="flex h-screen w-64 flex-col items-center bg-[#2f313c] pt-5">
-			<Button
-				variant="outlined"
-				startIcon={<PersonAddIcon />}
-				onClick={handleOpen}
-			>
-				Invite
-			</Button>
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-			<Modal open={open} handleClose={handleClose} />
+  return (
+    <div className="flex h-screen w-64 flex-col items-center bg-[#2f313c] pt-5">
+      <Button
+        variant="outlined"
+        startIcon={<PersonAddIcon />}
+        onClick={handleOpen}
+      >
+        Invite
+      </Button>
 
-			<div className="mt-10 flex w-[90%] flex-1 flex-col text-white">
-				<div className="flex h-2/3 flex-col overflow-y-auto">
-					<div className="mb-5 flex items-center gap-3">
-						<PeopleIcon />
-						{activeChat.chatType === "group"
-							? "Members"
-							: "Friends"}
-					</div>
+      <Modal open={open} handleClose={handleClose} />
 
-					<MemberList
-						members={members}
-						disabled={
-							activeChat.chatType === "group" ? true : false
-						}
-					/>
-				</div>
-				<div className="flex h-1/3 flex-col overflow-y-auto">
-					<div className="mb-3 flex items-center gap-3">
-						<EmailIcon />
-						Invitation
-					</div>
+      <div className="mt-10 flex w-[90%] flex-1 flex-col text-white">
+        <div className="flex h-2/3 flex-col overflow-y-auto">
+          <div className="mb-5 flex items-center gap-3">
+            <PeopleIcon />
+            {activeChat.chatType === "group" ? "Members" : "Friends"}
+          </div>
 
-					<InviteList invitations={invitations} />
-				</div>
-			</div>
-		</div>
-	);
+          <MemberList
+            members={members}
+            disabled={activeChat.chatType === "group" ? true : false}
+          />
+        </div>
+        <div className="flex h-1/3 flex-col overflow-y-auto">
+          <div className="mb-3 flex items-center gap-3">
+            <EmailIcon />
+            Invitation
+          </div>
+
+          <InviteList invitations={invitations} />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default SideBar;

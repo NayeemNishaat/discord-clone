@@ -125,20 +125,22 @@ export const sendInviteNotification = async (
     if (value === receiver.toString()) activeUserIds.push(key); // Note: Finding active receiver's SocketId!
   });
 
-  userInfo = await User.findById(receiver, "receivedInvitation friends")
-    .populate("receivedInvitation", "username")
-    .lean();
+  const userInfo = (await User.findById(receiver, "receivedInvitation")
+    .populate({
+      path: "receivedInvitation",
+      populate: { path: "user", select: "username" }
+    })
+    .lean()) as {
+    receivedInvitation: { username: string; user?: { username: string } }[];
+  };
+  const receivedInvitations = userInfo.receivedInvitation.map((invitation) => {
+    invitation.user && (invitation.username = invitation.user.username);
+    delete invitation.user;
+    return invitation;
+  });
 
   activeUserIds.forEach((activeUserId) => {
-    io.to(activeUserId).emit("invite", [
-      ...userInfo.receivedInvitation,
-      {
-        _id: sender._id,
-        username: sender.username,
-        groupName: groupName,
-        groupId: groupId
-      }
-    ]);
+    io.to(activeUserId).emit("invite", receivedInvitations);
   });
 };
 

@@ -120,7 +120,7 @@ function Body({ name }: { name: string | null }) {
       ) : (
         <MessageList messages={messages} />
       )}
-      <div className="flex w-full items-center gap-7 px-5 pb-4">
+      <div className="mt-auto flex w-full items-center gap-7 px-5 pb-4">
         <TextField
           InputProps={{
             style: { color: "#fff", padding: "0.8rem" }
