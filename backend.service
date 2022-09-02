@@ -24,6 +24,7 @@ WantedBy=multi-user.target
 #!/usr/bin/env node
 
 # After that make this /home/azureuser/discord/backend/dist/server.js file executable.
+# Also needs to provide additional permissions to the parent directory/adding root/current user to the server.js's group in some cases.
 
 # sudo systemctl daemon-reload
 # sudo systemctl start discord
